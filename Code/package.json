@@ -1,0 +1,22 @@
+{
+  "name": "bot",
+  "version": "1.0.0",
+  "description": "A multipurpose use discord bot.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "PTZ",
+  "license": "MIT",
+  "dependencies": {
+    "@discordjs/opus": "^0.3.2",
+    "cheerio": "^1.0.0-rc.3",
+    "discord.js": "^12.3.1",
+    "discord.js-commando": "git+https://github.com/discordjs/commando.git",
+    "ffmpeg-static": "^4.2.7",
+    "minecraft-server-util": "^2.2.0",
+    "mongoose": "^5.10.7",
+    "ms": "^2.1.2",
+    "request": "^2.88.2"
+  }
+}
