@@ -9,7 +9,7 @@ const { Console } = require("console");
 let inited = false;
 
 module.exports = {
-    commands: ['cypher-hard', 'ch'],
+    commands: ['cypher'],
     minArgs: 0,
     maxArgs: 0,
     callback: (message, arguments) => {

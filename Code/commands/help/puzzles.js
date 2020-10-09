@@ -9,7 +9,7 @@ module.exports = {
       .setColor('#0099ff')
       .setTitle('Commands')
       .setAuthor('Shitbot, By PTZ')
-      .setDescription('All commands for shitbot, type in the chat the sections below with a \"-\" then with the description for more info about those commands.')
+      .setDescription('All commands for shitbot, type in the chat the sections below with a \"=\" then with the description for more info about those commands.')
       .addFields(
         { name: '\u200B', value: '\u200B' },
         { name: 'Cypher, Bytes, Tap Code', value: '-help-fun', inline: true },

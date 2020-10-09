@@ -24,7 +24,7 @@ const client = new Commando.CommandoClient({
 client.on('ready', async () => {
   console.log('AN ERROR A DAY MAKES YOUR BRAIN GO AWAY!')
 
-  client.registry.registerGroup[['misc', 'miscellaneous commands'], ['moderation', 'moderation commands'], ['funny', 'funny and weird commands', ['help', 'have a question or need help?'], ['roles', 'free roles for sale! Cost only a command.'], ['thanks', 'wanna tank people, use this command '], ['puzzles', 'some fun games you can play']]].registerDefaults().registerCommandsIn(path.join(_dirname, 'cmds'))
+  client.registry.registerGroup[['misc', 'miscellaneous commands'], ['moderation', 'moderation commands'], ['funny', 'funny and weird commands'], ['help', 'have a question or need help?'], ['roles', 'free roles for sale! Cost only a command.'], ['thanks', 'wanna tank people, use this command '], ['puzzles', 'some fun games you can play']].registerDefaults().registerCommandsIn(path.join(_dirname, 'cmds'))
 
   await mongo().then((mongoose) => {
     try {
