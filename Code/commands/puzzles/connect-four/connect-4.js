@@ -12,7 +12,7 @@ module.exports = {
             message.channel.send('sorry, <@' + message.author + '>' + ', but you already have a game in progress in <#' + Manager.usersGame('<@' + message.author + '>').channel + '>');
             return;
         }
-        let game = new Game.connect4game('<@' + message.author + '>', message.channel);
+        var game = new Game.connect4game('<@' + message.author + '>', message.channel);
         game.startGame();
         Manager.addGame(game); 
         const ch = new Discord.MessageEmbed()

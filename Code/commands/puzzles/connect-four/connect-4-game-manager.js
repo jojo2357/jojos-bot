@@ -8,7 +8,8 @@ module.exports = {
     minArgs: 0,
     maxArgs: 1,
     callback: (message, arguments) => {
-        if (!parseInt(arguments[0]) && arguments[0] != "0"){
+        console.log("Plus one: " + (1 + parseInt(arguments[0])))
+        if (0 > parseInt(arguments[0]) || parseInt(arguments[0]) > 6){
             const ch = new Discord.MessageEmbed()
             .setColor('#0cc0b4')
             .setTitle('Am i looking at a moron?')
@@ -21,7 +22,12 @@ module.exports = {
         else if (Manager.usersGame('<@' + message.author + '>').channel != message.channel)
             message.channel.send("You have a game in progress in <#" + Manager.usersGame('<@' + message.author + '>').channel + ">")
         else if (Manager.usersGame('<@' + message.author + '>').hasRoom(parseInt(arguments[0])))
-            Manager.usersGame('<@' + message.author + '>').makeMove(arguments[0], 1);
+            if (Manager.usersGame('<@' + message.author + '>').isEmpty())
+                message.channel.send("Brain is still loading, please be patient.");
+            else{
+                Manager.usersGame('<@' + message.author + '>').makeMove(arguments[0], 1);
+                console.log(arguments);
+            }
         else message.channel.send("either u dont know how to type numbers or something went wrong");
     }
 }

@@ -12,11 +12,9 @@ module.exports = {
       .setDescription('All commands. Type in the chat the sections below with a \"=\" then with the description for more info about those commands.')
       .addFields(
         { name: '\u200B', value: '\u200B' },
-        { name: 'Games', value: '-games', inline: true },
-        { name: 'Miscellaneous', value: '-other', inline: true },
-        { name: 'Puzzles', value: '-puzzles', inline: true },
-        { name: 'Secret Commands for mods!', value: '-sc', inline: true },
-
+        { name: 'Connect-4', value: '=help-c4', inline: true },
+        { name: 'Cypher', value: '=cypher', inline: true },
+        { name: 'Music reccomendations', value: '=song', inline: true },
       ).setTimestamp()
       .setFooter('More commands comming soon!');
     message.channel.send(help);

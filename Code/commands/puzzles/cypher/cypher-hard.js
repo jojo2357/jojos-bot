@@ -1,4 +1,3 @@
-let cypherHard = ['Cypher 001\n\njfwoly dhz puclualk if qbspbz jhlzhy, h nylha rpun huk jvtthukly mvy yvtl h svun aptl hnv. ol bzlk aopz av zluk tlzzhnlz av vaolyz dpao vba hufvul ruvdpun doha pz vu aolyl pm zvtlvul ohk mvbuk pa.', 'Cypher 002:\n\nChyqna fjb rwenwcnm kh Jdurdb Cjnbja, j panjc trwp jwm lxvvjwmna oxa Rxvn j uxwp crvn jpx. Hn dbnm cqrb cx bnwm vnbbjpnb cx xcqnab frcq xdc jwhxwn twxfrwp ro cqnh qjm oxdwm rc.']
 let cypherRaw = 'jojo\'s wacky cypher \n\n'
 let plaintext = [];
 

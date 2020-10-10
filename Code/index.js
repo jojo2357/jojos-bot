@@ -14,6 +14,7 @@ const baseFile = 'command-base.js'
 const commandBase = require(`./commands/${baseFile}`);
 const advancedPolls = require('./commands/mics/poll');
 const mongo = require('./mongo');
+const MusicDb = require('./commands/music/music-manager.js');
 const { EventEmitter } = require('events');
  EventEmitter.defaultMaxListeners = 100
 const client = new Commando.CommandoClient({
@@ -23,8 +24,8 @@ const client = new Commando.CommandoClient({
 
 client.on('ready', async () => {
   console.log('AN ERROR A DAY MAKES YOUR BRAIN GO AWAY!')
-
-  client.registry.registerGroup[['misc', 'miscellaneous commands'], ['moderation', 'moderation commands'], ['funny', 'funny and weird commands'], ['help', 'have a question or need help?'], ['roles', 'free roles for sale! Cost only a command.'], ['thanks', 'wanna tank people, use this command '], ['puzzles', 'some fun games you can play']].registerDefaults().registerCommandsIn(path.join(_dirname, 'cmds'))
+  MusicDb.init();
+  client.registry.registerGroup[['misc', 'miscellaneous commands'], ['funny', 'funny and weird commands'], ['help', 'have a question or need help?'], ['puzzles', 'some fun games you can play']].registerDefaults().registerCommandsIn(path.join(_dirname, 'cmds'))
 
   await mongo().then((mongoose) => {
     try {

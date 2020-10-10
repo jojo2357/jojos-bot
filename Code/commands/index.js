@@ -1,7 +1,7 @@
 const Commando = require('discord.js-commando')
 const client = new Commando.CommandoClient()
 const config = require('../config.json');
-
+const MusicDb = require('./music/music-manager.js');
 
 client.on('message', message => {
     if (message.content === 'hi') {
@@ -16,36 +16,16 @@ client.on('message', message => {
         message.channel.send('I AM WATCHING YOU! 😠');
     } else if (message.content === "why it no work") {
         message.channel.send('because you do not know how to code...');
-    } else if (message.content === "i am 12") {
-        message.channel.send('Banned! 🔨');
     } else if (message.content === "bye") {
         message.channel.send('Cya! 👋🏼');
-    } else if (message.content === "warn") {
-        message.channel.send('Do you want to be warned?');
-    } else if (message.content === "apple") {
-        message.channel.send('An 🍎 a day keeps your money away. (LMAO, I still like apple products, don\'t ban me)');
-    } else if (message.content === "projects") {
-        message.channel.send('Currently working on many projects so STOP ASKING.');
     } else if (message.content === "flick u") {
-        message.channel.send('...');
-    } else if (message.content === "math test") {
-        message.channel.send('A math test a unit makes you rage every day! 😉');
-    } else if (message.content === "learn java") {
-        message.channel.send('Learning Java every day keeps your brain cells away. (Okay that was a joke, but still do it and lose some brain cells)');
+        message.channel.send('(╯°□°）╯︵ ┻━┻');
     } else if (message.content === "wanna play") {
         message.channel.send('Sure (haha annoying?)');
-    } else if (message.content === "veggies bad") {
-        message.channel.send('Eat your veggies kids!').then(messageReaction => {
-            messageReaction.react("🤮");
-        });
     } else if (message.content === "@everyone") {
-        message.channel.send('You didn\'t expect that to work did you?').then(messageReaction => {
-            messageReaction.react("😡");
-        });
+        message.channel.send('Y u gotta @ me like that?');
     } else if (message.content === "@here") {
-        message.channel.send('Pings these days...').then(messageReaction => {
-            messageReaction.react("😡");
-        });
+        message.channel.send('Y u gotta @ me like that?');
     } else if (message.content === "nice bot") {
         message.channel.send('☺️');
     } else if (message.content === "good bot") {
@@ -61,21 +41,13 @@ client.on('message', message => {
     } else if (message.content === 'server info') {
         message.channel.send(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}\n Server Invite Link: `);
     } else if (message.content === 'ping me') {
-        message.reply(`You asked for it 🤯`);
-    } else if (message.content === 'f in math') {
-        message.channel.send('Oofies, no big deal, all you need to do, STOP IT GET, SOME HELP, and study more.');
-    } else if (message.content === 'imo?') {
-        message.channel.send('in my opinion');
-    } else if (message.content === 'lmao?') {
-        message.channel.send('laugh my ass oof (not really oof, it\'s off)');
-    } else if (message.content === "shut up") {
-        message.channel.send('Okay, you will be muted rn.');
+        message.reply(`You asked for it 🤯 ` + message.sender);
     } else if (message.content === "error") {
         message.channel.send('An error a day makes your brain go away!').then(messageReaction => {
             messageReaction.react("🤯")
         })
     } else if (message.content === "confusion") {
-        message.channel.send('An confusion a day makes your brain cells go away!').then(messageReaction => {
+        message.channel.send('mad cuz bad').then(messageReaction => {
             messageReaction.react("🧠")
         })
     } else if (message.content === "ez") {
@@ -85,26 +57,24 @@ client.on('message', message => {
     } else if (message.content === "beg") {
         message.channel.send('Any thanks to spare? 🥺');
     } else if (message.content === "bruh") {
-        message.channel.send('A bruh a day makes your happiness go away.');
-    } else if (message.content === "heart attack") {
-        message.channel.send('An heart attack a day makes your mind go away.');
-    } else if (message.content === "wasting time") {
-        message.channel.send('A hour a day makes time fly away.');
-    } else if (message.content === "accident") {
-        message.channel.send('A accident a day makes me go away.');
-    } else if (message.content === "bot info") {
-        message.channel.send('**Owner:**  PTZ\n**GitHub:** https://github.com/PTZ8/Discord-Bot-JavaScript');
+        message.channel.send('bruh urself');
+    } else if (message.content === "bot info" || message.content === "info") {
+        message.channel.send('**Owner:**  jojo\n**GitHub:** https://github.com/jojo2357/jojos-bot');
     } else if (message.content === "creeper") {
-        message.channel.send('AWW man!');
+        message.channel.send('ohhh nononono');
     } else if (message.content === "how to code") {
         message.channel.send('by typing words into your pc');
     } else if (message.content === "how to math") {
-        message.channel.send('calculator');
+        message.channel.send('calculator and desmos');
     } else if (message.content === "too bad") {
         message.channel.send('too sad');
     } else if (message.content === "bored") {
-        message.channel.send('When life gives you boredomness, :LearntoCode:');
-    }
+        message.channel.send('When life gives you boredom, make boredomade');
+    } else if (message.content === "uwu") {
+        message.channel.send('owo');
+    } else if (message.content === "random song") {
+        message.channel.send('!p ' + MusicDb.getRandomName());
+    } 
 })
 
 client.login(config.token); 
