@@ -15,6 +15,7 @@ module.exports = {
         { name: 'Connect-4', value: '=help-c4', inline: true },
         { name: 'Cypher', value: '=cypher', inline: true },
         { name: 'Music reccomendations', value: '=song', inline: true },
+        { name: 'Dev notes', value: '=dev', inline: true },
       ).setTimestamp()
       .setFooter('More commands comming soon!');
     message.channel.send(help);

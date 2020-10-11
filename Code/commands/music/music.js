@@ -5,6 +5,7 @@ module.exports = {
     commands: ['songs', 'song'],
     minArgs: 1,
     maxArgs: 1,
+    expectedArgs: '`<amount of reccomendations>`',
     callback: (message, arguments) => {
         var out = '!p ' + musick.getRandomName();
         var putIn = "";

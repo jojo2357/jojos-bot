@@ -29,7 +29,6 @@ module.exports = {
     usersGame(user){
         for (var i = 0; i < games.length; i++)
             if (games[i].players.indexOf(user) >= 0){
-                console.log(user + "'s game is at index " + i);
                 return games[i];
             }
         return null;

@@ -20,8 +20,8 @@ client.on('message', message => {
         message.channel.send('Cya! 👋🏼');
     } else if (message.content === "flick u") {
         message.channel.send('(╯°□°）╯︵ ┻━┻');
-    } else if (message.content === "wanna play") {
-        message.channel.send('Sure (haha annoying?)');
+    } else if (message.content.includes('among us')) {
+        message.channel.send('Such a 1-d game, doesn\'t challenge the mind, can learn every aspect of the game from memes, and overall a shit game whose only benefit is that it facilitates enjoyable interactions with friends');
     } else if (message.content === "@everyone") {
         message.channel.send('Y u gotta @ me like that?');
     } else if (message.content === "@here") {
@@ -39,13 +39,9 @@ client.on('message', message => {
     } else if (message.content === 'my info') {
         message.channel.send(`Your username: ${message.author.username}\nYour ID: ${message.author.id}`);
     } else if (message.content === 'server info') {
-        message.channel.send(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}\n Server Invite Link: `);
+        message.channel.send(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}`);
     } else if (message.content === 'ping me') {
         message.reply(`You asked for it 🤯 ` + message.sender);
-    } else if (message.content === "error") {
-        message.channel.send('An error a day makes your brain go away!').then(messageReaction => {
-            messageReaction.react("🤯")
-        })
     } else if (message.content === "confusion") {
         message.channel.send('mad cuz bad').then(messageReaction => {
             messageReaction.react("🧠")
@@ -59,7 +55,7 @@ client.on('message', message => {
     } else if (message.content === "bruh") {
         message.channel.send('bruh urself');
     } else if (message.content === "bot info" || message.content === "info") {
-        message.channel.send('**Owner:**  jojo\n**GitHub:** https://github.com/jojo2357/jojos-bot');
+        message.channel.send('**Owner:**  jojo2357#1417\n**GitHub:** https://github.com/jojo2357/jojos-bot');
     } else if (message.content === "creeper") {
         message.channel.send('ohhh nononono');
     } else if (message.content === "how to code") {

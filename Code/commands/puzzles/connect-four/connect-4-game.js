@@ -30,11 +30,21 @@ module.exports = {
         }*/
 
         constructor(player1, channel) {
-            console.log("creating new game for " + player1);
-            this.isSinglePlayer = true;
+            if (player1[1] != null){
+                console.log();
+                this.isSinglePlayer = false;
+                this.turn = 1;
+            }else{
+                console.log("creating new game for " + player1[0]);
+                this.isSinglePlayer = true;
+                this.stdinStream = new stream.Readable({
+                    read(size) {
+                        return true;
+                    }
+                });
+            }
+            this.players = player1;
             this.turnNumber = 0;
-            this.players = [];
-            this.players.push(player1);
             this.channel = channel;
             this.gameBoard = [[0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0],
@@ -42,12 +52,6 @@ module.exports = {
             [0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0]];
-
-            this.stdinStream = new stream.Readable({
-                read(size) {
-                    return true;
-                }
-            });
         };
 
         acceptGame(){
@@ -55,14 +59,14 @@ module.exports = {
         };
 
         declineGame(){
-
+            connect4GameHolder.declineGame(this);
         };
 
         startGame() {
             const { spawn } = require('child_process');
 
             this.prc = spawn('java', ['-cp', process.cwd() + '\\connect-4-bot\\', 'ConnectFourMain', '' + this.brainSize]);
-            this.players.push(this.prc);
+            this.players[1] = this.prc;
             console.log('Game started');
             function getInput(inputIn = "") {
                 if (inputIn.length == 3)
@@ -107,22 +111,34 @@ module.exports = {
                 for (var row = 0; row < 6; row++)
                     if (this.gameBoard[row][column] == 0) {
                         this.gameBoard[row][column] = playerNumber;
-                        if (this.gameOver(this.gameBoard))
+                        if (this.gameOver(this.gameBoard)){
                             this.ggMessage(playerNumber);
+                            return;
+                        }
                         break;
                     }
                 if (playerNumber == 1){
-                    this.stdinStream.push("" + column + '\n');
+                    if (this.isSinglePlayer)
+                        this.stdinStream.push("" + column + '\n');
+                    else 
+                        this.sysoutBoard(playerNumber);
                     this.turnNumber++;
                 }else{
-                    this.sysoutBoard();
+                    this.sysoutBoard(0);
                 }
             } else {
-
+                if (this.isSinglePlayer){
+                    if (playerNumber == 1){
+                        this.channel.send("Hey dummy that column is full");
+                    }
+                }else{
+                    this.channel.send("Hey dummy that column is full");
+                }
+                
             }
         };
 
-        async sysoutBoard() {
+        async sysoutBoard(player) {
             console.log("board printing begin");
             const canvas = Canvas.createCanvas(224, 192);
             const ctx = canvas.getContext('2d');
@@ -142,7 +158,11 @@ module.exports = {
                 }
             }
             const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'testBoard.png');
-            this.channel.send('Don\'t mess up ' + this.players[0] + ' the i:b:iot', attachment);
+            if (!this.gameOver(this.gameBoard)){
+                this.channel.send('Don\'t mess up ' + this.players[player] + ' the i:b:iot', attachment);
+            }else{
+                this.channel.send(attachment);
+            }
             console.log("board printing done");
         };
 
@@ -169,7 +189,7 @@ module.exports = {
                 for (var col = 0; col < 4; col++) {
                     for (var row = 0; row < 3; row++) {
                         for (var boardExt = 0; boardExt < 4; boardExt++)
-                            if (board[row][col + boardExt] == winner && board[row][col + 1 + boardExt] == winner && board[row][col + 2 + boardExt] == winner && board[row][col + 3 + boardExt] == winner)//horizontal dub
+                            if (board[row + boardExt][col] == winner && board[row + boardExt][col + 1] == winner && board[row + boardExt][col + 2] == winner && board[row + boardExt][col + 3] == winner)//horizontal dub
                                 return winner;
                         if (board[row][col] == winner && board[row + 1][col + 1] == winner && board[row + 2][col + 2] == winner && board[row + 3][col + 3] == winner)//diag positive slope
                             return winner;

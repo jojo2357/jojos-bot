@@ -7,7 +7,7 @@ module.exports = {
     minArgs: 0,
     maxArgs: 0,
     callback: (message, arguments) => {
-        if (Manager.usersGame('<@' + message.author + '>').channel == message.channel)
+        if (Manager.usersGame('<@' + message.author + '>') != null && Manager.usersGame('<@' + message.author + '>').channel == message.channel)
             Manager.usersGame('<@' + message.author + '>').sysoutBoard();
         else 
             message.channel.send("You don't have a game in progress! Use `=connect-4` to start one!");
