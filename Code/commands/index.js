@@ -70,7 +70,9 @@ client.on('message', message => {
         message.channel.send('owo');
     } else if (message.content === "random song") {
         message.channel.send('!p ' + MusicDb.getRandomName());
-    } 
+    } else if ((message.content.includes(" pm ") || message.content.includes(" am "))) {
+        message.channel.send('Have you considered using 24-hour time? It drastically reduces redundencies');
+    }
 })
 
 client.login(config.token); 

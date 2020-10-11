@@ -2,6 +2,7 @@ const { Console } = require('console');
 const Discord = require('discord.js');
 const stream = require('stream');
 const Canvas = require('canvas');
+const fs = require('fs');
 const connect4GameHolder = require('./connect-4-game-holder');
 
 const emptyBoard = [[0, 0, 0, 0, 0, 0, 0],
@@ -56,6 +57,7 @@ module.exports = {
 
         acceptGame(){
             connect4GameHolder.makeLive(this);
+            this.sysoutBoard(this.players[1]);
         };
 
         declineGame(){
@@ -211,6 +213,19 @@ module.exports = {
                 this.channel.send("Wow " + this.players[0] + " I honestly cannot believe that you lost. I mean, if you played " + this.brainSize + " games of connect-4 you might have won");
             this.sysoutBoard();
             this.prc.kill();
+
+            if (!fs.existsSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat'))
+                fs.open('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat', function(err){});
+            fs.appendFileSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat', "" + (winner == 1 || winner == "1") + ' ' + (this.isSinglePlayer ? this.brainSize : this.players[1]));
+            if (!this.isSinglePlayer){
+                if (!fs.existsSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat'))
+                    fs.open('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat', function(err){});
+                fs.appendFileSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat', "" + !(winner == 1 || winner == "1") + ' ' + this.players[0]);
+            }else{
+                if (!fs.existsSync('assets/connect-4/game-record/' + this.brainSize + '_computerBrain.dat'))
+                    fs.open('assets/connect-4/game-record/' + this.brainSize + '_computerBrain.dat', function(err){});
+                fs.appendFileSync('assets/connect-4/game-record/' + this.brainSize + '_computerBrain.dat', "" + !(winner == 1 || winner == "1") + ' ' + this.players[0]);
+            }
             connect4GameHolder.removeGame(this);
             console.log("Attempted to kill and remove");
         }

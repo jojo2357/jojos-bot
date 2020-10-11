@@ -11,15 +11,14 @@ module.exports = {
             message.channel.send('sorry, <@' + message.author + '>' + ', but nobody has challenged you to a game');
             return;
         }
-        var game = new Game.connect4game(['<@' + message.author + '>', null], message.channel);
-        game.startGame();
-        Manager.addGame(game);
+        var out ="An :regional_indicator_x: after their name means that they currently have a game in progress and therefore their cahllenge cannot be accepted";
+        for (var i = 0; i < Manager.getChallenges('<@' + message.author + '>').length; i++){
+            out += "Challenger: " + Manager.getChallenges('<@' + message.author + '>')[i].players[0] + (Manager.usersGame('<@' + message.author + '>') != null ? ":regional_indicator_x:" : "");
+        }
         const ch = new Discord.MessageEmbed()
             .setColor('#0cc0b4')
-            .setTitle('Connect 4 duel to the death')
-            .setDescription('<@' + message.author + '>' + ' boutta loose bigtime')
-            .setTimestamp()
-            .setFooter('Haha, good luck! Brain is loading')
+            .setTitle('Your pending challenges')
+            .setDescription(out)
         message.channel.send(ch);
     }
 }
