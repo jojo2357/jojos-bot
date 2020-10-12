@@ -11,7 +11,7 @@ module.exports = {
             message.channel.send("you dont have any pending challenges!");
         }else if (challenges.length == 1){
             challenges[0].acceptGame();
-        }else if (message.mentions.users.first()){
+        }else if (arguments[0]){
             for (var i = 0; i < challenges.length; i++){
                 if (challenges[i].players[0] == '<@' + message.mentions.users.first() + '>'){
                     challenges[i].acceptGame();

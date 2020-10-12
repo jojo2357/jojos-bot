@@ -31,11 +31,10 @@ module.exports = {
         }*/
 
         constructor(player1, channel) {
-            if (player1[1] != null){
+            if (player1[1] != null) {
                 console.log();
                 this.isSinglePlayer = false;
-                this.turn = 1;
-            }else{
+            } else {
                 console.log("creating new game for " + player1[0]);
                 this.isSinglePlayer = true;
                 this.stdinStream = new stream.Readable({
@@ -44,6 +43,7 @@ module.exports = {
                     }
                 });
             }
+            this.turn = 2;
             this.players = player1;
             this.turnNumber = 0;
             this.channel = channel;
@@ -55,12 +55,12 @@ module.exports = {
             [0, 0, 0, 0, 0, 0, 0]];
         };
 
-        acceptGame(){
+        acceptGame() {
             connect4GameHolder.makeLive(this);
-            this.sysoutBoard(this.players[1]);
+            this.sysoutBoard(1);
         };
 
-        declineGame(){
+        declineGame() {
             connect4GameHolder.declineGame(this);
         };
 
@@ -101,8 +101,8 @@ module.exports = {
 
             this.prc.on('exit', function (code) {
                 console.log('Connect 4 bot died with code ' + code);
-                if ("" + code == "0")
-                    this.onFail.gameOver(this.onFail.gameBoard);
+                //if ("" + code == "0")
+                //    this.onFail.gameOver(this.onFail.gameBoard);
             });
             this.stdinStream.pipe(this.prc.stdin);
         };
@@ -113,30 +113,35 @@ module.exports = {
                 for (var row = 0; row < 6; row++)
                     if (this.gameBoard[row][column] == 0) {
                         this.gameBoard[row][column] = playerNumber;
-                        if (this.gameOver(this.gameBoard)){
-                            this.ggMessage(playerNumber);
+                        if (this.gameOver(this.gameBoard) != 0) {
+                            if (this.gameOver(this.gameBoard) == 3)
+                                this.ggMessage(3);
+                            else
+                                this.ggMessage(playerNumber);
                             return;
                         }
                         break;
                     }
-                if (playerNumber == 1){
+                if (playerNumber == 1) {
                     if (this.isSinglePlayer)
                         this.stdinStream.push("" + column + '\n');
-                    else 
+                    else
                         this.sysoutBoard(playerNumber);
+                    this.turn = 2;
                     this.turnNumber++;
-                }else{
+                } else {
+                    this.turn = 1;
                     this.sysoutBoard(0);
                 }
             } else {
-                if (this.isSinglePlayer){
-                    if (playerNumber == 1){
+                if (this.isSinglePlayer) {
+                    if (playerNumber == 1) {
                         this.channel.send("Hey dummy that column is full");
                     }
-                }else{
+                } else {
                     this.channel.send("Hey dummy that column is full");
                 }
-                
+
             }
         };
 
@@ -160,9 +165,9 @@ module.exports = {
                 }
             }
             const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'testBoard.png');
-            if (!this.gameOver(this.gameBoard)){
+            if (!this.gameOver(this.gameBoard) && player != -1) {
                 this.channel.send('Don\'t mess up ' + this.players[player] + ' the i:b:iot', attachment);
-            }else{
+            } else {
                 this.channel.send(attachment);
             }
             console.log("board printing done");
@@ -173,7 +178,7 @@ module.exports = {
         };
 
         isEmpty() {
-            if (this.gameBoard === undefined){
+            if (this.gameBoard === undefined) {
                 console.log(this.players[0] + " was undefined");
                 return true;
             }
@@ -202,29 +207,46 @@ module.exports = {
                     }
                 }
             }
-            return 0;
+            var allFilled = true;
+            for (var col = 0; col < 7; col++) {
+                if (board[5][col] == 0)
+                    return 0;
+            }
+            return 3;
         }
 
         ggMessage(winner) {
             console.log("Attempting to kill and remove. winner: " + winner);
-            if (winner == 1 || winner == "1")
-                this.channel.send("Wow " + this.players[0] + " you should be so proud that you managed to beat a stupid program. Despite having played " + this.brainSize + " games your massive intelligence has won the day");
-            else
-                this.channel.send("Wow " + this.players[0] + " I honestly cannot believe that you lost. I mean, if you played " + this.brainSize + " games of connect-4 you might have won");
-            this.sysoutBoard();
-            this.prc.kill();
+            if (winner != 3) {
+                if (this.isSinglePlayer) {
+                    if (winner == 1 || winner == "1")
+                        this.channel.send("Wow " + this.players[0] + " you should be so proud that you managed to beat a stupid program. Despite having played " + this.brainSize + " games your massive intelligence has won the day");
+                    else
+                        this.channel.send("Wow " + this.players[0] + " I honestly cannot believe that you lost. I mean, if you played " + this.brainSize + " games of connect-4 you might have won");
+                } else {
+                    if (winner == 1 || winner == "1")
+                        this.channel.send("Wow " + this.players[0] + " completely dominated " + this.players[1] + " in only " + this.turnNumber + " moves");
+                    else
+                        this.channel.send("Wow " + this.players[1] + " completely dominated " + this.players[0] + " in only " + this.turnNumber + " moves");
+                }
+            }else{
+                this.channel.send("Wow you both suck!");
+            }
+            this.sysoutBoard(-1);
+            if (this.isSinglePlayer)
+                this.prc.kill();
 
             if (!fs.existsSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat'))
-                fs.open('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat', function(err){});
-            fs.appendFileSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat', "" + (winner == 1 || winner == "1") + ' ' + (this.isSinglePlayer ? this.brainSize : this.players[1]));
-            if (!this.isSinglePlayer){
+                fs.open('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat', function (err) { });
+            fs.appendFileSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "W" : winner == 3 ? "D" : "L") + ' ' + (this.isSinglePlayer ? this.brainSize : this.players[1]) + '\n');
+            if (!this.isSinglePlayer) {
                 if (!fs.existsSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat'))
-                    fs.open('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat', function(err){});
-                fs.appendFileSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat', "" + !(winner == 1 || winner == "1") + ' ' + this.players[0]);
-            }else{
+                    fs.open('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat', function (err) { });
+                fs.appendFileSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "L" : winner == 3 ? "D" : "W") + ' ' + this.players[0] + '\n');
+            } else {
                 if (!fs.existsSync('assets/connect-4/game-record/' + this.brainSize + '_computerBrain.dat'))
-                    fs.open('assets/connect-4/game-record/' + this.brainSize + '_computerBrain.dat', function(err){});
-                fs.appendFileSync('assets/connect-4/game-record/' + this.brainSize + '_computerBrain.dat', "" + !(winner == 1 || winner == "1") + ' ' + this.players[0]);
+                    fs.open('assets/connect-4/game-record/' + this.brainSize + '_computerBrain.dat', function (err) { });
+                fs.appendFileSync('assets/connect-4/game-record/' + this.brainSize + '_computerBrain.dat', "" + ((winner == 1 || winner == "1") ? "L" : winner == 3 ? "D" : "W") + ' ' + this.players[0] + '\n');
             }
             connect4GameHolder.removeGame(this);
             console.log("Attempted to kill and remove");

@@ -7,9 +7,9 @@ client.on('message', message => {
     if (message.content === 'hi') {
         message.channel.send('Hello!');
     } else if (message.content === "gn") {
-        message.channel.send('Good Night to you! 😴');
+        message.channel.send('Good Night to you my homies :kissing_heart:');
     } else if (message.content === "bitch") {
-        message.channel.send('That\' not nice');
+        message.channel.send('That\'s not nice');
     } else if (message.content === "fuck") {
         message.channel.send('What\'s wrong?');
     } else if (message.content === "shitbot") {
@@ -40,8 +40,6 @@ client.on('message', message => {
         message.channel.send(`Your username: ${message.author.username}\nYour ID: ${message.author.id}`);
     } else if (message.content === 'server info') {
         message.channel.send(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}`);
-    } else if (message.content === 'ping me') {
-        message.reply(`You asked for it 🤯 ` + message.sender);
     } else if (message.content === "confusion") {
         message.channel.send('mad cuz bad').then(messageReaction => {
             messageReaction.react("🧠")
@@ -50,8 +48,6 @@ client.on('message', message => {
         message.channel.send('then let me challenge you. **WHAT IS 1+1**').then(messageReaction => {
             messageReaction.react("🤔")
         })
-    } else if (message.content === "beg") {
-        message.channel.send('Any thanks to spare? 🥺');
     } else if (message.content === "bruh") {
         message.channel.send('bruh urself');
     } else if (message.content === "bot info" || message.content === "info") {
@@ -70,7 +66,7 @@ client.on('message', message => {
         message.channel.send('owo');
     } else if (message.content === "random song") {
         message.channel.send('!p ' + MusicDb.getRandomName());
-    } else if ((message.content.includes(" pm ") || message.content.includes(" am "))) {
+    } else if ((message.content.includes("pm"))) {
         message.channel.send('Have you considered using 24-hour time? It drastically reduces redundencies');
     }
 })

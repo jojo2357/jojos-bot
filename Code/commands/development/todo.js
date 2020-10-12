@@ -8,7 +8,12 @@ module.exports = {
     const help = new Discord.MessageEmbed()
       .setColor('#fff800')
       .setTitle('Things to do:')
-      .setDescription('Add multiplayer connect-4\nMaybe create connect-4 tournaments\nAdd more songs (I only looked at 4 bands)\nConnect LOL api\nenable making moves via reaction instead of =move')
+      .setDescription(
+        'Enable connect-4 stats\
+        \nMaybe create connect-4 tournaments\
+        \nAdd more songs (I only looked at 4 bands)\
+        \nConnect LOL api\
+        \nenable making moves via reaction instead of =move')
       .setTimestamp()
       .setFooter('More commands comming soon!');
     message.channel.send(help);

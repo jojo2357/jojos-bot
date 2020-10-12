@@ -10,7 +10,7 @@ module.exports = {
         if (game == null){
             message.channel.send('You dont have a game!');
         }else{
-            game.ggMessage(game.players[game.players.indexOf('<@' + message.author + '>') == 0 ? 1 : 0]);
+            game.ggMessage(game.players.indexOf('<@' + message.author + '>'));
         }
     }
 }
