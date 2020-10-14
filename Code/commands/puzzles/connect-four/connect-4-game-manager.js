@@ -4,7 +4,7 @@ const Manager = require('./connect-4-game-holder.js');
 
 
 module.exports = {
-    commands: ['move'],
+    commands: ['move', 'm'],
     minArgs: 0,
     maxArgs: 1,
     callback: (message, arguments) => {

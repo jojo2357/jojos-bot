@@ -53,7 +53,7 @@ module.exports = {
                 else
                     out += "\n" + mapKeys[i] + ': ' + playerMap.get(mapKeys[i])[0] + '/' + playerMap.get(mapKeys[i])[1] + '/' + playerMap.get(mapKeys[i])[2];
             }
-            out += "xxxxxxxxxxxxxxxxxxxxxxx";
+            out += "\nxxxxxxxxxxxxxxxxxxxxxxx";
             out += "\nLifetime record: " + w + '/' + d + '/' + l;
             out += "\nLifetime wr: " + (100 * w / tot) + '%';
             const ch = new Discord.MessageEmbed()

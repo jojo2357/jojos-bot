@@ -7,7 +7,7 @@ module.exports = {
     minArgs: 0,
     maxArgs: 1,
     callback: (message, arguments) => {
-        try {
+        //try {
             var user = arguments[0];
             if (user != undefined && arguments.length > 0 && user.indexOf('>') > 0)
                 user = user.substring(3, 21);
@@ -15,7 +15,7 @@ module.exports = {
                 message.channel.send('sorry, <@' + message.author + '>' + ', but you already have a game in progress in <#' + Manager.usersGame('<@' + message.author + '>').channel + '>');
                 return;
             }
-            if (!message.guild.member(user) && user.length > 0) {
+            if (!message.guild.member(user) && user != undefined) {
                 message.channel.send('Sorry i cant find that user in this server. Please try again');
                 return;
             }
@@ -43,8 +43,13 @@ module.exports = {
                 Manager.addPending(game);
                 message.channel.send('Hey <@' + user + '>! <@' + message.author + '> has challenged you to a connect-4 duel to the death. use `=accept` to accept')
             } else {
+                if (!Game.botLoaded()){
+                    message.channel.send('Brain is still loading, be patient');
+                    return;
+                }
                 var game = new Game.connect4game(['<@' + message.author + '>', null], message.channel);
                 game.startGame();
+                game.makeInitialSend();
                 Manager.addGame(game);
                 const ch = new Discord.MessageEmbed()
                     .setColor('#0cc0b4')
@@ -54,8 +59,8 @@ module.exports = {
                     .setFooter('Haha, good luck! Brain is loading')
                 message.channel.send(ch);
             }
-        } catch (err) {
-            message.channel.send("An error has occured: " + err.message);
-        }
+        //} catch (err) {
+        //    message.channel.send("An error has occured: " + err.message);
+        //}
     }
 }

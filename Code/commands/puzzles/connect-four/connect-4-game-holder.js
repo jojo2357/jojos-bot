@@ -67,5 +67,18 @@ module.exports = {
 
     declineGame(game) {
         pending.splice(pending.indexOf(game), 1);
+    },
+
+    notifyData(data){
+        for (var i = 0; i < games.length; i++){
+            if (data.includes(games[i].ID)){
+                if (data.charAt(22) == '-' && data.charAt(23) == '3'){
+                    games[i].ggMessage(1);
+                }
+                games[i].makeMove(parseInt(data.charAt(22)), 2);
+                return;
+            }
+        }
+        console.log('We dont know anybody with that ID!');
     }
 }

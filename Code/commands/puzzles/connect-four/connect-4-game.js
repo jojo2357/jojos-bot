@@ -4,6 +4,11 @@ const stream = require('stream');
 const Canvas = require('canvas');
 const fs = require('fs');
 const connect4GameHolder = require('./connect-4-game-holder');
+const Commando = require('discord.js-commando');
+const client = new Commando.CommandoClient();
+const config = require(process.cwd() + '\\config.json');
+client.login(config.token); 
+
 
 const emptyBoard = [[0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0],
@@ -12,24 +17,75 @@ const emptyBoard = [[0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0]];
 
+const brainSize = 10000;
+
+const { spawn } = require('child_process');
+
+var prc;
+var stdinStream;
+
+var botLoaded = false;
+
+function boardToString(board){
+    var out = "|";
+    for (var i = 5; i >= 0; i--){
+        for (var j = 0; j < 7; j++){
+            out += "" + board[i][j];
+        }
+        out += "|";
+    }
+    return out;
+}
+
+function checkLoaded(str){
+    if (str.includes('INIT')){
+        thing();
+        botLoaded = true;
+        console.log('Roger, inited');
+    }
+}
+
+function thing(){
+    client.user.setActivity('=connect-4').then(console.log);
+}
+
 module.exports = {
+    botLoaded(){
+        return botLoaded;
+    },
+
+    init(){
+        stdinStream = new stream.Readable({
+            read(size) {
+                return true;
+            }
+        });
+
+        prc = spawn('java', ['-cp', process.cwd() + '\\connect-4-bot\\', 'ConnectFourMain', '' + brainSize]);
+
+        prc.stdout.checkLoad = checkLoaded;
+
+        function theThing(data) {
+            var str = data.toString()
+            str.replace(/(\r\n|\n|\r)/gm, "").trim();
+            console.log("Connect 4 master says: " + str);
+            this.checkLoad(str);
+            connect4GameHolder.notifyData(str);
+        }
+        prc.stdout.on('data', theThing);
+
+        prc.stderr.on('data', (data) => {
+            console.error("Connect 4 master erred: " + data.toString());
+        });
+
+        prc.on('exit', function (code) {
+            console.log('Connect 4 master bot died with code ' + code);
+        });
+        stdinStream.pipe(prc.stdin);
+        console.log("master bot created");
+    },
+
     connect4game: class {
-        brainSize = 10000;
-
-        /*constructor(player1, player2, channel){
-            this.isSinglePlayer = false;
-            this.players.push(player1);
-            this.players.push(player2);
-            this.channel = channel;
-            this.turn = 1;
-            this.gameBoard = [[0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0]];
-        }*/
-
         constructor(player1, channel) {
             if (player1[1] != null) {
                 console.log();
@@ -37,12 +93,8 @@ module.exports = {
             } else {
                 console.log("creating new game for " + player1[0]);
                 this.isSinglePlayer = true;
-                this.stdinStream = new stream.Readable({
-                    read(size) {
-                        return true;
-                    }
-                });
             }
+            this.generateID();
             this.turn = 2;
             this.players = player1;
             this.turnNumber = 0;
@@ -55,6 +107,13 @@ module.exports = {
             [0, 0, 0, 0, 0, 0, 0]];
         };
 
+        generateID(){
+            this.ID = "";
+            for (var i = 0; i < 20; i++){
+                this.ID += Math.floor(Math.random() * 10);
+            }
+        };
+
         acceptGame() {
             connect4GameHolder.makeLive(this);
             this.sysoutBoard(1);
@@ -65,9 +124,8 @@ module.exports = {
         };
 
         startGame() {
-            const { spawn } = require('child_process');
-
-            this.prc = spawn('java', ['-cp', process.cwd() + '\\connect-4-bot\\', 'ConnectFourMain', '' + this.brainSize]);
+            /*this.prc = new Object();
+            this.prc = Object.assign(this.prc, prc);
             this.players[1] = this.prc;
             console.log('Game started');
             function getInput(inputIn = "") {
@@ -76,21 +134,15 @@ module.exports = {
             }
             this.prc.stdout.sendTo = this;
             this.prc.stdout.channel = this.channel;
+            this.prc.stdout.listeningID = this.ID;
             this.prc.stderr.channel = this.channel;
             this.prc.onFail = this;
             function theThing(data) {
                 var str = data.toString()
-                str.replace(/(\r\n|\n|\r)/gm, "").trim();
-                console.log("Connect 4 says: " + str);
-                /*const ch = new Discord.MessageEmbed()
-                    .setColor('#0cc0b4')
-                    .setTitle('Connect 4 duel to the death')
-                    .setDescription("Connect 4 says: " + str)
-                    .setTimestamp()
-                    .setFooter('Haha, good luck!');
-                this.channel.send(ch);*/
-                if (str.length <= 4)
-                    this.sendTo.makeMove(parseInt(str.charAt(0)), 2);
+                str = str.replace(/(\r\n|\n|\r)/gm, "").trim();
+                console.log("Connect 4 says: |" + str + "| and im listening for " + this.listeningID + ' ' + str.includes(this.listeningID));
+                if (str.includes(this.listeningID))
+                    this.sendTo.makeMove(parseInt(str.charAt(22)), 2);
             }
             this.prc.stdout.on('data', theThing);
 
@@ -99,16 +151,22 @@ module.exports = {
                 this.channel.send("the connect four bot has encountered an exception " + data.toString())
             });
 
-            this.prc.on('exit', function (code) {
+            /*this.prc.on('exit', function (code) {
                 console.log('Connect 4 bot died with code ' + code);
-                //if ("" + code == "0")
-                //    this.onFail.gameOver(this.onFail.gameBoard);
-            });
-            this.stdinStream.pipe(this.prc.stdin);
+            });*/
+            //this.stdinStream.pipe(this.prc.stdin);
         };
+
+        makeInitialSend(){
+            stdinStream.push(this.ID + ':' + boardToString(this.gameBoard) + '\n');
+        }
 
         makeMove(column = -1, playerNumber) {
             console.log("Incoming move! my owner is " + this.players[0] + " and they played " + column);
+            if (this.turn != playerNumber){
+                console.log("Rejecting out of turn data");
+                return;
+            }
             if (this.hasRoom(column)) {
                 for (var row = 0; row < 6; row++)
                     if (this.gameBoard[row][column] == 0) {
@@ -124,7 +182,7 @@ module.exports = {
                     }
                 if (playerNumber == 1) {
                     if (this.isSinglePlayer)
-                        this.stdinStream.push("" + column + '\n');
+                        stdinStream.push(this.ID + ':' + boardToString(this.gameBoard) + '\n');
                     else
                         this.sysoutBoard(playerNumber);
                     this.turn = 2;
@@ -220,9 +278,9 @@ module.exports = {
             if (winner != 3) {
                 if (this.isSinglePlayer) {
                     if (winner == 1 || winner == "1")
-                        this.channel.send("Wow " + this.players[0] + " you should be so proud that you managed to beat a stupid program. Despite having played " + this.brainSize + " games your massive intelligence has won the day");
+                        this.channel.send("Wow " + this.players[0] + " you should be so proud that you managed to beat a stupid program. Despite having played " + brainSize + " games your massive intelligence has won the day");
                     else
-                        this.channel.send("Wow " + this.players[0] + " I honestly cannot believe that you lost. I mean, if you played " + this.brainSize + " games of connect-4 you might have won");
+                        this.channel.send("Wow " + this.players[0] + " I honestly cannot believe that you lost. I mean, if you played " + brainSize + " games of connect-4 you might have won");
                 } else {
                     if (winner == 1 || winner == "1")
                         this.channel.send("Wow " + this.players[0] + " completely dominated " + this.players[1] + " in only " + this.turnNumber + " moves");
@@ -233,20 +291,18 @@ module.exports = {
                 this.channel.send("Wow you both suck!");
             }
             this.sysoutBoard(-1);
-            if (this.isSinglePlayer)
-                this.prc.kill();
 
             if (!fs.existsSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat'))
                 fs.open('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat', function (err) { });
-            fs.appendFileSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "W" : winner == 3 ? "D" : "L") + ' ' + (this.isSinglePlayer ? this.brainSize : this.players[1]) + '\n');
+            fs.appendFileSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "W" : winner == 3 ? "D" : "L") + ' ' + (this.isSinglePlayer ? brainSize : this.players[1]) + '\n');
             if (!this.isSinglePlayer) {
                 if (!fs.existsSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat'))
                     fs.open('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat', function (err) { });
                 fs.appendFileSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "L" : winner == 3 ? "D" : "W") + ' ' + this.players[0] + '\n');
             } else {
-                if (!fs.existsSync('assets/connect-4/game-record/' + this.brainSize + '_computerBrain.dat'))
-                    fs.open('assets/connect-4/game-record/' + this.brainSize + '_computerBrain.dat', function (err) { });
-                fs.appendFileSync('assets/connect-4/game-record/' + this.brainSize + '_computerBrain.dat', "" + ((winner == 1 || winner == "1") ? "L" : winner == 3 ? "D" : "W") + ' ' + this.players[0] + '\n');
+                if (!fs.existsSync('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat'))
+                    fs.open('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat', function (err) { });
+                fs.appendFileSync('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat', "" + ((winner == 1 || winner == "1") ? "L" : winner == 3 ? "D" : "W") + ' ' + this.players[0] + '\n');
             }
             connect4GameHolder.removeGame(this);
             console.log("Attempted to kill and remove");

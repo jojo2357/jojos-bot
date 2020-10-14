@@ -14,25 +14,29 @@ const baseFile = 'command-base.js'
 const commandBase = require(`./commands/${baseFile}`);
 const mongo = require('./mongo');
 const MusicDb = require('./commands/music/music-manager.js');
+const C4Game = require('./commands/puzzles/connect-four/connect-4-game.js');
 const { EventEmitter } = require('events');
- EventEmitter.defaultMaxListeners = 100
+EventEmitter.defaultMaxListeners = 100
 const client = new Commando.CommandoClient({
   owner: '524411594009083933',
   commandPrefix: config.prefix
 })
 
 client.on('ready', async () => {
-  console.log('AN ERROR A DAY MAKES YOUR BRAIN GO AWAY!')
+  console.log(`Logged in as ${client.user.tag}!`);
   MusicDb.init();
+  C4Game.init();
+  client.user.setActivity('thinking about connect-4');
+  console.log("Presence set!");
   //client.registry.registerGroup[['misc', 'miscellaneous commands'], ['funny', 'funny and weird commands'], ['help', 'have a question or need help?'], ['puzzles', 'some fun games you can play']].registerDefaults().registerCommandsIn(path.join(_dirname, 'cmds'))
 
-  await mongo().then((mongoose) => {
+  /*mongo().then((mongoose) => {
     try {
       console.log('Coneected?')
     } finally {
       mongoose.connection.close()
     }
-  })
+  })*/
 });
 
 /*
@@ -136,3 +140,10 @@ client.on('message', async message => {
 //   }
 // });
 client.login(config.token);
+
+module.exports = {
+  setReady() {
+    console.log('We are off and racing');
+    client.user.setActivity('=connect-4');
+  }
+}
