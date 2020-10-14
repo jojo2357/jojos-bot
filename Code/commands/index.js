@@ -4,12 +4,8 @@ const config = require('../config.json');
 const MusicDb = require('./music/music-manager.js');
 
 client.on('message', message => {
-    /*if (message.content === 'hi') {
-        message.channel.send('Hello!');
-    } else */if (message.content === "gn") {
+    if (message.content === "gn") {
         message.channel.send('Good Night to you my homies :kissing_heart:');
-    } else if (message.content === "Hello!") {
-        message.channel.send('hi');
     } else if (message.content === "bitch") {
         message.channel.send('That\'s not nice');
     } else if (message.content === "fuck") {

@@ -2,7 +2,6 @@ const Discord = require('discord.js');
 const Game = require('./connect-4-game.js');
 const Manager = require('./connect-4-game-holder.js');
 
-
 module.exports = {
     commands: ['move', 'm'],
     minArgs: 0,

@@ -2,6 +2,8 @@ var games = [];
 var pending = [];
 
 module.exports = {
+    holdMyBeer : null,
+
     allGames() {
         return games;
     },
@@ -71,14 +73,19 @@ module.exports = {
 
     notifyData(data){
         for (var i = 0; i < games.length; i++){
-            if (data.includes(games[i].ID)){
+            if (data.includes(games[i].ID) && data.includes(':')){
                 if (data.charAt(22) == '-' && data.charAt(23) == '3'){
                     games[i].ggMessage(1);
                 }
                 games[i].makeMove(parseInt(data.charAt(22)), 2);
                 return;
             }
+            if (data.includes(games[i].ID)){
+                games[i].makeMove(parseInt(data.charAt(0)), games[i].turn)
+                return true;
+            }
         }
         console.log('We dont know anybody with that ID!');
+        return false;
     }
 }

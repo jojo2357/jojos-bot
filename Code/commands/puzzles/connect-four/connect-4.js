@@ -3,7 +3,7 @@ const Game = require('./connect-4-game.js');
 const Manager = require('./connect-4-game-holder.js');
 
 module.exports = {
-    commands: ['connect-4', '4-in-row'],
+    commands: ['connect-4', '4-in-row', 'c4'],
     minArgs: 0,
     maxArgs: 1,
     callback: (message, arguments) => {

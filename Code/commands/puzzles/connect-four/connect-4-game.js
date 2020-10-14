@@ -7,8 +7,7 @@ const connect4GameHolder = require('./connect-4-game-holder');
 const Commando = require('discord.js-commando');
 const client = new Commando.CommandoClient();
 const config = require(process.cwd() + '\\config.json');
-client.login(config.token); 
-
+client.login(config.token);
 
 const emptyBoard = [[0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0],
@@ -26,10 +25,10 @@ var stdinStream;
 
 var botLoaded = false;
 
-function boardToString(board){
+function boardToString(board) {
     var out = "|";
-    for (var i = 5; i >= 0; i--){
-        for (var j = 0; j < 7; j++){
+    for (var i = 5; i >= 0; i--) {
+        for (var j = 0; j < 7; j++) {
             out += "" + board[i][j];
         }
         out += "|";
@@ -37,24 +36,24 @@ function boardToString(board){
     return out;
 }
 
-function checkLoaded(str){
-    if (str.includes('INIT')){
+function checkLoaded(str) {
+    if (str.includes('INIT')) {
         thing();
         botLoaded = true;
         console.log('Roger, inited');
     }
 }
 
-function thing(){
+function thing() {
     client.user.setActivity('=connect-4').then(console.log);
 }
 
 module.exports = {
-    botLoaded(){
+    botLoaded() {
         return botLoaded;
     },
 
-    init(){
+    init() {
         stdinStream = new stream.Readable({
             read(size) {
                 return true;
@@ -97,7 +96,7 @@ module.exports = {
             this.generateID();
             this.turn = 2;
             this.players = player1;
-            this.turnNumber = 0;
+            this.turnNumber = 1;
             this.channel = channel;
             this.gameBoard = [[0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0],
@@ -107,9 +106,9 @@ module.exports = {
             [0, 0, 0, 0, 0, 0, 0]];
         };
 
-        generateID(){
+        generateID() {
             this.ID = "";
-            for (var i = 0; i < 20; i++){
+            for (var i = 0; i < 20; i++) {
                 this.ID += Math.floor(Math.random() * 10);
             }
         };
@@ -157,13 +156,13 @@ module.exports = {
             //this.stdinStream.pipe(this.prc.stdin);
         };
 
-        makeInitialSend(){
+        makeInitialSend() {
             stdinStream.push(this.ID + ':' + boardToString(this.gameBoard) + '\n');
         }
 
         makeMove(column = -1, playerNumber) {
             console.log("Incoming move! my owner is " + this.players[0] + " and they played " + column);
-            if (this.turn != playerNumber){
+            if (this.turn != playerNumber) {
                 console.log("Rejecting out of turn data");
                 return;
             }
@@ -203,7 +202,7 @@ module.exports = {
             }
         };
 
-        async sysoutBoard(player) {
+        async sysoutBoard(player = this.turn - 1) {
             console.log("board printing begin");
             const canvas = Canvas.createCanvas(224, 192);
             const ctx = canvas.getContext('2d');
@@ -223,8 +222,73 @@ module.exports = {
                 }
             }
             const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'testBoard.png');
+            if (this.lastMessage != null)
+                this.lastMessage.delete();
             if (!this.gameOver(this.gameBoard) && player != -1) {
-                this.channel.send('Don\'t mess up ' + this.players[player] + ' the i:b:iot', attachment);
+                connect4GameHolder.holdMyBeer = this;
+                this.channel.send('Don\'t mess up ' + this.players[player] + ' the i:b:iot', attachment)
+                    .then(async function (message) {
+                        var effectiveThis = connect4GameHolder.holdMyBeer;
+                        connect4GameHolder.holdMyBeer.lastMessage = message;
+                        connect4GameHolder.holdMyBeer = null;
+                        var thing = false;
+                        while (!thing) {
+                            try {
+                                if (effectiveThis.hasRoom(0))
+                                await message.react('1️⃣');
+                                if (effectiveThis.hasRoom(1))
+                                await message.react('2️⃣');
+                                if (effectiveThis.hasRoom(2))
+                                await message.react('3️⃣');
+                                if (effectiveThis.hasRoom(3))
+                                await message.react('4️⃣');
+                                if (effectiveThis.hasRoom(4))
+                                await message.react('5️⃣');
+                                if (effectiveThis.hasRoom(5))
+                                await message.react('6️⃣');
+                                if (effectiveThis.hasRoom(6))
+                                await message.react('7️⃣');
+                                thing = true;
+                            } catch (error) {
+                                console.error('One of the emojis failed to react. ' + message.deleted);
+                                thing = message.deleted;
+                            }
+                        }
+                        const filter = (reaction, user) => {
+                            return '<@' + user.id + '>' == effectiveThis.players[effectiveThis.turn - 1] && ((reaction.emoji.name == '1️⃣' && effectiveThis.hasRoom(0))|| (reaction.emoji.name == '2️⃣'&& effectiveThis.hasRoom(0)) || (reaction.emoji.name == '3️⃣'&& effectiveThis.hasRoom(0)) || (reaction.emoji.name == '4️⃣'&& effectiveThis.hasRoom(0)) || (reaction.emoji.name == '5️⃣' && effectiveThis.hasRoom(0))|| (reaction.emoji.name == '6️⃣'&& effectiveThis.hasRoom(0)) || (reaction.emoji.name == '7️⃣'&& effectiveThis.hasRoom(0)));
+                        };
+
+                        const collector = message.createReactionCollector(filter);
+                        collector.on.effectiveThis = effectiveThis;
+                        collector.on('collect', (reaction, reactionCollector) => {
+                            var react;
+                            switch (reaction.emoji.name) {
+                                case '1️⃣':
+                                    react = 1;
+                                    break;
+                                case '2️⃣':
+                                    react = 2;
+                                    break;
+                                case '3️⃣':
+                                    react = 3;
+                                    break;
+                                case '4️⃣':
+                                    react = 4;
+                                    break;
+                                case '5️⃣':
+                                    react = 5;
+                                    break;
+                                case '6️⃣':
+                                    react = 6;
+                                    break;
+                                case '7️⃣':
+                                    react = 7;
+                                    break;
+                            }
+                            if (connect4GameHolder.notifyData((react - 1) + ' ' + effectiveThis.ID))
+                                message.delete();
+                        });
+                    });
             } else {
                 this.channel.send(attachment);
             }
@@ -287,7 +351,7 @@ module.exports = {
                     else
                         this.channel.send("Wow " + this.players[1] + " completely dominated " + this.players[0] + " in only " + this.turnNumber + " moves");
                 }
-            }else{
+            } else {
                 this.channel.send("Wow you both suck!");
             }
             this.sysoutBoard(-1);
