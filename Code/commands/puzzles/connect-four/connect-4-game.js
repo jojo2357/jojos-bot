@@ -210,6 +210,7 @@ module.exports = {
             const redToken = await Canvas.loadImage('assets\\images\\redToken.png');
             const yellowToken = await Canvas.loadImage('assets\\images\\yellowToken.png');
             const whiteToken = await Canvas.loadImage('assets\\images\\whiteToken.png');
+            const winningPeice = this.gameOver(this.gameBoard) == 1 ? await Canvas.loadImage('assets\\images\\winningYellowToken.png') : await Canvas.loadImage('assets\\images\\winningRedToken.png');
             ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
             for (var row = 5; row >= 0; row--) {
                 for (var col = 0; col < 7; col++) {
@@ -219,6 +220,23 @@ module.exports = {
                         ctx.drawImage(yellowToken, 32 * col, 160 - 32 * row, 32, 32);
                     if (this.gameBoard[row][col] == 2)
                         ctx.drawImage(redToken, 32 * col, 160 - 32 * row, 32, 32);
+                }
+            }
+            if (this.gameOver(this.gameBoard) != 0) {
+                for (var i = 0; i < 4; i++) {
+                    switch (this.winstyle) {
+                        case 1:
+                            ctx.drawImage(winningPeice, 32 * (this.windex[1] + i), 160 - 32 * this.windex[0], 32, 32)
+                            break;
+                        case 2:
+                            ctx.drawImage(winningPeice, 32 * (this.windex[1] + i), 160 - 32 * (this.windex[0] + i), 32, 32)
+                            break;
+                        case 3:
+                            ctx.drawImage(winningPeice, 32 * this.windex[1], 160 - 32 * (this.windex[0] + i), 32, 32)
+                            break;
+                        case 4:
+                            ctx.drawImage(winningPeice, 32 * (this.windex[1] + i), 160 - 32 * (this.windex[0] + 3 - i), 32, 32)
+                    }
                 }
             }
             const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'testBoard.png');
@@ -235,19 +253,19 @@ module.exports = {
                         while (!thing) {
                             try {
                                 if (effectiveThis.hasRoom(0))
-                                await message.react('1️⃣');
+                                    await message.react('1️⃣');
                                 if (effectiveThis.hasRoom(1))
-                                await message.react('2️⃣');
+                                    await message.react('2️⃣');
                                 if (effectiveThis.hasRoom(2))
-                                await message.react('3️⃣');
+                                    await message.react('3️⃣');
                                 if (effectiveThis.hasRoom(3))
-                                await message.react('4️⃣');
+                                    await message.react('4️⃣');
                                 if (effectiveThis.hasRoom(4))
-                                await message.react('5️⃣');
+                                    await message.react('5️⃣');
                                 if (effectiveThis.hasRoom(5))
-                                await message.react('6️⃣');
+                                    await message.react('6️⃣');
                                 if (effectiveThis.hasRoom(6))
-                                await message.react('7️⃣');
+                                    await message.react('7️⃣');
                                 thing = true;
                             } catch (error) {
                                 console.error('One of the emojis failed to react. ' + message.deleted);
@@ -255,7 +273,7 @@ module.exports = {
                             }
                         }
                         const filter = (reaction, user) => {
-                            return '<@' + user.id + '>' == effectiveThis.players[effectiveThis.turn - 1] && ((reaction.emoji.name == '1️⃣' && effectiveThis.hasRoom(0))|| (reaction.emoji.name == '2️⃣'&& effectiveThis.hasRoom(0)) || (reaction.emoji.name == '3️⃣'&& effectiveThis.hasRoom(0)) || (reaction.emoji.name == '4️⃣'&& effectiveThis.hasRoom(0)) || (reaction.emoji.name == '5️⃣' && effectiveThis.hasRoom(0))|| (reaction.emoji.name == '6️⃣'&& effectiveThis.hasRoom(0)) || (reaction.emoji.name == '7️⃣'&& effectiveThis.hasRoom(0)));
+                            return '<@' + user.id + '>' == effectiveThis.players[effectiveThis.turn - 1] && ((reaction.emoji.name == '1️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '2️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '3️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '4️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '5️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '6️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '7️⃣' && effectiveThis.hasRoom(0)));
                         };
 
                         const collector = message.createReactionCollector(filter);
@@ -319,13 +337,27 @@ module.exports = {
                     for (var row = 0; row < 3; row++) {
                         for (var boardExt = 0; boardExt < 4; boardExt++)
                             if (board[row + boardExt][col] == winner && board[row + boardExt][col + 1] == winner && board[row + boardExt][col + 2] == winner && board[row + boardExt][col + 3] == winner)//horizontal dub
+                            {
+                                this.windex = [row + boardExt, col];
+                                this.winstyle = 1;
                                 return winner;
+                            }
                         if (board[row][col] == winner && board[row + 1][col + 1] == winner && board[row + 2][col + 2] == winner && board[row + 3][col + 3] == winner)//diag positive slope
+                        {
+                            this.windex = [row, col];
+                            this.winstyle = 2;
                             return winner;
-                        if (board[row][col] == winner && board[row + 1][col] == winner && board[row + 2][col] == winner && board[row + 3][col] == winner)//vertical dub
+                        } else if (board[row][col] == winner && board[row + 1][col] == winner && board[row + 2][col] == winner && board[row + 3][col] == winner)//vertical dub
+                        {
+                            this.windex = [row, col];
+                            this.winstyle = 3;
                             return winner;
-                        if (board[row + 3][col] == winner && board[row + 2][col + 1] == winner && board[row + 1][col + 2] == winner && board[row][col + 3] == winner)//diag negative slope
+                        } else if (board[row + 3][col] == winner && board[row + 2][col + 1] == winner && board[row + 1][col + 2] == winner && board[row][col + 3] == winner)//diag negative slope
+                        {
+                            this.windex = [row, col];
+                            this.winstyle = 4;
                             return winner;
+                        }
                     }
                 }
             }

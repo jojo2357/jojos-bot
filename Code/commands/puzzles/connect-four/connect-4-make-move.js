@@ -31,5 +31,6 @@ module.exports = {
             }
         } else 
             message.channel.send("either u dont know how to type numbers or something went wrong");
+        message.delete();
     }
 }
