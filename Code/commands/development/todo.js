@@ -11,8 +11,8 @@ module.exports = {
       .setDescription(
         'Maybe create connect-4 tournaments\
         \nAdd more songs (I only looked at 4 bands)\
-        \nConnect LOL api\
-        \nenable making moves via reaction instead of =move')
+        \nMake a bot version that only learns from the community (rn, it teaches itself by playing a rng)'
+        )
       .setTimestamp()
       .setFooter('More commands comming soon!');
     message.channel.send(help);

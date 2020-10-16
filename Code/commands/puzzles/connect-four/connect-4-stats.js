@@ -20,7 +20,7 @@ module.exports = {
                 return;
             }
             if (shortAuthor == '699366687455051808'){
-                for (var braneSize = 10000; braneSize <= 1000000; braneSize *= 10){
+                for (var braneSize = 10000; braneSize <= 10000000; braneSize *= 10){
                     if (!fs.existsSync('./assets/connect-4/game-record/' + braneSize + '_computerBrain.dat'))
                         continue;
                     if (braneSize >= 1000000)

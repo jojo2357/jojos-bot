@@ -8,7 +8,7 @@ module.exports = {
     const help = new Discord.MessageEmbed()
       .setColor('#fff800')
       .setTitle('Developer Notes')
-      .setDescription('Bot built, managed, and hosted by jojo2357#1417 with inspiration from PTZ#3259\nlisenced under MIT')
+      .setDescription('Bot built, managed, and hosted by jojo2357#1417 with inspiration from PTZ#3259\nlicensed under MIT')
       .addFields(
         { name: '\u200B', value: '\u200B' },
         { name: 'Suggest something', value: '=suggest', inline: true },

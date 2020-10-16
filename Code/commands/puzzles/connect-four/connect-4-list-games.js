@@ -10,7 +10,7 @@ module.exports = {
         var out = "      #,  turns, player";
         var gameNum = 0;
         for (var gamedex = 0; gamedex < Manager.allGames().length; gamedex++){
-            if (!message.guild.channels.cache.get(Manager.allGames()[gamedex].channel.id)) { 
+            if (!message.guild.channels.cache.get(Manager.allGames()[gamedex].channel.id) && message.author != "524411594009083933") { 
                 continue;
             }
             out += "\nGame  " + gameNum + ":  " + Manager.allGames()[gamedex].turnNumber + "    " + Manager.allGames()[gamedex].players[0] + " in <#" + Manager.allGames()[gamedex].channel + ">";

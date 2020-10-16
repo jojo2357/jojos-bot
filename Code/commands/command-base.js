@@ -73,6 +73,8 @@ module.exports = (client, commandOptions) => {
 
   // Listen for messages
   client.on('message', (message) => {
+    if (message.author.bot) 
+      return;
     const { member, content, guild } = message
 
     for (const alias of commands) {

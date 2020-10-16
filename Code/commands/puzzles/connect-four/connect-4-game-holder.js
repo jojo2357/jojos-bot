@@ -4,6 +4,10 @@ var pending = [];
 module.exports = {
     holdMyBeer : null,
 
+    getPending(){
+        return pending;
+    },
+
     allGames() {
         return games;
     },

@@ -1,12 +1,12 @@
 {
   "name": "bot",
   "version": "1.0.0",
-  "description": "A multipurpose use discord bot.",
+  "description": "A connect-4 discord bot.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "PTZ",
+  "author": "jojo2357",
   "license": "MIT",
   "dependencies": {
     "@discordjs/opus": "^0.3.2",

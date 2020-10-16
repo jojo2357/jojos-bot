@@ -3,7 +3,6 @@ const Commando = require('discord.js-commando')
 const path = require('path')
 const ms = require("ms");
 const { ping } = require('minecraft-server-util');
-const roleClaim = require('./commands/roles/claim-role')
 const { prefix } = require('./config.json');
 const config = require('./config.json');
 const fs = require('fs');
@@ -70,7 +69,11 @@ for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
 }
 
-
+client.on("guildCreate", (guild) => {
+  client.users.cache.get('524411594009083933').send(`omgomgomgomgogm i got added to ${guild.name}!!!`);
+  client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
+  console.log(`Joined new guild: ${guild.name}`);
+});
 
 // //*The poll command
 client.on('message', message => {
@@ -144,6 +147,6 @@ client.login(config.token);
 module.exports = {
   setReady() {
     console.log('We are off and racing');
-    client.user.setActivity('=connect-4');
+    client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers');
   }
 }

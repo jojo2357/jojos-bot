@@ -16,7 +16,7 @@ const emptyBoard = [[0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0]];
 
-const brainSize = 10000;
+const brainSize = 1000000;
 
 const { spawn } = require('child_process');
 
@@ -45,7 +45,7 @@ function checkLoaded(str) {
 }
 
 function thing() {
-    client.user.setActivity('=connect-4').then(console.log);
+    client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
 }
 
 module.exports = {
@@ -60,7 +60,7 @@ module.exports = {
             }
         });
 
-        prc = spawn('java', ['-cp', process.cwd() + '\\connect-4-bot\\', 'ConnectFourMain', '' + brainSize]);
+        prc = spawn('java', ['-Xms4g', '-cp', process.cwd() + '\\connect-4-bot\\', 'ConnectFourMain', '' + brainSize]);
 
         prc.stdout.checkLoad = checkLoaded;
 
@@ -341,16 +341,16 @@ module.exports = {
                                 this.windex = [row + boardExt, col];
                                 this.winstyle = 1;
                                 return winner;
-                            }
+                            }else if (board[row][col + boardExt] == winner && board[row + 1][col + boardExt] == winner && board[row + 2][col + boardExt] == winner && board[row + 3][col + boardExt] == winner)//vertical dub
+                            {
+                                this.windex = [row, col];
+                                this.winstyle = 3;
+                                return winner;
+                            } 
                         if (board[row][col] == winner && board[row + 1][col + 1] == winner && board[row + 2][col + 2] == winner && board[row + 3][col + 3] == winner)//diag positive slope
                         {
                             this.windex = [row, col];
                             this.winstyle = 2;
-                            return winner;
-                        } else if (board[row][col] == winner && board[row + 1][col] == winner && board[row + 2][col] == winner && board[row + 3][col] == winner)//vertical dub
-                        {
-                            this.windex = [row, col];
-                            this.winstyle = 3;
                             return winner;
                         } else if (board[row + 3][col] == winner && board[row + 2][col + 1] == winner && board[row + 1][col + 2] == winner && board[row][col + 3] == winner)//diag negative slope
                         {
