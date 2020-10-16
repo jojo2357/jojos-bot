@@ -67,7 +67,7 @@ module.exports = {
         function theThing(data) {
             var str = data.toString()
             str.replace(/(\r\n|\n|\r)/gm, "").trim();
-            console.log("Connect 4 master says: " + str);
+            //console.log("Connect 4 master says: " + str);
             this.checkLoad(str);
             connect4GameHolder.notifyData(str);
         }
@@ -161,9 +161,9 @@ module.exports = {
         }
 
         makeMove(column = -1, playerNumber) {
-            console.log("Incoming move! my owner is " + this.players[0] + " and they played " + column);
+            //console.log("Incoming move! my owner is " + this.players[0] + " and they played " + column);
             if (this.turn != playerNumber) {
-                console.log("Rejecting out of turn data");
+                //console.log("Rejecting out of turn data");
                 return;
             }
             if (this.hasRoom(column)) {
@@ -203,7 +203,7 @@ module.exports = {
         };
 
         async sysoutBoard(player = this.turn - 1) {
-            console.log("board printing begin");
+            //console.log("board printing begin");
             const canvas = Canvas.createCanvas(224, 192);
             const ctx = canvas.getContext('2d');
             const background = await Canvas.loadImage('assets\\images\\defaultBoard.png');
@@ -268,7 +268,7 @@ module.exports = {
                                     await message.react('7️⃣');
                                 thing = true;
                             } catch (error) {
-                                console.error('One of the emojis failed to react. ' + message.deleted);
+                                //console.error('One of the emojis failed to react. ' + message.deleted);
                                 thing = message.deleted;
                             }
                         }
@@ -310,7 +310,7 @@ module.exports = {
             } else {
                 this.channel.send(attachment);
             }
-            console.log("board printing done");
+            //console.log("board printing done");
         };
 
         hasRoom(column) {
