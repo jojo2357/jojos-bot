@@ -2,10 +2,20 @@ const Commando = require('discord.js-commando')
 const client = new Commando.CommandoClient()
 const config = require('../config.json');
 const MusicDb = require('./music/music-manager.js');
+const Manager = require('./puzzles/connect-four/connect-4-game-holder.js');
 
 client.on('message', message => {
     if (message.author.bot) 
         return;
+    if (message.toString().length == 1 && message.toString().substr(0,1) <= '7' && message.toString().substr(0,1) >= '1'){
+        if (Manager.usersGame('<@' + message.author + '>') != null && Manager.usersGame('<@' + message.author + '>').channel.id == message.channel.id && Manager.usersGame('<@' + message.author + '>').hasRoom(message.toString().substr(0,1) - 1)) {
+            if (Manager.usersGame('<@' + message.author + '>').turn == 1 + Manager.usersGame('<@' + message.author + '>').players.indexOf('<@' + message.author + '>')) {
+                Manager.usersGame('<@' + message.author + '>').makeMove(message.toString().substr(0,1) - 1, 1 + Manager.usersGame('<@' + message.author + '>').players.indexOf('<@' + message.author + '>'));
+                message.delete();
+                return;
+            }
+        }
+    }
     if (message.content === "Hello!") {
         message.channel.send('hi');
     } else if (message.content === "gn") {
@@ -22,9 +32,9 @@ client.on('message', message => {
         message.channel.send('Cya! 👋🏼');
     } else if (message.content === "flick u") {
         message.channel.send('(╯°□°）╯︵ ┻━┻');
-    } else if (message.content.includes('among us')) {
+    /*} else if (message.content.includes('among us')) {
         message.channel.send('Such a 1-d game, doesn\'t challenge the mind, can learn every aspect of the game from memes, and overall a shit game whose only benefit is that it facilitates enjoyable interactions with friends');
-    } else if (message.content === "@everyone") {
+    */} else if (message.content === "@everyone") {
         message.channel.send('Y u gotta @ me like that?');
     } else if (message.content === "@here") {
         message.channel.send('Y u gotta @ me like that?');

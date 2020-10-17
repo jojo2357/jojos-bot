@@ -9,8 +9,14 @@ module.exports = {
     callback: (message, arguments) => {
         //try {
             var user = arguments[0];
-            if (user != undefined && arguments.length > 0 && user.indexOf('>') > 0)
-                user = user.substring(3, 21);
+            if (user != undefined && arguments.length > 0 && user.indexOf('>') > 0){
+                console.log(user)
+                if (user.indexOf('!') >= 0)
+                    user = user.substring(3, 21);
+                else
+                    user = user.substring(2, 20);
+                console.log(user)
+            }
             if (Manager.usersGame('<@' + message.author + '>') != null) {
                 message.channel.send('sorry, <@' + message.author + '>' + ', but you already have a game in progress in <#' + Manager.usersGame('<@' + message.author + '>').channel + '>');
                 return;

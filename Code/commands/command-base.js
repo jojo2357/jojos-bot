@@ -113,7 +113,7 @@ module.exports = (client, commandOptions) => {
             `Use ${prefix}${alias} ${expectedArgs}`)
           return
         }
-        console.log(message.author.username + " in " + message.guild.name)
+        console.log(message.author.username + " in " + message.guild.name + " asked for " + message)
         try{
           callback(message, arguments, arguments.join(' '), client)
         }catch (err){

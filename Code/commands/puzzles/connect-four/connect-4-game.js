@@ -16,7 +16,7 @@ const emptyBoard = [[0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0]];
 
-const brainSize = 1000000;
+const brainSize = 10000;
 
 const { spawn } = require('child_process');
 
@@ -87,7 +87,6 @@ module.exports = {
     connect4game: class {
         constructor(player1, channel) {
             if (player1[1] != null) {
-                console.log();
                 this.isSinglePlayer = false;
             } else {
                 console.log("creating new game for " + player1[0]);
@@ -241,11 +240,13 @@ module.exports = {
             }
             const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'testBoard.png');
             if (this.lastMessage != null)
-                this.lastMessage.delete();
+                this.lastMessage.delete().catch();
             if (!this.gameOver(this.gameBoard) && player != -1) {
                 connect4GameHolder.holdMyBeer = this;
                 this.channel.send('Don\'t mess up ' + this.players[player] + ' the i:b:iot', attachment)
                     .then(async function (message) {
+                        if (connect4GameHolder.holdMyBeer == null)
+                            return;
                         var effectiveThis = connect4GameHolder.holdMyBeer;
                         connect4GameHolder.holdMyBeer.lastMessage = message;
                         connect4GameHolder.holdMyBeer = null;
@@ -253,19 +254,19 @@ module.exports = {
                         while (!thing) {
                             try {
                                 if (effectiveThis.hasRoom(0))
-                                    await message.react('1️⃣');
+                                    await message.react('1️⃣').catch();
                                 if (effectiveThis.hasRoom(1))
-                                    await message.react('2️⃣');
+                                    await message.react('2️⃣').catch();
                                 if (effectiveThis.hasRoom(2))
-                                    await message.react('3️⃣');
+                                    await message.react('3️⃣').catch();
                                 if (effectiveThis.hasRoom(3))
-                                    await message.react('4️⃣');
+                                    await message.react('4️⃣').catch();
                                 if (effectiveThis.hasRoom(4))
-                                    await message.react('5️⃣');
+                                    await message.react('5️⃣').catch();
                                 if (effectiveThis.hasRoom(5))
-                                    await message.react('6️⃣');
+                                    await message.react('6️⃣').catch();
                                 if (effectiveThis.hasRoom(6))
-                                    await message.react('7️⃣');
+                                    await message.react('7️⃣').catch();
                                 thing = true;
                             } catch (error) {
                                 //console.error('One of the emojis failed to react. ' + message.deleted);
@@ -304,9 +305,9 @@ module.exports = {
                                     break;
                             }
                             if (connect4GameHolder.notifyData((react - 1) + ' ' + effectiveThis.ID))
-                                message.delete();
+                                message.delete().catch();
                         });
-                    });
+                    }).catch();
             } else {
                 this.channel.send(attachment);
             }

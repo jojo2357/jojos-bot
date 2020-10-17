@@ -9,7 +9,6 @@ module.exports = {
       .setColor('#fff800')
       .setTitle('Connect 4 Help')
       .setDescription('um, really hope you know how to play. https://en.wikipedia.org/wiki/Connect_Four ig :shrug:\
-      \nNote that the far left column is 0, the middle is 3 and the far right is 6\
       \nIf the bot is playing `thinking about connect-4`, then the brain is still loading. `=connect-4` means that the brain is finished loading'
       )
       .addFields(
