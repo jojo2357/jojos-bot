@@ -19,8 +19,8 @@ module.exports = {
                 message.channel.send("Sorry but I couldn't find match hisotry for id: " + shortAuthor)
                 return;
             }
-            if (shortAuthor == '699366687455051808'){
-                for (var braneSize = 10000; braneSize <= 10000000; braneSize *= 10){
+            if (shortAuthor == '699366687455051808') {
+                for (var braneSize = 10000; braneSize <= 10000000; braneSize *= 10) {
                     if (!fs.existsSync('./assets/connect-4/game-record/' + braneSize + '_computerBrain.dat'))
                         continue;
                     if (braneSize >= 1000000)
@@ -38,7 +38,7 @@ module.exports = {
     }
 }
 
-function getAndPrint(shortAuthor, title = 'Connect 4 stats', message){
+function getAndPrint(shortAuthor, title = 'Connect 4 stats', message) {
     if (!fs.existsSync('./assets/connect-4/game-record/' + shortAuthor + '.dat'))
         return;
     var playerGames = fs.readFileSync('./assets/connect-4/game-record/' + shortAuthor + '.dat').toString().split('\n');
@@ -50,9 +50,10 @@ function getAndPrint(shortAuthor, title = 'Connect 4 stats', message){
     var mapKeys = []
     for (var i = 0; i < playerGames.length - 1; i++) {
         if (!playerMap.has(playerGames[i].substr(2))) {
-            playerMap.set(playerGames[i].substr(2), [0, 0, 0]);
+            playerMap.set(playerGames[i].substr(2), [0, 0, 0, 0]);
             mapKeys.push(playerGames[i].substr(2));
         }
+        playerMap.get(playerGames[i].substr(2))[3]++;
         switch (playerGames[i].charAt(0)) {
             case 'W':
                 playerMap.get(playerGames[i].substr(2))[0]++;
@@ -63,25 +64,38 @@ function getAndPrint(shortAuthor, title = 'Connect 4 stats', message){
                 d++;
                 break;
             case 'L':
-                playerMap.get(playerGames[i].substr(2))[2]++
+                playerMap.get(playerGames[i].substr(2))[2]++;
                 l++;
         }
         tot++;
     }
     var out = "Opponent:   W/D/L";
-    for (var i = 0; i < playerMap.size; i++) {
-        if (!mapKeys[i].includes('>')){
-            if (parseInt(mapKeys[i]) >= 1000000)
-                var brainName = mapKeys[i].substring(0, mapKeys[i].length - 6) + 'M'
+    for (var j = playerMap.size; j > 0 && playerMap.size > 0; j--) {
+        var rec = 0;
+        var recDex = -1;
+        for (var i = 0; i < playerMap.size; i++) {
+            if (playerMap.get(mapKeys[i])[3] > rec){
+                rec = playerMap.get(mapKeys[i])[3];
+                recDex = i
+            }
+        }
+        if (recDex == -1)
+            break;
+        if (!mapKeys[recDex].includes('>')) {
+            if (parseInt(mapKeys[recDex]) >= 1000000)
+                var brainName = mapKeys[recDex].substring(0, mapKeys[recDex].length - 6) + 'M'
             else
-                var brainName = mapKeys[i].substring(0, mapKeys[i].length - 3) + 'K'
-            out += "\nBrain size " + brainName + ': ' + playerMap.get(mapKeys[i])[0] + '/' + playerMap.get(mapKeys[i])[1] + '/' + playerMap.get(mapKeys[i])[2];
-        }else
-            out += "\n" + mapKeys[i] + ': ' + playerMap.get(mapKeys[i])[0] + '/' + playerMap.get(mapKeys[i])[1] + '/' + playerMap.get(mapKeys[i])[2];
+                var brainName = mapKeys[recDex].substring(0, mapKeys[recDex].length - 3) + 'K'
+            out += "\nBrain size " + brainName + ': ' + playerMap.get(mapKeys[recDex])[0] + '/' + playerMap.get(mapKeys[recDex])[1] + '/' + playerMap.get(mapKeys[recDex])[2];
+        } else
+            out += "\n" + mapKeys[recDex] + ': ' + playerMap.get(mapKeys[recDex])[0] + '/' + playerMap.get(mapKeys[recDex])[1] + '/' + playerMap.get(mapKeys[recDex])[2];
+        playerMap.delete(mapKeys[recDex]);
+        mapKeys.splice(recDex, 1);
     }
     out += "\n-------------------------------";
     out += "\nLifetime record: " + w + '/' + d + '/' + l;
     out += "\nLifetime wr: " + (100 * w / tot).toFixed(2) + '%';
+    out += "\nLifetime games: " + tot;
     const ch = new Discord.MessageEmbed()
         .setColor('#0cc0b4')
         .setTitle(title)

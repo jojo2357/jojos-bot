@@ -9,6 +9,8 @@ module.exports = {
     callback: (message, arguments) => {
         var out = '!p ' + musick.getRandomName();
         var putIn = "";
+        if (parseInt(arguments[0]) < 1 || parseInt(arguments[0]) > 50)
+            return;
         for (var i = 0; i < parseInt(arguments[0]) - 1; i++){
             putIn = musick.getRandomName();
             while (out.includes(putIn)){

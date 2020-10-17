@@ -402,7 +402,6 @@ module.exports = {
                 fs.appendFileSync('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat', "" + ((winner == 1 || winner == "1") ? "L" : winner == 3 ? "D" : "W") + ' ' + this.players[0] + '\n');
             }
             connect4GameHolder.removeGame(this);
-            console.log("Attempted to kill and remove");
         }
     }
 }
