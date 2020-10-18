@@ -2,7 +2,7 @@ const Commando = require('discord.js-commando')
 const client = new Commando.CommandoClient()
 const config = require('../config.json');
 const MusicDb = require('./music/music-manager.js');
-const Manager = require('./puzzles/connect-four/connect-4-game-holder.js');
+const Manager = require('./puzzles/connect-four/game/connect-4-game-holder.js');
 
 client.on('message', message => {
     if (message.author.bot) 

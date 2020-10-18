@@ -113,7 +113,10 @@ module.exports = (client, commandOptions) => {
             `Use ${prefix}${alias} ${expectedArgs}`)
           return
         }
-        console.log(message.author.username + " in " + message.guild.name + " asked for " + message.toString())
+        if (message.guild != null)
+          console.log(message.author.username + " in " + message.guild.name + " asked for " + message.toString())
+        else 
+          console.log("Someone dm'd me")
         try{
           callback(message, arguments, arguments.join(' '), client)
         }catch (err){

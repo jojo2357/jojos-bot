@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const Manager = require('./connect-4-game-holder.js');
+const Manager = require('../game/connect-4-game-holder.js');
 
 module.exports = {
     commands: ['my-challenges', 'pending-challenges', 'challenges'],

@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
-const Game = require('./connect-4-game.js');
-const Manager = require('./connect-4-game-holder.js');
+const Game = require('./game/connect-4-game.js');
+const Manager = require('./game/connect-4-game-holder.js');
 
 module.exports = {
   commands: ['diff', 'difficulty', 'brain-status'],
