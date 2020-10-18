@@ -21,7 +21,7 @@ module.exports = {
                 message.channel.send('sorry, <@' + message.author + '>' + ', but you already have a game in progress in <#' + Manager.usersGame('<@' + message.author + '>').channel + '>');
                 return;
             }
-            if (!message.guild.member(user) && user != undefined) {
+            if (message.guild != null && !message.guild.member(user) && user != undefined) {
                 message.channel.send('Sorry i cant find that user in this server. Please try again');
                 return;
             }
@@ -29,7 +29,9 @@ module.exports = {
                 message.channel.send("Yes, I will play against you foolish mortal")
                 user = null;
             }
-            if (message.guild.members.fetch(user) && user) {
+            if (message.guild == null && user){
+                message.channel.send('Sorry, I cant do that. You can either play against me here or go to a server and play them there')
+            }else if (message.guild != null && message.guild.members.fetch(user) && user) {
                 if (user == message.author) {
                     message.channel.send("Go play with urself somewhere else :rolling_eyes:");
                     return;
@@ -54,7 +56,6 @@ module.exports = {
                     return;
                 }
                 var game = new Game.connect4game(['<@' + message.author + '>', null], message.channel);
-                game.startGame();
                 game.makeInitialSend();
                 Manager.addGame(game);
                 const ch = new Discord.MessageEmbed()

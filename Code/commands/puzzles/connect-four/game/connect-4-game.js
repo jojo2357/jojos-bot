@@ -49,12 +49,12 @@ function checkLoaded(str = "") {
 function thing() {
     if (client.user != null)
         client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
-    else 
+    else
         console.log("an error occured while setting presence")
 }
 
 module.exports = {
-    gamesPlayed(){
+    gamesPlayed() {
         return gamesPlayed;
     },
 
@@ -62,7 +62,7 @@ module.exports = {
         return botLoaded;
     },
 
-    brainSize(){
+    brainSize() {
         return brainSize;
     },
 
@@ -110,7 +110,7 @@ module.exports = {
             this.turn = 2;
             this.players = player1;
             this.turnNumber = 1;
-            this.channel = channel;
+            this.channel = [channel, channel];
             this.gameBoard = [[0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0],
@@ -126,47 +126,14 @@ module.exports = {
             }
         };
 
-        acceptGame() {
+        acceptGame(channel) {
             connect4GameHolder.makeLive(this);
+            this.channel[1] = channel;
             this.sysoutBoard(1);
         };
 
         declineGame() {
             connect4GameHolder.declineGame(this);
-        };
-
-        startGame() {
-            /*this.prc = new Object();
-            this.prc = Object.assign(this.prc, prc);
-            this.players[1] = this.prc;
-            console.log('Game started');
-            function getInput(inputIn = "") {
-                if (inputIn.length == 3)
-                    this.makeMove(parseInt(inputIn.charAt(0)), parseInt(inputIn.charAt(2)));
-            }
-            this.prc.stdout.sendTo = this;
-            this.prc.stdout.channel = this.channel;
-            this.prc.stdout.listeningID = this.ID;
-            this.prc.stderr.channel = this.channel;
-            this.prc.onFail = this;
-            function theThing(data) {
-                var str = data.toString()
-                str = str.replace(/(\r\n|\n|\r)/gm, "").trim();
-                console.log("Connect 4 says: |" + str + "| and im listening for " + this.listeningID + ' ' + str.includes(this.listeningID));
-                if (str.includes(this.listeningID))
-                    this.sendTo.makeMove(parseInt(str.charAt(22)), 2);
-            }
-            this.prc.stdout.on('data', theThing);
-
-            this.prc.stderr.on('data', (data) => {
-                console.error(data.toString());
-                this.channel.send("the connect four bot has encountered an exception " + data.toString())
-            });
-
-            /*this.prc.on('exit', function (code) {
-                console.log('Connect 4 bot died with code ' + code);
-            });*/
-            //this.stdinStream.pipe(this.prc.stdin);
         };
 
         makeInitialSend() {
@@ -207,10 +174,10 @@ module.exports = {
             } else {
                 if (this.isSinglePlayer) {
                     if (playerNumber == 1) {
-                        this.channel.send("Hey dummy that column is full");
+                        this.channel[this.turn - 1].send("Hey dummy that column is full");
                     }
                 } else {
-                    this.channel.send("Hey dummy that column is full");
+                    this.channel[this.turn - 1].send("Hey dummy that column is full");
                 }
 
             }
@@ -258,7 +225,7 @@ module.exports = {
                 this.lastMessage.delete().catch();
             if (!this.gameOver(this.gameBoard) && player != -1) {
                 connect4GameHolder.holdMyBeer = this;
-                this.channel.send('Don\'t mess up ' + this.players[player] + ' the i:b:iot', attachment)
+                this.channel[player].send('Don\'t mess up ' + this.players[player] + ' the i:b:iot', attachment)
                     .then(async function (message) {
                         if (connect4GameHolder.holdMyBeer == null)
                             return;
@@ -324,7 +291,8 @@ module.exports = {
                         });
                     }).catch();
             } else {
-                this.channel.send(attachment);
+                this.channel[0].send(attachment);
+                this.channel[1].send(attachment);
             }
             //console.log("board printing done");
         };
@@ -357,12 +325,12 @@ module.exports = {
                                 this.windex = [row + boardExt, col];
                                 this.winstyle = 1;
                                 return winner;
-                            }else if (board[row][col + boardExt] == winner && board[row + 1][col + boardExt] == winner && board[row + 2][col + boardExt] == winner && board[row + 3][col + boardExt] == winner)//vertical dub
+                            } else if (board[row][col + boardExt] == winner && board[row + 1][col + boardExt] == winner && board[row + 2][col + boardExt] == winner && board[row + 3][col + boardExt] == winner)//vertical dub
                             {
                                 this.windex = [row, col];
                                 this.winstyle = 3;
                                 return winner;
-                            } 
+                            }
                         if (board[row][col] == winner && board[row + 1][col + 1] == winner && board[row + 2][col + 2] == winner && board[row + 3][col + 3] == winner)//diag positive slope
                         {
                             this.windex = [row, col];
@@ -390,17 +358,24 @@ module.exports = {
             if (winner != 3) {
                 if (this.isSinglePlayer) {
                     if (winner == 1 || winner == "1")
-                        this.channel.send("Wow " + this.players[0] + " you should be so proud that you managed to beat a stupid program. Despite having played " + brainSize + " games your massive intelligence has won the day");
+                        this.channel[0].send("Wow " + this.players[0] + " you should be so proud that you managed to beat a stupid program. Despite having played " + brainSize + " games your massive intelligence has won the day");
                     else
-                        this.channel.send("Wow " + this.players[0] + " I honestly cannot believe that you lost. I mean, if you played " + brainSize + " games of connect-4 you might have won");
+                        this.channel[0].send("Wow " + this.players[0] + " I honestly cannot believe that you lost. I mean, if you played " + brainSize + " games of connect-4 you might have won");
                 } else {
-                    if (winner == 1 || winner == "1")
-                        this.channel.send("Wow " + this.players[0] + " completely dominated " + this.players[1] + " in only " + this.turnNumber + " moves");
-                    else
-                        this.channel.send("Wow " + this.players[1] + " completely dominated " + this.players[0] + " in only " + this.turnNumber + " moves");
+                    if (winner == 1 || winner == "1") {
+                        this.channel[0].send("Wow " + this.players[0] + " completely dominated " + this.players[1] + " in only " + this.turnNumber + " moves");
+                        if (this.channel[0].id != this.channel[1].id)
+                            this.channel[1].send("Wow " + this.players[0] + " completely dominated " + this.players[1] + " in only " + this.turnNumber + " moves");
+                    } else {
+                        this.channel[0].send("Wow " + this.players[1] + " completely dominated " + this.players[0] + " in only " + this.turnNumber + " moves");
+                        if (this.channel[0].id != this.channel[1].id)
+                            this.channel[1].send("Wow " + this.players[1] + " completely dominated " + this.players[0] + " in only " + this.turnNumber + " moves");
+                    }
                 }
             } else {
-                this.channel.send("Wow you both suck!");
+                this.channel[0].send("Wow you both suck!");
+                if (this.channel[0] != this.channel[1])
+                    this.channel[1].send("Wow you both suck!");
             }
             this.sysoutBoard(-1);
 

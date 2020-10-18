@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 
 module.exports = {
-    commands: ['suggest', 'sgt', 'suggestion'],
+    commands: ['suggest', 'sgt', 'suggestion', 'bug'],
     minArgs: 1,
     expectedArgs: '<message>',
     callback: (userMessage, arguments, text, client) => {

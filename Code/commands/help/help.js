@@ -16,7 +16,7 @@ module.exports = {
         { name: 'Music Recommendations', value: '=song', inline: true },
         { name: 'Dev Notes', value: '=dev', inline: true },
         { name: 'Java Tips', value: '=java-help', inline: true },
-        { name: 'Make a suggestion/report a bug', value: '=suggest', inline: true },
+        { name: 'Make a suggestion/report a bug', value: '=suggest/=bug', inline: true },
         { name: 'My invite link', value: '=invite', inline: true },
       ).setTimestamp()
       .setFooter('More commands comming soon!');

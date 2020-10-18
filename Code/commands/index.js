@@ -8,7 +8,8 @@ client.on('message', message => {
     if (message.author.bot) 
         return;
     if (message.toString().length == 1 && message.toString().substr(0,1) <= '7' && message.toString().substr(0,1) >= '1'){
-        if (Manager.usersGame('<@' + message.author + '>') != null && Manager.usersGame('<@' + message.author + '>').channel.id == message.channel.id && Manager.usersGame('<@' + message.author + '>').hasRoom(message.toString().substr(0,1) - 1)) {
+        var huh = Manager.usersGame('<@' + message.author.id + '>')
+        if (Manager.usersGame('<@' + message.author.id + '>') != null && Manager.usersGame('<@' + message.author.id + '>').channel[Manager.usersGame('<@' + message.author.id + '>').players.indexOf('<@' + message.author.id + '>')].id == message.channel.id && Manager.usersGame('<@' + message.author.id + '>').hasRoom(message.toString().substr(0,1) - 1)) {
             if (Manager.usersGame('<@' + message.author + '>').turn == 1 + Manager.usersGame('<@' + message.author + '>').players.indexOf('<@' + message.author + '>')) {
                 Manager.usersGame('<@' + message.author + '>').makeMove(message.toString().substr(0,1) - 1, 1 + Manager.usersGame('<@' + message.author + '>').players.indexOf('<@' + message.author + '>'));
                 message.delete();
