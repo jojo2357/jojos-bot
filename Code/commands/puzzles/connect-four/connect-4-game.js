@@ -16,12 +16,13 @@ const emptyBoard = [[0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0]];
 
-const brainSize = 10000;
+const brainSize = 0;
 
 const { spawn } = require('child_process');
 
 var prc;
 var stdinStream;
+var gamesPlayed = 0;
 
 var botLoaded = false;
 
@@ -36,21 +37,33 @@ function boardToString(board) {
     return out;
 }
 
-function checkLoaded(str) {
+function checkLoaded(str = "") {
     if (str.includes('INIT')) {
         thing();
         botLoaded = true;
         console.log('Roger, inited');
+        return;
     }
 }
 
 function thing() {
-    client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
+    if (client.user != null)
+        client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
+    else 
+        console.log("an error occured while setting presence")
 }
 
 module.exports = {
+    gamesPlayed(){
+        return gamesPlayed;
+    },
+
     botLoaded() {
         return botLoaded;
+    },
+
+    brainSize(){
+        return brainSize;
     },
 
     init() {
@@ -70,6 +83,7 @@ module.exports = {
             //console.log("Connect 4 master says: " + str);
             this.checkLoad(str);
             connect4GameHolder.notifyData(str);
+            connect4GameHolder.checkIfGamesPlayed(str);
         }
         prc.stdout.on('data', theThing);
 
@@ -174,6 +188,7 @@ module.exports = {
                                 this.ggMessage(3);
                             else
                                 this.ggMessage(playerNumber);
+                            stdinStream.push(this.ID + ':' + boardToString(this.gameBoard) + '\n');
                             return;
                         }
                         break;
@@ -250,7 +265,7 @@ module.exports = {
                         var effectiveThis = connect4GameHolder.holdMyBeer;
                         connect4GameHolder.holdMyBeer.lastMessage = message;
                         connect4GameHolder.holdMyBeer = null;
-                        var thing = false;
+                        /*var thing = false;
                         while (!thing) {
                             try {
                                 if (effectiveThis.hasRoom(0))
@@ -272,7 +287,7 @@ module.exports = {
                                 //console.error('One of the emojis failed to react. ' + message.deleted);
                                 thing = message.deleted;
                             }
-                        }
+                        }*/
                         const filter = (reaction, user) => {
                             return '<@' + user.id + '>' == effectiveThis.players[effectiveThis.turn - 1] && ((reaction.emoji.name == '1️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '2️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '3️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '4️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '5️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '6️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '7️⃣' && effectiveThis.hasRoom(0)));
                         };
@@ -388,6 +403,9 @@ module.exports = {
                 this.channel.send("Wow you both suck!");
             }
             this.sysoutBoard(-1);
+
+            if (this.gameOver(this.gameBoard) != 0)
+                connect4GameHolder.gamesPlayed++;
 
             if (!fs.existsSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat'))
                 fs.open('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat', function (err) { });

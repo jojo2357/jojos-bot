@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const fs = require('fs');
 
 module.exports = {
-    commands: ['connect-4-stats', 'connect-4-stat'],
+    commands: ['connect-4-stats', 'connect-4-stat', 'c4-stat', 'c4-stats'],
     minArgs: 0,
     maxArgs: 1,
     callback: (message, arguments) => {
@@ -29,6 +29,7 @@ module.exports = {
                         var title = braneSize.toFixed(0).substring(0, braneSize.toFixed(0).length - 3) + 'K'
                     getAndPrint(braneSize + '_computerBrain', 'Record for bot brain sized ' + title, message)
                 }
+                getAndPrint("community", 'Community Brain', message)
                 return;
             }
             getAndPrint(shortAuthor, 'Connect 4 stats', message)
@@ -39,9 +40,15 @@ module.exports = {
 }
 
 function getAndPrint(shortAuthor, title = 'Connect 4 stats', message) {
-    if (!fs.existsSync('./assets/connect-4/game-record/' + shortAuthor + '.dat'))
-        return;
-    var playerGames = fs.readFileSync('./assets/connect-4/game-record/' + shortAuthor + '.dat').toString().split('\n');
+    if (shortAuthor == "community") {
+        if (!fs.existsSync('./assets/connect-4/game-record/0_computerBrain.dat'))
+            return;
+        var playerGames = fs.readFileSync('./assets/connect-4/game-record/0_computerBrain.dat').toString().split('\n');
+    } else {
+        if (!fs.existsSync('./assets/connect-4/game-record/' + shortAuthor + '.dat'))
+            return;
+        var playerGames = fs.readFileSync('./assets/connect-4/game-record/' + shortAuthor + '.dat').toString().split('\n');
+    }
     var w = 0;
     var d = 0;
     var l = 0;
@@ -74,7 +81,7 @@ function getAndPrint(shortAuthor, title = 'Connect 4 stats', message) {
         var rec = 0;
         var recDex = -1;
         for (var i = 0; i < playerMap.size; i++) {
-            if (playerMap.get(mapKeys[i])[3] > rec){
+            if (playerMap.get(mapKeys[i])[3] > rec) {
                 rec = playerMap.get(mapKeys[i])[3];
                 recDex = i
             }
@@ -82,11 +89,17 @@ function getAndPrint(shortAuthor, title = 'Connect 4 stats', message) {
         if (recDex == -1)
             break;
         if (!mapKeys[recDex].includes('>')) {
-            if (parseInt(mapKeys[recDex]) >= 1000000)
+            if (parseInt(mapKeys[recDex]) >= 1000000) {
                 var brainName = mapKeys[recDex].substring(0, mapKeys[recDex].length - 6) + 'M'
-            else
-                var brainName = mapKeys[recDex].substring(0, mapKeys[recDex].length - 3) + 'K'
-            out += "\nBrain size " + brainName + ': ' + playerMap.get(mapKeys[recDex])[0] + '/' + playerMap.get(mapKeys[recDex])[1] + '/' + playerMap.get(mapKeys[recDex])[2];
+                out += "\nBrain size " + brainName + ': ' + playerMap.get(mapKeys[recDex])[0] + '/' + playerMap.get(mapKeys[recDex])[1] + '/' + playerMap.get(mapKeys[recDex])[2];
+            } else
+                if (parseInt(mapKeys[recDex]) == 0) {
+                    var brainName = "Community Brain"
+                    out += "\n" + brainName + ': ' + playerMap.get(mapKeys[recDex])[0] + '/' + playerMap.get(mapKeys[recDex])[1] + '/' + playerMap.get(mapKeys[recDex])[2];
+                } else {
+                    var brainName = mapKeys[recDex].substring(0, mapKeys[recDex].length - 3) + 'K'
+                    out += "\nBrain size " + brainName + ': ' + playerMap.get(mapKeys[recDex])[0] + '/' + playerMap.get(mapKeys[recDex])[1] + '/' + playerMap.get(mapKeys[recDex])[2];
+                }
         } else
             out += "\n" + mapKeys[recDex] + ': ' + playerMap.get(mapKeys[recDex])[0] + '/' + playerMap.get(mapKeys[recDex])[1] + '/' + playerMap.get(mapKeys[recDex])[2];
         playerMap.delete(mapKeys[recDex]);

@@ -5,7 +5,6 @@ module.exports = {
   minArgs: 0,
   maxArgs: 0,
   callback: (message, arguments) => {
-    message.channel.send('To invite me to more servers, use this link: https://discord.com/api/oauth2/authorize?client_id=699366687455051808&permissions=10304&scope=bot')
     const help = new Discord.MessageEmbed()
       .setColor('#0099ff')
       .setTitle('Commands')
@@ -17,7 +16,8 @@ module.exports = {
         { name: 'Music Recommendations', value: '=song', inline: true },
         { name: 'Dev Notes', value: '=dev', inline: true },
         { name: 'Java Tips', value: '=java-help', inline: true },
-        { name: 'Make a suggestion', value: '=suggest', inline: true },
+        { name: 'Make a suggestion/report a bug', value: '=suggest', inline: true },
+        { name: 'My invite link', value: '=invite', inline: true },
       ).setTimestamp()
       .setFooter('More commands comming soon!');
     message.channel.send(help);

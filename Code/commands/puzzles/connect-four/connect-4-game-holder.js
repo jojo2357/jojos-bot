@@ -1,10 +1,23 @@
 var games = [];
 var pending = [];
+var gamesPlayed = 0;
 
 module.exports = {
-    holdMyBeer : null,
+    holdMyBeer: null,
 
-    getPending(){
+    checkIfGamesPlayed(str) {
+        if (str.includes("Games: ")) {
+            console.log(str.substring(7, str.indexOf('\r')));
+            gamesPlayed = parseInt(str.substring(7, str.indexOf('\r')));
+            console.log(gamesPlayed)
+        }
+    },
+
+    notgamesPlayed(){
+        return gamesPlayed;
+    },
+
+    getPending() {
         return pending;
     },
 
@@ -48,7 +61,7 @@ module.exports = {
         return out;
     },
 
-    beenChallenged(user){
+    beenChallenged(user) {
         var out = [];
         for (var i = 0; i < pending.length; i++) {
             if (pending[i].players.indexOf(user) == 1) {
@@ -75,16 +88,16 @@ module.exports = {
         pending.splice(pending.indexOf(game), 1);
     },
 
-    notifyData(data){
-        for (var i = 0; i < games.length; i++){
-            if (data.includes(games[i].ID) && data.includes(':')){
-                if (data.charAt(22) == '-' && data.charAt(23) == '3'){
+    notifyData(data) {
+        for (var i = 0; i < games.length; i++) {
+            if (data.includes(games[i].ID) && data.includes(':')) {
+                if (data.charAt(22) == '-' && data.charAt(23) == '3') {
                     games[i].ggMessage(1);
                 }
                 games[i].makeMove(parseInt(data.charAt(22)), 2);
                 return;
             }
-            if (data.includes(games[i].ID)){
+            if (data.includes(games[i].ID)) {
                 games[i].makeMove(parseInt(data.charAt(0)), games[i].turn)
                 return true;
             }
