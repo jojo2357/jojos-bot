@@ -176,6 +176,9 @@ module.exports = {
                     this.turn = 1;
                     this.sysoutBoard(0);
                 }
+                if (this.timerObj != undefined)
+                    clearTimeout(this.timerObj);
+                this.timerObj = setTimeout(function(bruh, turn){bruh.ggMessage(turn)}, 60000, this, this.turn - 1);
             } else {
                 if (this.isSinglePlayer) {
                     if (playerNumber == 1) {
@@ -360,13 +363,14 @@ module.exports = {
         }
 
         ggMessage(winner) {
+            clearTimeout(this.timerObj);
             console.log("Attempting to kill and remove. winner: " + winner);
             if (winner != 3) {
                 if (this.isSinglePlayer) {
                     if (winner == 1 || winner == "1")
-                        this.channel[0].send("Wow " + this.players[0] + " you should be so proud that you managed to beat a stupid program. Despite having played " + brainSize + " games your massive intelligence has won the day");
+                        this.channel[0].send("Wow " + this.players[0] + " you should be so proud that you managed to beat a stupid program. Despite having played " + connect4GameHolder.notgamesPlayed() + " games your massive intelligence has won the day");
                     else
-                        this.channel[0].send("Wow " + this.players[0] + " I honestly cannot believe that you lost. I mean, if you played " + brainSize + " games of connect-4 you might have won");
+                        this.channel[0].send("Wow " + this.players[0] + " I honestly cannot believe that you lost. I mean, if you played " + connect4GameHolder.notgamesPlayed() + " games of connect-4 you might have won");
                 } else {
                     if (winner == 1 || winner == "1") {
                         this.channel[0].send("Wow " + this.players[0] + " completely dominated " + this.players[1] + " in only " + this.turnNumber + " moves");

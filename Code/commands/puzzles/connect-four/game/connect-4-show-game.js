@@ -8,7 +8,7 @@ module.exports = {
     maxArgs: 0,
     callback: (message, arguments) => {
         if (Manager.usersGame('<@' + message.author + '>') != null)
-            if (Manager.usersGame('<@' + message.author + '>').channel[Manager.usersGame('<@' + message.author + '>').turn - 1] == message.channel)
+            if (Manager.usersGame('<@' + message.author + '>').channel[Manager.usersGame('<@' + message.author + '>').turn - 1].id == message.channel.id)
                 Manager.usersGame('<@' + message.author + '>').sysoutBoard();
             else
                 message.reply("somethin sus, heres a suggestion: " + Manager.usersGame('<@' + message.author + '>').channel[Manager.usersGame('<@' + message.author + '>').players.indexOf('<@' + message.author + '>')])
