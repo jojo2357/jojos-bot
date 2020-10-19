@@ -7,8 +7,11 @@ module.exports = {
     minArgs: 0,
     maxArgs: 0,
     callback: (message, arguments) => {
-        if (Manager.usersGame('<@' + message.author + '>') != null && Manager.usersGame('<@' + message.author + '>').channel == message.channel)
-            Manager.usersGame('<@' + message.author + '>').sysoutBoard();
+        if (Manager.usersGame('<@' + message.author + '>') != null)
+            if (Manager.usersGame('<@' + message.author + '>').channel[Manager.usersGame('<@' + message.author + '>').turn - 1] == message.channel)
+                Manager.usersGame('<@' + message.author + '>').sysoutBoard();
+            else
+                message.reply("somethin sus, heres a suggestion: " + Manager.usersGame('<@' + message.author + '>').channel[Manager.usersGame('<@' + message.author + '>').players.indexOf('<@' + message.author + '>')])
         else 
             message.channel.send("You don't have a game in progress! Use `=connect-4` to start one!");
     }

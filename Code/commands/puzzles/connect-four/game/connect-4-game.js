@@ -7,7 +7,6 @@ const connect4GameHolder = require('./connect-4-game-holder');
 const Commando = require('discord.js-commando');
 const client = new Commando.CommandoClient();
 const config = require(process.cwd() + '\\config.json');
-client.login(config.token);
 
 const emptyBoard = [[0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0],
@@ -49,8 +48,9 @@ function checkLoaded(str = "") {
 function thing() {
     if (client.user != null)
         client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
-    else
-        console.log("an error occured while setting presence")
+    else{
+        client.login(config.token).then(() => client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log)).catch(() => console.log("an error occured while setting presence"))
+    }
 }
 
 module.exports = {
@@ -125,6 +125,11 @@ module.exports = {
                 this.ID += Math.floor(Math.random() * 10);
             }
         };
+
+        setChannels(channels){
+            this.channel[0] = channels[0];
+            this.channel[1] = channels[1];
+        }
 
         acceptGame(channel) {
             connect4GameHolder.makeLive(this);
@@ -292,7 +297,8 @@ module.exports = {
                     }).catch();
             } else {
                 this.channel[0].send(attachment);
-                this.channel[1].send(attachment);
+                if (this.channel[0].id != this.channel[1].id)
+                    this.channel[1].send(attachment);
             }
             //console.log("board printing done");
         };
@@ -327,7 +333,7 @@ module.exports = {
                                 return winner;
                             } else if (board[row][col + boardExt] == winner && board[row + 1][col + boardExt] == winner && board[row + 2][col + boardExt] == winner && board[row + 3][col + boardExt] == winner)//vertical dub
                             {
-                                this.windex = [row, col];
+                                this.windex = [row, col + boardExt];
                                 this.winstyle = 3;
                                 return winner;
                             }
@@ -394,8 +400,9 @@ module.exports = {
                     fs.open('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat', function (err) { });
                 fs.appendFileSync('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat', "" + ((winner == 1 || winner == "1") ? "L" : winner == 3 ? "D" : "W") + ' ' + this.players[0] + '\n');
             }
+            if (this.tourney != undefined)
+                this.tourney.notifyGG(this);
             connect4GameHolder.removeGame(this);
         }
     }
 }
-

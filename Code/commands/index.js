@@ -21,6 +21,8 @@ client.on('message', message => {
         message.channel.send('hi');
     } else if (message.content === "gn") {
         message.channel.send('Good Night to you my homies :kissing_heart:');
+    } else if (message.content === "verify") {
+        message.channel.send('Only ' + (76 - client.guilds.cache.size) + ' servers more until that check mark!');
     } else if (message.content === "bitch") {
         message.channel.send('That\'s not nice');
     } else if (message.content === "fuck") {
