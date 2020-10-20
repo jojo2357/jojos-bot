@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const Commando = require('discord.js-commando');
 const config = require(process.cwd() + '/config.json');
 const client = new Discord.Client();
+const fs = require('fs');
 
 client.login(config.token);
 
@@ -14,13 +15,11 @@ module.exports = {
         let moosage = arguments.join(' ');
 
         /*var guildList =*/ client.guilds.cache.forEach(guild => {
-
-            if (channel != undefined){
-                if (typeof channel.send === "function" && guild.id == 762070587102461953)
-                    channel.send(moosage).catch((err) => console.log("An error has occurred sending to " + guild.name))
-                else 
-                    console.log("Could not send to " + guild.name)
-            }
+            if (!fs.existsSync('./assets/server-settings/' + guild.id + '.json'))
+                return;
+            let channelSettings = require(process.cwd() + '/assets/server-settings/' + message.guild.id + '.json');
+            if(channelSettings.notifications)
+                client.channels.cache.get(channelSettings.notificationChannel).send(moosage);
         });
         /*try {
             guildList.forEach((guild) => guild.defaultChannel.send(arguments.join(' ')));

@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const Game = require('./connect-4-game.js');
 const Manager = require('./connect-4-game-holder.js');
+const fs = require('fs');
 
 module.exports = {
     commands: ['connect-4', '4-in-row', 'c4'],
@@ -17,8 +18,8 @@ module.exports = {
                     user = user.substring(2, 20);
                 console.log(user)
             }
-            if (Manager.usersGame('<@' + message.author + '>') != null) {
-                message.channel.send('sorry, <@' + message.author + '>' + ', but you already have a game in progress in <#' + Manager.usersGame('<@' + message.author + '>').channel + '>');
+            if (Manager.usersGame('<@' + message.author.id + '>') != null) {
+                message.channel.send('sorry, <@' + message.author.id + '>' + ', but you already have a game in progress in <#' + Manager.usersGame('<@' + message.author + '>').channel + '>');
                 return;
             }
             if (message.guild != null && !message.guild.member(user) && user != undefined) {
@@ -55,6 +56,8 @@ module.exports = {
                     message.channel.send('Brain is still loading, be patient');
                     return;
                 }
+                if (!fs.existsSync('./assets/server-settings/' + message.guild.id + '.json'))
+                    message.channel.send("**HEY**!! This server has not configured settings! Use `=server-settings` to get started in order to recieve updates and warnings before the bot restarts in order to not lose game data!")
                 var game = new Game.connect4game(['<@' + message.author + '>', null], message.channel);
                 game.makeInitialSend();
                 Manager.addGame(game);
