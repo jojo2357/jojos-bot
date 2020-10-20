@@ -50,6 +50,10 @@ module.exports = {
             this.assisgnIndex = 0;
         };
 
+        delayedStart(tournament){
+            tournament.createGames();
+        }
+
         contains(player){
             for (var i = 0; i < this.players.length; i++)
                 if (this.players[i].id == player.id)
@@ -82,31 +86,33 @@ module.exports = {
         }
 
         createWithoutSeed(){
+            this.activeGames = [];
+            this.players.sort(function(first, second){
+                return first.seed - second.seed;
+            })
             if (this.players.length != this.getOptimalTourneySize(this.players.length)){
-                for (var i = this.players.length - 1; i > this.getOptimalTourneySize(this.players.length); i--){
-                    this.players[i].player.send("Here goes round #" + this.round);
-                    this.players[2 * this.getOptimalTourneySize(this.players.length) - this.players.length + (this.players.length - 1 - i)].player.send("Here goes round #" + this.round);
-                    const game = new Game.connect4game(['<@' + this.players[i].id + '>', '<@' + this.players[this.players[2 * this.getOptimalTourneySize(this.players.length) - this.players.length + (this.players.length - 1 - i)]].id + '>'], null)
-                    game.setChannels([this.players[i].player.dmChannel, this.players[this.players[2 * this.getOptimalTourneySize(this.players.length) - this.players.length + (this.players.length - 1 - i)]].player.dmChannel])
+                for (var i = this.players.length - 1; i > this.getOptimalTourneySize(this.players.length) - 1; i--){
+                    this.players[i].player.send("Here goes round #" + this.round + '\nYou are going second, please wait');
+                    this.players[2 * this.getOptimalTourneySize(this.players.length) - this.players.length + (this.players.length - 1 - i)].player.send("Here goes round #" + this.round+ '\nYou are going first! please make your move');
+                    const game = new Game.connect4game(['<@' + this.players[i].id + '>', '<@' + this.players[2 * this.getOptimalTourneySize(this.players.length) - this.players.length + (this.players.length - 1 - i)].id + '>'], null)
+                    game.setChannels([this.players[i].player.dmChannel, this.players[2 * this.getOptimalTourneySize(this.players.length) - this.players.length + (this.players.length - 1 - i)].player.dmChannel])
                     game.sysoutBoard(1);
+                    game.sysoutBoard(2);
                     game.lowerPlayer = this.players[i];
-                    game.higherPlayer = this.players[this.players[2 * this.getOptimalTourneySize(this.players.length) - this.players.length + (this.players.length - 1 - i)]];
+                    game.higherPlayer = this.players[2 * this.getOptimalTourneySize(this.players.length) - this.players.length + (this.players.length - 1 - i)];
                     game.tourney = this;
                     gameManager.addGame(game);
                     this.activeGames.push(game);
                 }
                 return;
             }
-            this.activeGames = [];
-            this.players.sort(function(first, second){
-                return first.seed - second.seed;
-            })
             for (var i = 0; i < this.players.length/2; i++){
-                this.players[i].player.send("Here goes round #" + this.round);
-                this.players[this.players.length - i - 1].player.send("Here goes round #" + this.round);
+                this.players[i].player.send("Here goes round #" + this.round+ '\nYou are going first! please make your move');
+                this.players[this.players.length - i - 1].player.send("Here goes round #" + this.round + '\nYou are going second, please wait');
                 const game = new Game.connect4game(['<@' + this.players[this.players.length - 1 - i].id + '>', '<@' + this.players[i].id + '>'], null)
                 game.setChannels([this.players[this.players.length - 1 - i].player.dmChannel, this.players[i].player.dmChannel])
                 game.sysoutBoard(1);
+                game.sysoutBoard(2);
                 game.lowerPlayer = this.players[i];
                 game.higherPlayer = this.players[this.players.length - 1 - i];
                 game.tourney = this;
@@ -122,9 +128,9 @@ module.exports = {
             }
         }
 
-        notifyGG(game){
+        notifyGG(game, winner){
             if (this.containsGame(game)){
-                switch (game.gameOver(game.gameBoard)){
+                switch (winner){
                     case 3:{
                         const newGame = new Game.connect4game(['<@' + game.lowerPlayer.id + '>', '<@' + game.upperPlayer.id + '>'], null)
                         newGame.setChannels([game.lowerPlayer.player.dmChannel, game.upperPlayer.player.dmChannel])

@@ -9,7 +9,7 @@ module.exports = {
       .setColor('#0099ff')
       .setTitle('Commands')
       .setAuthor('Jojo2357\'s bot')
-      .setDescription('All commands. Type in the chat the sections below with a \"=\" then with the description for more info about those commands.')
+      .setDescription('All commands. Type in the chat the sections below with a \"=\" then with the description for more info about those commands.\nIf you have any questions, friend me at jojo2357#1417 and I can help you out')
       .addFields(
         { name: 'Connect-4', value: '=connect-4-help', inline: true },
         { name: 'Cypher', value: '=cypher', inline: true },

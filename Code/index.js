@@ -75,6 +75,12 @@ client.on("guildCreate", (guild) => {
   console.log(`Joined new guild: ${guild.name}`);
 });
 
+client.on("guildDelete", (guild) => {
+  client.users.cache.get('524411594009083933').send(`sobsobsobsobsobsob :sob: i got romoved from ${guild.name}!!!`);
+  client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
+  console.log(`Left guild: ${guild.name}`);
+});
+
 // //*The poll command
 client.on('message', message => {
   let args = message.content.substring(prefix.length).split(" ");

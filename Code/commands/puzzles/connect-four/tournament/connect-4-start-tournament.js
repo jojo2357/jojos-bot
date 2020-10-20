@@ -3,9 +3,17 @@ const Manager = require('./connect-4-tournament-manager.js');
 
 module.exports = {
     commands: ['begin'],
-    minArgs: 0,
+    minArgs: 2,
+    expectedArgs: 'UTC time to start tournament at',
     callback: (message, arguments) => {
-        if (message.author.id == '524411594009083933')
+        if (message.author.id == '524411594009083933'){
             Manager.tournament.createGames();
+            var now = new Date();
+            var millisTill10 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(arguments[0]), parseInt(arguments[1]), 0, 0) - now;
+            if (millisTill10 < 0) {
+                 millisTill10 += 86400000; // it's after 10am, try 10am tomorrow.
+            }
+            setTimeout(Manager.tournament.delayedStart, millisTill10, Manager.tournament);
+        }
     }
 }

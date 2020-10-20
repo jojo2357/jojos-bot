@@ -178,7 +178,10 @@ module.exports = {
                 }
                 if (this.timerObj != undefined)
                     clearTimeout(this.timerObj);
-                this.timerObj = setTimeout(function(bruh, turn){bruh.ggMessage(turn)}, 60000, this, this.turn - 1);
+                this.timerObj = setTimeout(function(bruh, turn){
+                    bruh.channel[bruh.turn - 1].send("So sorry, but you took longer than a minute so you forfeit.")
+                    bruh.ggMessage(turn)
+                }, 60000, this, this.turn - 1);
             } else {
                 if (this.isSinglePlayer) {
                     if (playerNumber == 1) {
@@ -404,8 +407,10 @@ module.exports = {
                     fs.open('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat', function (err) { });
                 fs.appendFileSync('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat', "" + ((winner == 1 || winner == "1") ? "L" : winner == 3 ? "D" : "W") + ' ' + this.players[0] + '\n');
             }
-            if (this.tourney != undefined)
-                this.tourney.notifyGG(this);
+            if (this.tourney != undefined){
+                console.log("its over in this tourney");
+                this.tourney.notifyGG(this, this.gameOver(this.gameBoard) == 0 ? winner + 1: winner);
+            }
             connect4GameHolder.removeGame(this);
         }
     }
