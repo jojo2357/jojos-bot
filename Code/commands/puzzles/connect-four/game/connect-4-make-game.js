@@ -49,6 +49,7 @@ module.exports = {
                     return;
                 }
                 var game = new Game.connect4game(['<@' + message.author + '>', '<@' + user + '>'], message.channel);
+                game.timeout = 3600000;
                 Manager.addPending(game);
                 message.channel.send('Hey <@' + user + '>! <@' + message.author + '> has challenged you to a connect-4 duel to the death. use `=accept` to accept')
             } else {
@@ -56,9 +57,14 @@ module.exports = {
                     message.channel.send('Brain is still loading, be patient');
                     return;
                 }
-                if (!fs.existsSync('./assets/server-settings/' + message.guild.id + '.json'))
+                if (message.guild != undefined && !fs.existsSync('./assets/server-settings/' + message.guild.id + '.json'))
                     message.channel.send("**HEY**!! This server has not configured settings! Use `=server-settings` to get started in order to recieve updates and warnings before the bot restarts in order to not lose game data!")
                 var game = new Game.connect4game(['<@' + message.author + '>', null], message.channel);
+                if (message.guild == undefined){
+                    game.timeout = 0;
+                }else{
+                    game.timeout = 3600000;
+                }
                 game.makeInitialSend();
                 Manager.addGame(game);
                 const ch = new Discord.MessageEmbed()

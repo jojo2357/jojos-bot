@@ -48,10 +48,12 @@ module.exports = {
             this.allPlayers = [];
             this.round = 0;
             this.assisgnIndex = 0;
+            this.inProgress = false;
         };
 
         delayedStart(tournament){
             tournament.createGames();
+            tournament.inProgress = true;
         }
 
         contains(player){
@@ -95,6 +97,11 @@ module.exports = {
                     this.players[i].player.send("Here goes round #" + this.round + '\nYou are going second, please wait');
                     this.players[2 * this.getOptimalTourneySize(this.players.length) - this.players.length + (this.players.length - 1 - i)].player.send("Here goes round #" + this.round+ '\nYou are going first! please make your move');
                     const game = new Game.connect4game(['<@' + this.players[i].id + '>', '<@' + this.players[2 * this.getOptimalTourneySize(this.players.length) - this.players.length + (this.players.length - 1 - i)].id + '>'], null)
+                    game.timeout = 60000
+                    game.timerObj = setTimeout(function (bruh, turn) {
+                        bruh.channel[bruh.turn - 1].send("So sorry, but you took longer than " + timeout / 1000 + " seconds so you forfeit.")
+                        bruh.ggMessage(turn)
+                    }, timeout, game, game.turn - 1);
                     game.setChannels([this.players[i].player.dmChannel, this.players[2 * this.getOptimalTourneySize(this.players.length) - this.players.length + (this.players.length - 1 - i)].player.dmChannel])
                     game.sysoutBoard(1);
                     game.sysoutBoard(2);
@@ -110,6 +117,11 @@ module.exports = {
                 this.players[i].player.send("Here goes round #" + this.round+ '\nYou are going first! please make your move');
                 this.players[this.players.length - i - 1].player.send("Here goes round #" + this.round + '\nYou are going second, please wait');
                 const game = new Game.connect4game(['<@' + this.players[this.players.length - 1 - i].id + '>', '<@' + this.players[i].id + '>'], null)
+                game.timeout = 60000;
+                game.timerObj = setTimeout(function (bruh, turn) {
+                    bruh.channel[bruh.turn - 1].send("So sorry, but you took longer than " + timeout / 1000 + " seconds so you forfeit.")
+                    bruh.ggMessage(turn)
+                }, game.timeout, game, game.turn - 1);
                 game.setChannels([this.players[this.players.length - 1 - i].player.dmChannel, this.players[i].player.dmChannel])
                 game.sysoutBoard(1);
                 game.sysoutBoard(2);
@@ -133,6 +145,7 @@ module.exports = {
                 switch (winner){
                     case 3:{
                         const newGame = new Game.connect4game(['<@' + game.lowerPlayer.id + '>', '<@' + game.upperPlayer.id + '>'], null)
+                        game.timeout = 60000;
                         newGame.setChannels([game.lowerPlayer.player.dmChannel, game.upperPlayer.player.dmChannel])
                         newGame.sysoutBoard(1);
                         newGame.lowerPlayer = game.upperPlayer;
@@ -141,20 +154,32 @@ module.exports = {
                         gameManager.addGame(newGame);
                         this.activeGames.push(newGame);
                         this.activeGames.splice(this.activeGames.indexOf(game), 1);
+                        console.log("DRAW IN TOURNEY")
                         return;
                     }case 2:
+                        console.log(this.players.length + " : " + game.higherPlayer.seed + " : " + game.lowerPlayer.seed)
+                        game.higherPlayer.player.send("You won")
+                        game.lowerPlayer.player.send("You lost")
+                        this.players.splice(this.players.indexOf(game.lowerPlayer), 1)
+                        if (!fs.existsSync('./assets/connect-4/tournaments/game-record/' + ("" + game.players[0]).substring(2, 20) + '.dat'))
+                            fs.open('./assets/connect-4/tournaments/game-record/' + ("" + game.players[0]).substring(2, 20) + '.dat', function (err) { });
+                        fs.appendFileSync('./assets/connect-4/tournaments/game-record/' + ("" + game.players[0]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "L" : (winner == 3 ? "D" : "W")) + ' ' + game.players[1] + '\n');
+                        if (!fs.existsSync('assets/connect-4/tournaments/game-record/' + ("" + game.players[1]).substring(2, 20) + '.dat'))
+                            fs.open('assets/connect-4/tournaments/game-record/' + ("" + game.players[1]).substring(2, 20) + '.dat', function (err) { });
+                        fs.appendFileSync('assets/connect-4/tournaments/game-record/' + ("" + game.players[1]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "W" : (winner == 3 ? "D" : "L")) + ' ' + game.players[0] + '\n');
+                        break;
+                    case 1:
                         console.log(this.players.length + " : " + game.higherPlayer.seed + " : " + game.lowerPlayer.seed)
                         game.lowerPlayer.player.send("You won")
                         game.higherPlayer.player.send("You lost")
                         this.players[this.players.indexOf(game.lowerPlayer)].seed = game.higherPlayer.seed
                         this.players.splice(this.players.indexOf(game.higherPlayer), 1)
-                        break;
-                    case 1:
-                        console.log(this.players.length + " : " + game.higherPlayer.seed + " : " + game.lowerPlayer.seed)
-                        game.higherPlayer.player.send("You won")
-                        game.lowerPlayer.player.send("You lost")
-                        this.players.splice(this.players.indexOf(game.lowerPlayer), 1)
-                        break;
+                        if (!fs.existsSync('./assets/connect-4/tournaments/game-record/' + ("" + game.players[0]).substring(2, 20) + '.dat'))
+                            fs.open('./assets/connect-4/tournaments/game-record/' + ("" + game.players[0]).substring(2, 20) + '.dat', function (err) { });
+                        fs.appendFileSync('./assets/connect-4/tournaments/game-record/' + ("" + game.players[0]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "L" : (winner == 3 ? "D" : "W")) + ' ' + game.players[1] + '\n');
+                        if (!fs.existsSync('assets/connect-4/tournaments/game-record/' + ("" + game.players[1]).substring(2, 20) + '.dat'))
+                            fs.open('assets/connect-4/tournaments/game-record/' + ("" + game.players[1]).substring(2, 20) + '.dat', function (err) { });
+                        fs.appendFileSync('assets/connect-4/tournaments/game-record/' + ("" + game.players[1]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "W" : (winner == 3 ? "D" : "L")) + ' ' + game.players[0] + '\n');                        break;
                     case 0:
                 }
                 this.activeGames.splice(this.activeGames.indexOf(game), 1);
@@ -167,16 +192,13 @@ module.exports = {
 
         getOptimalTourneySize(n) { 
             if (n == 0) 
-                return 0; 
-    
+                return 0;
             var msb = 0; 
             n = Math.floor(n / 2); 
-    
             while (n != 0) { 
                 n = Math.floor(n / 2); 
                 msb++; 
             } 
-    
             return (1 << msb); 
         } 
     }

@@ -24,15 +24,13 @@ client.on('message', message => {
     } else if (message.content === "gn") {
         message.channel.send('Good Night to you my homies :kissing_heart:');
     } else if (message.content === "verify") {
-        message.channel.send('Only ' + (76 - client.guilds.cache.size) + ' servers more until that check mark!');
+        message.channel.send('Only ' + (75 - client.guilds.cache.size) + ' servers more until that check mark!');
     } else if (message.content === "bitch") {
         message.channel.send('That\'s not nice');
     } else if (message.content === "fuck") {
         message.channel.send('What\'s wrong?');
     } else if (message.content === "shitbot") {
         message.channel.send('I AM WATCHING YOU! 😠');
-    } else if (message.content === "why it no work") {
-        message.channel.send('because you do not know how to code...');
     } else if (message.content === "bye") {
         message.channel.send('Cya! 👋🏼');
     } else if (message.content === "flick u") {
@@ -57,14 +55,6 @@ client.on('message', message => {
         message.channel.send(`Your username: ${message.author.username}\nYour ID: ${message.author.id}`);
     } else if (message.content === 'server info') {
         message.channel.send(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}`);
-    } else if (message.content === "confusion") {
-        message.channel.send('mad cuz bad').then(messageReaction => {
-            messageReaction.react("🧠")
-        })
-    } else if (message.content === "ez") {
-        message.channel.send('then let me challenge you. **WHAT IS 1+1**').then(messageReaction => {
-            messageReaction.react("🤔")
-        })
     } else if (message.content === "bruh") {
         message.channel.send('bruh urself');
     } else if (message.content === "bot info" || message.content === "info") {

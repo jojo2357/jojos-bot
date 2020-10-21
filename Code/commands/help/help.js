@@ -18,6 +18,8 @@ module.exports = {
         { name: 'Java Tips', value: '=java-help', inline: true },
         { name: 'Make a suggestion/report a bug', value: '=suggest/=bug', inline: true },
         { name: 'My invite link', value: '=invite', inline: true },
+        { name: 'Notifications and settings', value: '=settings-help', inline: true },
+        { name: 'Windows hacks', value: '=win-hax', inline: true },
       ).setTimestamp()
       .setFooter('More commands comming soon!');
     message.channel.send(help);

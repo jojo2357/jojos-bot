@@ -17,9 +17,11 @@ module.exports = {
         /*var guildList =*/ client.guilds.cache.forEach(guild => {
             if (!fs.existsSync('./assets/server-settings/' + guild.id + '.json'))
                 return;
-            let channelSettings = require(process.cwd() + '/assets/server-settings/' + message.guild.id + '.json');
-            if(channelSettings.notifications)
+            let channelSettings = require(process.cwd() + '/assets/server-settings/' + guild.id + '.json');
+            if(channelSettings.notifications){
                 client.channels.cache.get(channelSettings.notificationChannel).send(moosage);
+                return;
+            }
         });
         /*try {
             guildList.forEach((guild) => guild.defaultChannel.send(arguments.join(' ')));

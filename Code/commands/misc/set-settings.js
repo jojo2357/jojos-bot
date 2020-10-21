@@ -23,8 +23,10 @@ module.exports = {
                 existingSettings.notifications = arguments[2].toLowerCase() == 'true'
                 break;
             case 'notification channel':
-                if (arguments[2].indexOf('#') > 0)
+                if (arguments[2].indexOf('#') > 0){
                     existingSettings.notificationChannel = arguments[2].substring(2, arguments[2].indexOf('>'))
+                    existingSettings.notifications = true;
+                }
                 break;
             default:
                 message.reply("Could not find that setting");

@@ -48,7 +48,7 @@ function checkLoaded(str = "") {
 function thing() {
     if (client.user != null)
         client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
-    else{
+    else {
         client.login(config.token).then(() => client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log)).catch(() => console.log("an error occured while setting presence"))
     }
 }
@@ -126,7 +126,7 @@ module.exports = {
             }
         };
 
-        setChannels(channels){
+        setChannels(channels) {
             this.channel[0] = channels[0];
             this.channel[1] = channels[1];
         }
@@ -178,10 +178,13 @@ module.exports = {
                 }
                 if (this.timerObj != undefined)
                     clearTimeout(this.timerObj);
-                this.timerObj = setTimeout(function(bruh, turn){
-                    bruh.channel[bruh.turn - 1].send("So sorry, but you took longer than a minute so you forfeit.")
-                    bruh.ggMessage(turn)
-                }, 60000, this, this.turn - 1);
+                if (this.timeout != 0) {
+                    let timeout = this.timeout;
+                    this.timerObj = setTimeout(function (bruh, turn) {
+                        bruh.channel[bruh.turn - 1].send("So sorry, but you took longer than " + timeout / 1000 + " seconds so you forfeit.")
+                        bruh.ggMessage(turn)
+                    }, timeout, this, this.turn - 1);
+                }
             } else {
                 if (this.isSinglePlayer) {
                     if (playerNumber == 1) {
@@ -394,22 +397,22 @@ module.exports = {
 
             if (this.gameOver(this.gameBoard) != 0)
                 connect4GameHolder.gamesPlayed++;
-
-            if (!fs.existsSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat'))
-                fs.open('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat', function (err) { });
-            fs.appendFileSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "W" : winner == 3 ? "D" : "L") + ' ' + (this.isSinglePlayer ? brainSize : this.players[1]) + '\n');
-            if (!this.isSinglePlayer) {
-                if (!fs.existsSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat'))
-                    fs.open('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat', function (err) { });
-                fs.appendFileSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "L" : winner == 3 ? "D" : "W") + ' ' + this.players[0] + '\n');
+            if (this.tourney == undefined) {
+                if (!fs.existsSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat'))
+                    fs.open('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat', function (err) { });
+                fs.appendFileSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "W" : winner == 3 ? "D" : "L") + ' ' + (this.isSinglePlayer ? brainSize : this.players[1]) + '\n');
+                if (!this.isSinglePlayer) {
+                    if (!fs.existsSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat'))
+                        fs.open('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat', function (err) { });
+                    fs.appendFileSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "L" : winner == 3 ? "D" : "W") + ' ' + this.players[0] + '\n');
+                } else {
+                    if (!fs.existsSync('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat'))
+                        fs.open('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat', function (err) { });
+                    fs.appendFileSync('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat', "" + ((winner == 1 || winner == "1") ? "L" : winner == 3 ? "D" : "W") + ' ' + this.players[0] + '\n');
+                }
             } else {
-                if (!fs.existsSync('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat'))
-                    fs.open('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat', function (err) { });
-                fs.appendFileSync('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat', "" + ((winner == 1 || winner == "1") ? "L" : winner == 3 ? "D" : "W") + ' ' + this.players[0] + '\n');
-            }
-            if (this.tourney != undefined){
                 console.log("its over in this tourney");
-                this.tourney.notifyGG(this, this.gameOver(this.gameBoard) == 0 ? winner + 1: winner);
+                this.tourney.notifyGG(this, this.gameOver(this.gameBoard) == 0 ? winner + 1 : winner);
             }
             connect4GameHolder.removeGame(this);
         }

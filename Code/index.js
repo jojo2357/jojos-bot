@@ -73,12 +73,16 @@ client.on("guildCreate", (guild) => {
   client.users.cache.get('524411594009083933').send(`omgomgomgomgogm i got added to ${guild.name}!!!`);
   client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
   console.log(`Joined new guild: ${guild.name}`);
+  if (guild.systemChannel != null)
+    guild.systemChannel.send("Hey! thanks for adding me! You can use `=help` to see commands. Use `=settings-help` to get started configuring the bot to recieve notifications")
 });
 
 client.on("guildDelete", (guild) => {
   client.users.cache.get('524411594009083933').send(`sobsobsobsobsobsob :sob: i got romoved from ${guild.name}!!!`);
   client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
   console.log(`Left guild: ${guild.name}`);
+  if (fs.existsSync(process.cwd() + '/assets/server-settings/' + guild.id + '.json'))
+    fs.unlinkSync(process.cwd() + '/assets/server-settings/' + guild.id + '.json').then(console.log("Removed " + message.guild.id + '.json'))
 });
 
 // //*The poll command

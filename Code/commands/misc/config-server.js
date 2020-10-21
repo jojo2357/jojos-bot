@@ -18,7 +18,7 @@ module.exports = {
         var thisServerSettings = require(process.cwd() + '/assets/server-settings/' + message.guild.id + '.json');
         const msg = new Discord.MessageEmbed()
         .setTitle('Server Settings')
-        .setDescription('use =set to change a setting')
+        .setDescription('use =set to change a setting. Example: `=set recieves notifications true` or `=set notification channel #general`')
         .addFields(
             { name: 'Recieves Notifications', value: "This setting determines if you recieve notifications about bot restarts, new updates, and inter-server tournaments (coming soon). is either `true` or `false`\n" + thisServerSettings.notifications},
             { name: 'Notification Channel', value: "Current notifications channel:\n" + (thisServerSettings.notificationChannel == 0 ? "not set" : "<#" + thisServerSettings.notificationChannel + ">")},

@@ -1,6 +1,6 @@
 .vscode/*
 config.json
 connect-4-bot/*
-assets/connect-4/game-record/*
+assets/connect-4/*
 *.bat
 assets/server-settings/*

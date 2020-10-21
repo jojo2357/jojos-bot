@@ -6,7 +6,7 @@ module.exports = {
     minArgs: 0,
     maxArgs: 0,
     callback: (message, arguments) => {
-        if (!Manager.tournament.contains(message.author)){
+        if (!Manager.tournament.contains(message.author) && !Manager.tournament.inProgress){
             message.author.send("You have been signed up!").then(() => {
                 Manager.tournament.addPlayer(message.author);
                 console.log("Signed up");
@@ -17,6 +17,8 @@ module.exports = {
             })
 //            Manager.tournament.addPlayer(message.author)
 //            console.log("Signed up");
+        }else if (Manager.tournament.inProgress){
+            message.reply(" its already in progress")
         }else{
             message.reply(" you were already registered")
         }
