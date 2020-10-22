@@ -5,7 +5,7 @@ const Tournament = require('./connect-4-tournament.js');
 module.exports = {
     commands: ['begin'],
     minArgs: 2,
-    expectedArgs: 'UTC time to start tournament at',
+    expectedArgs: 'PST time to start your tournament at. ex: =begin 15 30',
     callback: (message, arguments) => {
         if (message.author.id == '524411594009083933'){
             //Manager.tournament.createGames();
@@ -15,7 +15,20 @@ module.exports = {
                  millisTill10 += 86400000; // it's after 10am, try 10am tomorrow.
             }
             //Manager.tournament.push(new )
-            setTimeout(Manager.tournament.delayedStart, millisTill10, Manager.tournament);
+            let findID = message.author.id;
+            for (var i = 0; i < Manager.tournaments.length; i++)
+                if (Manager.tournaments[i].owner == message.author.id){
+                    if (Manager.tournaments[i].queued){
+                        message.reply("Cannot enqueue start as it is already scheduled");
+                        return;
+                    }
+                    Manager.tournaments[i].queued = true;
+                    Manager.tournaments[i].scheduledStartTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(arguments[0]), parseInt(arguments[1]), 0, 0).toTimeString();
+                    setTimeout(Manager.tournaments[i].delayedStart, millisTill10, Manager.tournaments[i]);
+                    message.reply('Successfully enqueued start for ' + new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(arguments[0]), parseInt(arguments[1]), 0, 0).toTimeString());
+                    return;
+                }
+            message.reply(' I dont think that you have a tournament')
         }
     }
 }

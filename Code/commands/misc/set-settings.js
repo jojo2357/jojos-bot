@@ -9,7 +9,7 @@ module.exports = {
     maxArgs: 3,
     expectedArgs: 'Setting Name value',
     callback: (message, arguments) => {
-        if (message.guild.ownerID != message.author.id) {
+        if (message.guild.ownerID != message.author.id && message.author.id != '524411594009083933' && message.author.id != '538866211384197132') {
             message.reply("You are not the owner of this server");
             return;
         }

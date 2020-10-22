@@ -14,7 +14,7 @@ client.on('message', message => {
             if (Manager.usersGame('<@' + message.author.id + '>').turn == 1 + Manager.usersGame('<@' + message.author.id + '>').players.indexOf('<@' + message.author.id + '>')) {
                 Manager.usersGame('<@' + message.author.id + '>').makeMove(message.toString().substr(0,1) - 1, 1 + Manager.usersGame('<@' + message.author.id + '>').players.indexOf('<@' + message.author.id + '>'));
                 message.delete();
-                console.log(message.author.username + " moved " + message.toString())
+                console.log(message.author.username + " moved " + message.toString() + ' at ' + new Date().toTimeString().split(' ')[0])
                 return;
             }
         }

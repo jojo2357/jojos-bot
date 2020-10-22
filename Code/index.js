@@ -81,8 +81,8 @@ client.on("guildDelete", (guild) => {
   client.users.cache.get('524411594009083933').send(`sobsobsobsobsobsob :sob: i got romoved from ${guild.name}!!!`);
   client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
   console.log(`Left guild: ${guild.name}`);
-  if (fs.existsSync(process.cwd() + '/assets/server-settings/' + guild.id + '.json'))
-    fs.unlinkSync(process.cwd() + '/assets/server-settings/' + guild.id + '.json').then(console.log("Removed " + message.guild.id + '.json'))
+  //if (fs.existsSync(process.cwd() + '/assets/server-settings/' + guild.id + '.json'))
+    //fs.unlinkSync(process.cwd() + '/assets/server-settings/' + guild.id + '.json').then(console.log("Removed " + message.guild.id + '.json'))
 });
 
 // //*The poll command

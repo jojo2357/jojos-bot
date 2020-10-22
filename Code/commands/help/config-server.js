@@ -8,10 +8,6 @@ module.exports = {
     minArgs: 0,
     maxArgs: 0,
     callback: (message, arguments) => {
-        if (message.guild.ownerID != message.author.id){
-            message.reply("You are not the owner of this server");
-            return;
-        }
         if (!fs.existsSync('./assets/server-settings/' + message.guild.id + '.json')){
             fs.writeFileSync('./assets/server-settings/' + message.guild.id + '.json', JSON.stringify(defaultSettings));
         }

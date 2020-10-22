@@ -114,9 +114,9 @@ module.exports = (client, commandOptions) => {
           return
         }
         if (message.guild != null)
-          console.log(message.author.username + " in " + message.guild.name + " asked for " + message.toString())
+          console.log(message.author.username + " in " + message.guild.name + " asked for " + message.toString() + ' at ' + new Date().toTimeString().split(' ')[0])
         else 
-          console.log(message.author.username + " in dm'd me and asked for " + message.toString())
+          console.log(message.author.username + " in dm'd me and asked for " + message.toString() + ' at ' + new Date().toTimeString().split(' ')[0])
         try{
           callback(message, arguments, arguments.join(' '), client)
         }catch (err){

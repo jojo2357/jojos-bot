@@ -89,6 +89,7 @@ module.exports = {
 
         prc.stderr.on('data', (data) => {
             console.error("Connect 4 master erred: " + data.toString());
+            process.exit();
         });
 
         prc.on('exit', function (code) {
@@ -235,7 +236,7 @@ module.exports = {
                 }
             }
             const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'testBoard.png');
-            if (this.lastMessage != null)
+            if (this.lastMessage != null && this.lastMessage.channel.guild != null)
                 this.lastMessage.delete().catch();
             if (!this.gameOver(this.gameBoard) && player != -1) {
                 connect4GameHolder.holdMyBeer = this;
@@ -412,7 +413,7 @@ module.exports = {
                 }
             } else {
                 console.log("its over in this tourney");
-                this.tourney.notifyGG(this, this.gameOver(this.gameBoard) == 0 ? winner + 1 : winner);
+                this.tourney.notifyGG(this, /*this.gameOver(this.gameBoard) == 0 ? winner + 1 :*/ winner);
             }
             connect4GameHolder.removeGame(this);
         }
