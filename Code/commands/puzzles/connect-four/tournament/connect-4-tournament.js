@@ -1,7 +1,9 @@
-const gameManager = require('../game/connect-4-game-holder.js');
-const Game = require('../game/connect-4-game.js');
 const fs = require('fs');
 const Discord = require('discord.js');
+const { error } = require('console');
+const gameManager = require('../game/connect-4-game-holder.js');
+const Game = require('../game/connect-4-game.js');
+const Manager = require(process.cwd() + '/commands/puzzles/connect-four/tournament/connect-4-tournament-manager.js');
 
 class tournamentParticipant{
     constructor(id, player){
@@ -43,20 +45,31 @@ class tournamentParticipant{
 
 module.exports = {
     tournament: class{
-        constructor(host, scope){//Who owns it, global: true/local: false
+        constructor(host, scope, localServer){//Who owns it, global: true/local: false
+            if (host == null){
+                Manager.tournaments.splice(this, 1) 
+                return;
+            }
             this.players = [];
             this.allPlayers = [];
             this.round = 1;
             this.assisgnIndex = 0;
             this.inProgress = false;
             this.public = scope;
+            this.hostServer = localServer;
             this.queued = false;
             this.owner = host;
         };
 
-        delayedStart(tournament){
+        delayedStart(tournament, errorChannel){
+            if (tournament.players.length < 2){
+                Manager.tournaments.splice(Manager.tournaments.indexOf(tournament), 1)
+                errorChannel.send("Aborting tournament due to too few players!");
+                return false;
+            }
             tournament.createGames();
             tournament.inProgress = true;
+            return true;
         }
 
         contains(player){
@@ -166,10 +179,10 @@ module.exports = {
                         game.higherPlayer.player.send("You lost")
                         if (!fs.existsSync('./assets/connect-4/tournaments/game-record/' + ("" + game.players[0]).substring(2, 20) + '.dat'))
                             fs.open('./assets/connect-4/tournaments/game-record/' + ("" + game.players[0]).substring(2, 20) + '.dat', function (err) { });
-                        fs.appendFileSync('./assets/connect-4/tournaments/game-record/' + ("" + game.players[0]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "L" : (winner == 3 ? "D" : "W")) + ' ' + game.players[1] + '\n');
+                        fs.appendFileSync('./assets/connect-4/tournaments/game-record/' + ("" + game.players[0]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "W" : (winner == 3 ? "D" : "L")) + ' ' + game.players[1] + '\n');
                         if (!fs.existsSync('assets/connect-4/tournaments/game-record/' + ("" + game.players[1]).substring(2, 20) + '.dat'))
                             fs.open('assets/connect-4/tournaments/game-record/' + ("" + game.players[1]).substring(2, 20) + '.dat', function (err) { });
-                        fs.appendFileSync('assets/connect-4/tournaments/game-record/' + ("" + game.players[1]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "W" : (winner == 3 ? "D" : "L")) + ' ' + game.players[0] + '\n');
+                        fs.appendFileSync('assets/connect-4/tournaments/game-record/' + ("" + game.players[1]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "L" : (winner == 3 ? "D" : "W")) + ' ' + game.players[0] + '\n');
                         break;
                     case 2:
                         console.log(winner + " : " + game.higherPlayer.id + " : " + game.lowerPlayer.id)
@@ -178,15 +191,17 @@ module.exports = {
                         this.players.splice(this.players.indexOf(game.lowerPlayer), 1)
                         if (!fs.existsSync('./assets/connect-4/tournaments/game-record/' + ("" + game.players[0]).substring(2, 20) + '.dat'))
                             fs.open('./assets/connect-4/tournaments/game-record/' + ("" + game.players[0]).substring(2, 20) + '.dat', function (err) { });
-                        fs.appendFileSync('./assets/connect-4/tournaments/game-record/' + ("" + game.players[0]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "L" : (winner == 3 ? "D" : "W")) + ' ' + game.players[1] + '\n');
+                        fs.appendFileSync('./assets/connect-4/tournaments/game-record/' + ("" + game.players[0]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "W" : (winner == 3 ? "D" : "L")) + ' ' + game.players[1] + '\n');
                         if (!fs.existsSync('assets/connect-4/tournaments/game-record/' + ("" + game.players[1]).substring(2, 20) + '.dat'))
                             fs.open('assets/connect-4/tournaments/game-record/' + ("" + game.players[1]).substring(2, 20) + '.dat', function (err) { });
-                        fs.appendFileSync('assets/connect-4/tournaments/game-record/' + ("" + game.players[1]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "W" : (winner == 3 ? "D" : "L")) + ' ' + game.players[0] + '\n');                        break;
+                        fs.appendFileSync('assets/connect-4/tournaments/game-record/' + ("" + game.players[1]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "L" : (winner == 3 ? "D" : "W")) + ' ' + game.players[0] + '\n');                        
+                        break;
                     case 0:
                 }
                 this.activeGames.splice(this.activeGames.indexOf(game), 1);
                 if (this.players.length == 1){
-                    this.players[0].player.send("You won the whole thing")
+                    this.players[0].player.send("You won the whole thing!!! U r the best around and finished 1st!")
+                    Manager.tournaments.splice(Manager.tournaments.indexOf(this), 1)
                 }else if (this.activeGames.length == 0){
                     this.round++;
                     this.createWithoutSeed();

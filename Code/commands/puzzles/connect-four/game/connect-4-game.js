@@ -184,7 +184,7 @@ module.exports = {
                     this.timerObj = setTimeout(function (bruh, turn) {
                         bruh.channel[bruh.turn - 1].send("So sorry, but you took longer than " + timeout / 1000 + " seconds so you forfeit.")
                         bruh.ggMessage(turn)
-                    }, timeout, this, this.turn - 1);
+                    }, timeout, this, this.turn == 2 ? 1 : 2);
                 }
             } else {
                 if (this.isSinglePlayer) {

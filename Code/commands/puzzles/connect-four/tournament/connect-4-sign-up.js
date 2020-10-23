@@ -8,13 +8,18 @@ module.exports = {
     maxArgs: 1,
     expectedArgs: 'tournament id',
     callback: (message, arguments) => {
-        var tournaments;
+        var tournament;
         for (var i = 0; i < Manager.tournaments.length; i++) {
             if (Manager.tournaments[i].owner.id == arguments[0])
                 tournament = Manager.tournaments[i];
         }
         if (tournament == undefined) {
             message.reply('Could not find a tournament with that id');
+            return;
+        }
+        if (!tournament.public && tournament.hostServer.id != message.guild.id){
+            console.log(tournament.hostServer.id + ' ' + message.guild.id)
+            message.reply("Sorry, but that tournament is local to another server. Please navigate back to that server to sign up");
             return;
         }
         for (var i = 0; i < Manager.tournaments.length; i++) {

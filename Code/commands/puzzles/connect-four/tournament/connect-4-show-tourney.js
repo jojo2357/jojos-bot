@@ -28,9 +28,17 @@ module.exports = {
                 .setFooter('Haha, good luck! Brain is loading')
             message.channel.send(ch);
         }else{
-            var out = "# of players, owner username, tournament id, scheduled start time"
+            var out = "Local/Global, # of players, owner username, tournament id, scheduled start time"
             for (var i = 0; i < Manager.tournaments.length; i++){
-                out += '\n' + Manager.tournaments[i].players.length + ' players, ' + Manager.tournaments[i].owner.username + ' `' + Manager.tournaments[i].owner.id + '` ' + (Manager.tournaments[i].scheduledStartTime == undefined ? 'not set' : Manager.tournaments[i].scheduledStartTime);
+                if (Manager.tournaments[i].hostServer == null || Manager.tournaments[i].hostServer == undefined){
+                    Manager.tournaments.splice(i, 1);
+                    if (Manager.tournaments.length == i)
+                        break;
+                }
+                if (!Manager.tournaments[i].public && message.guild.id == Manager.tournaments[i].hostServer.id)
+                    out += '\nLocal:  ' + Manager.tournaments[i].players.length + ' players, ' + Manager.tournaments[i].owner.username + ' `' + Manager.tournaments[i].owner.id + '` ' + (Manager.tournaments[i].scheduledStartTime == undefined ? 'not set' : Manager.tournaments[i].scheduledStartTime);
+                else if (Manager.tournaments[i].public)
+                    out += '\nGlobal: ' + Manager.tournaments[i].players.length + ' players, ' + Manager.tournaments[i].owner.username + ' `' + Manager.tournaments[i].owner.id + '` ' + (Manager.tournaments[i].scheduledStartTime == undefined ? 'not set' : Manager.tournaments[i].scheduledStartTime);
             }
             const ch = new Discord.MessageEmbed()
                 .setColor('#0cc0b4')

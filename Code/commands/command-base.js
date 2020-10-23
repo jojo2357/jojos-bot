@@ -120,7 +120,7 @@ module.exports = (client, commandOptions) => {
         try{
           callback(message, arguments, arguments.join(' '), client)
         }catch (err){
-          message.reply('An error has occured: ' + err);
+          message.reply('An error has occured: ' + err + '\n' + err.stack);
         }
         return
       }

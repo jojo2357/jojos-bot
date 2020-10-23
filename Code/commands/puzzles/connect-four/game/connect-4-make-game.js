@@ -70,7 +70,7 @@ module.exports = {
                 const ch = new Discord.MessageEmbed()
                     .setColor('#0cc0b4')
                     .setTitle('Connect 4 duel to the death')
-                    .setDescription('<@' + message.author + '>' + ' boutta loose bigtime. Remember though, if you want to play another human, just mention them after `=connect-4`. Ypu can also use `=help` to see more commands')
+                    .setDescription('<@' + message.author + '>' + ' boutta loose bigtime. Remember though, if you want to play another human, just mention them after `=connect-4`. You can also use `=help` to see more commands')
                     .setTimestamp()
                     .setFooter('Haha, good luck! Brain is loading')
                 message.channel.send(ch);
