@@ -24,6 +24,7 @@ module.exports = {
         { name: 'Show lifetime stats', value: '=connect-4-stats (optional)UserId/Mention', inline: true },
         { name: 'Current loaded ai', value: '=difficulty', inline: true },
         { name: 'Frequently asked questions', value: '=faq', inline: true },
+        { name: 'Tournament commands', value: '=tournament-help', inline: true },
       ).setTimestamp()
       .setFooter('More commands comming soon!');
     message.channel.send(help);
