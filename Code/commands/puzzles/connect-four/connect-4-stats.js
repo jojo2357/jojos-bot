@@ -106,6 +106,71 @@ function getAndPrint(shortAuthor, title = 'Connect 4 stats', message) {
         mapKeys.splice(recDex, 1);
     }
     out += "\n-------------------------------";
+    if (shortAuthor == "community") {
+        if (!fs.existsSync('./assets/connect-4/tournaments/game-record/0_computerBrain.dat'))
+            return;
+        var tourneyGames = fs.readFileSync('./assets/connect-4/tournaments/game-record/0_computerBrain.dat').toString().split('\n');
+    } else {
+        if (!fs.existsSync('./assets/connect-4/tournaments/game-record/' + shortAuthor + '.dat'))
+            return;
+        var tourneyGames = fs.readFileSync('./assets/connect-4/tournaments/game-record/' + shortAuthor + '.dat').toString().split('\n');
+    }
+    /*var w = 0;
+    var d = 0;
+    var l = 0;
+    var tot = 0;*/
+    var playerMap = new Map();
+    var mapKeys = []
+    for (var i = 0; i < tourneyGames.length - 1; i++) {
+        if (!playerMap.has(tourneyGames[i].substr(2))) {
+            playerMap.set(tourneyGames[i].substr(2), [0, 0, 0, 0]);
+            mapKeys.push(tourneyGames[i].substr(2));
+        }
+        playerMap.get(tourneyGames[i].substr(2))[3]++;
+        switch (tourneyGames[i].charAt(0)) {
+            case 'W':
+                playerMap.get(tourneyGames[i].substr(2))[0]++;
+                w++;
+                break;
+            case 'D':
+                playerMap.get(tourneyGames[i].substr(2))[1]++;
+                d++;
+                break;
+            case 'L':
+                playerMap.get(tourneyGames[i].substr(2))[2]++;
+                l++;
+        }
+        tot++;
+    }
+    out += "\nTournament stats:";
+    for (var j = playerMap.size; j > 0 && playerMap.size > 0; j--) {
+        var rec = 0;
+        var recDex = -1;
+        for (var i = 0; i < playerMap.size; i++) {
+            if (playerMap.get(mapKeys[i])[3] > rec) {
+                rec = playerMap.get(mapKeys[i])[3];
+                recDex = i
+            }
+        }
+        if (recDex == -1)
+            break;
+        if (!mapKeys[recDex].includes('>')) {
+            if (parseInt(mapKeys[recDex]) >= 1000000) {
+                var brainName = mapKeys[recDex].substring(0, mapKeys[recDex].length - 6) + 'M'
+                out += "\nBrain size " + brainName + ': ' + playerMap.get(mapKeys[recDex])[0] + '/' + playerMap.get(mapKeys[recDex])[1] + '/' + playerMap.get(mapKeys[recDex])[2];
+            } else
+                if (parseInt(mapKeys[recDex]) == 0) {
+                    var brainName = "Community Brain"
+                    out += "\n" + brainName + ': ' + playerMap.get(mapKeys[recDex])[0] + '/' + playerMap.get(mapKeys[recDex])[1] + '/' + playerMap.get(mapKeys[recDex])[2];
+                } else {
+                    var brainName = mapKeys[recDex].substring(0, mapKeys[recDex].length - 3) + 'K'
+                    out += "\nBrain size " + brainName + ': ' + playerMap.get(mapKeys[recDex])[0] + '/' + playerMap.get(mapKeys[recDex])[1] + '/' + playerMap.get(mapKeys[recDex])[2];
+                }
+        } else
+            out += "\n" + mapKeys[recDex] + ': ' + playerMap.get(mapKeys[recDex])[0] + '/' + playerMap.get(mapKeys[recDex])[1] + '/' + playerMap.get(mapKeys[recDex])[2];
+        playerMap.delete(mapKeys[recDex]);
+        mapKeys.splice(recDex, 1);
+    }
     out += "\nLifetime record: " + w + '/' + d + '/' + l;
     out += "\nLifetime wr: " + (100 * w / tot).toFixed(2) + '%';
     out += "\nLifetime games: " + tot;

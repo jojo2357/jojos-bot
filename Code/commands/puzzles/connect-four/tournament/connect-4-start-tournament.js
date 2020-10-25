@@ -5,6 +5,7 @@ const Tournament = require('./connect-4-tournament.js');
 module.exports = {
     commands: ['begin'],
     minArgs: 2,
+    maxArgs: 2,
     expectedArgs: 'PST time to start your tournament at. ex: =begin 15 30\nIt is currently ' + new Date().toTimeString().split(' ')[0],
     callback: (message, arguments) => {
         //if (message.author.id == '524411594009083933'){
@@ -29,6 +30,12 @@ module.exports = {
                     Manager.tournaments[i].queued = true;
                     Manager.tournaments[i].scheduledStartTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(arguments[0]), parseInt(arguments[1]), 0, 0).toTimeString();
                     setTimeout(Manager.tournaments[i].delayedStart, millisTill10, Manager.tournaments[i], message.channel);
+                    if (millisTill10 > 5000 * 60)
+                        setTimeout((tourney) => {
+                            for (var i = 0; i < tourney.players.length; i++)
+                                tourney.players[i].player.send('Tournament starts in 5 minutes!');
+                        }, millisTill10 - (1000 * 60 * 5), Manager.tournaments[i]);
+                    
                     message.reply('Successfully enqueued start for ' + new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(arguments[0]), parseInt(arguments[1]), 0, 0).toTimeString());
                     return;
                 }

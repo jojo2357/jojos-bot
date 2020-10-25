@@ -28,7 +28,7 @@ module.exports = {
             return;
         }
         console.log('Creating tournament!')
-        const tourney = new Tournament.tournament(message.author, arguments[0] == 'global');
+        const tourney = new Tournament.tournament(message.author, true, message.guild);
         Manager.tournaments.push(tourney);
         message.channel.send("Created! Your ID is: " + message.author.id + ". Share it far and wide!")
     }
