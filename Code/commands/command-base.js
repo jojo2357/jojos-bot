@@ -116,11 +116,6 @@ module.exports = (client, commandOptions) => {
         }
         if (message.guild != null){
           console.log(message.author.username + " in " + message.guild.name + " asked for " + message.toString() + ' at ' + new Date().toTimeString().split(' ')[0])
-          var q = spawn('sendNotification.bat', ['A command!', (message.author.username + ' in ' + message.guild.name + ' asked for ' + message.toString() + ' at ' + new Date().toTimeString().split(' ')[0]).replace('\"', '').replace('\'', '')])
-          q.stdout.on('data', (data) => console.log(data.toString()))
-          q.stderr.on('data', (data) => {
-            console.error("Oh no!: " + data.toString());
-        });
         }else 
           console.log(message.author.username + " in dm'd me and asked for " + message.toString() + ' at ' + new Date().toTimeString().split(' ')[0])
         try{

@@ -89,6 +89,7 @@ module.exports = {
 
         prc.stderr.on('data', (data) => {
             console.error("Connect 4 master erred: " + data.toString());
+            spawn('sendError.bat', ['C4 bot died', data.toString()])
             process.exit();
         });
 
@@ -372,6 +373,7 @@ module.exports = {
         ggMessage(winner) {
             clearTimeout(this.timerObj);
             console.log("Attempting to kill and remove. winner: " + winner);
+            spawn('sendNotification.bat', ['GG m8', (this.players[0] + ' ' + (winner == 1 ? 'won' : winner == 3 ? 'drew' : 'lost') + ' to ' + (this.isSinglePlayer ? ' the cpu' : this.players[1])).replace('\"', '').replace('\'', '')])
             if (winner != 3) {
                 if (this.isSinglePlayer) {
                     if (winner == 1 || winner == "1")
