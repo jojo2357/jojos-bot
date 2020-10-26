@@ -20,6 +20,7 @@ const client = new Commando.CommandoClient({
   owner: '524411594009083933',
   commandPrefix: config.prefix
 })
+const { spawn } = require('child_process');
 
 client.on('ready', async () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -70,7 +71,7 @@ for (const file of commandFiles) {
 }
 
 client.on("guildCreate", (guild) => {
-  client.users.cache.get('524411594009083933').send(`omgomgomgomgogm i got added to ${guild.name}!!!`);
+  spawn('sendNotification.bat', ['Added to server', 'omgomgomgomgogm i got added to' + (guild.name).replace('\"', '').replace('\'', '') + '!!!'])
   client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
   console.log(`Joined new guild: ${guild.name}`);
   if (guild.systemChannel != null)
@@ -78,7 +79,7 @@ client.on("guildCreate", (guild) => {
 });
 
 client.on("guildDelete", (guild) => {
-  client.users.cache.get('524411594009083933').send(`sobsobsobsobsobsob :sob: i got romoved from ${guild.name}!!!`);
+  spawn('sendNotification.bat', ['Removed from server', 'sobsobsobsobsobsob 😭 i got removed from' + (guild.name).replace('\"', '').replace('\'', '') + '!!!'])
   client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
   console.log(`Left guild: ${guild.name}`);
   //if (fs.existsSync(process.cwd() + '/assets/server-settings/' + guild.id + '.json'))
