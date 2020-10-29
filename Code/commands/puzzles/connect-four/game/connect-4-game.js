@@ -88,9 +88,9 @@ module.exports = {
         prc.stdout.on('data', theThing);
 
         prc.stderr.on('data', (data) => {
-            console.error("Connect 4 master erred: " + data.toString());
-            spawn('sendError.bat', ['C4 bot died', data.toString()])
-            process.exit();
+            console.error("Connect 4 master erred: " + data.toString()).then(
+            spawn('sendError.bat', ['C4 bot died', data.toString()])).then(
+            process.exit())
         });
 
         prc.on('exit', function (code) {

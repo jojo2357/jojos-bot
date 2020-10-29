@@ -21,6 +21,7 @@ const client = new Commando.CommandoClient({
   commandPrefix: config.prefix
 })
 const { spawn } = require('child_process');
+const sendUsers = require('./commands/misc/count-users.js')
 
 client.on('ready', async () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -161,3 +162,5 @@ module.exports = {
     client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers');
   }
 }
+
+sendUsers.setClient(client)
