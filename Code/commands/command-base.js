@@ -1,7 +1,10 @@
 const { prefix } = require('../config.json')
 const { spawn } = require('child_process');
+const fs = require("fs");
 
+let blacklisted = []
 const validatePermissions = (permissions) => {
+
   const validPermissions = [
     'CREATE_INSTANT_INVITE',
     'KICK_MEMBERS',
@@ -44,6 +47,7 @@ const validatePermissions = (permissions) => {
 }
 
 module.exports = (client, commandOptions) => {
+
   let {
     commands,
     expectedArgs = '',
@@ -76,15 +80,24 @@ module.exports = (client, commandOptions) => {
   client.on('message', (message) => {
     if (message.author.bot) 
       return;
+    if (blacklisted.includes(message.author.id))
+      return;
     const { member, content, guild } = message
 
     for (const alias of commands) {
       const command = `${prefix}${alias.toLowerCase()}`
-
       if (
         content.toLowerCase().startsWith(`${command} `) ||
         content.toLowerCase() === command
       ) {
+        blacklisted = [];
+        blacklisted = fs.readFileSync('assets/blacklist/blacklist.dat').toString().split('\r\n');
+        for (var i = blacklisted.length - 1; i >= 0; i--){
+            if (blacklisted[i] === ''){
+              blacklisted.splice(i, 1);
+            }
+        }
+        console.log(blacklisted)
         for (const permission of permissions) {
           if (!member.hasPermission(permission)) {
             message.reply(permissionError)
