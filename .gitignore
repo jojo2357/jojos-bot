@@ -1,0 +1,8 @@
+Code/.vscode/*
+Code/config.json
+Code/connect-4-bot/*
+Code/assets/connect-4/*
+Code/run.bat
+Code/assets/server-settings/*
+Code/assets/blacklist/*
+Code/node_modules/*
