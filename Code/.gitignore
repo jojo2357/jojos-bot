@@ -5,3 +5,4 @@ assets/connect-4/*
 run.bat
 assets/server-settings/*
 assets/blacklist/*
+node_modules/*
