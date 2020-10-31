@@ -19,16 +19,7 @@ module.exports = {
             message.channel.send('<@' + message.author + '> you dont have a game, silly! Use `=connect-4` to start one!')
         else if (Manager.usersGame('<@' + message.author + '>').channel != message.channel)
             message.channel.send("You have a game in progress in <#" + Manager.usersGame('<@' + message.author + '>').channel + ">")
-        else if (Manager.usersGame('<@' + message.author + '>').hasRoom(parseInt(arguments[0]) - 1)) {
-            if (Manager.usersGame('<@' + message.author + '>').isEmpty() && Manager.usersGame('<@' + message.author + '>').isSinglePlayer)
-                message.channel.send("Brain is still loading, please be patient.");
-            else if (Manager.usersGame('<@' + message.author + '>').turn == 1 + Manager.usersGame('<@' + message.author + '>').players.indexOf('<@' + message.author + '>')) {
-                Manager.usersGame('<@' + message.author + '>').makeMove(parseInt(arguments[0]) - 1, 1 + Manager.usersGame('<@' + message.author + '>').players.indexOf('<@' + message.author + '>'));
-            } else {
-                message.channel.send("it aint ur turn fool");
-            }
-        } else
-            message.channel.send("either u dont know how to type numbers or something went wrong");
+        message.channel.send('Using `=m` is no longer supported. to make a move, only type the number of the column')
         message.delete();
     }
 }
