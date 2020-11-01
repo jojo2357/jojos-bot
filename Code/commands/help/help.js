@@ -20,6 +20,7 @@ module.exports = {
         { name: 'My invite link', value: '=invite', inline: true },
         { name: 'Notifications and settings', value: '=settings-help', inline: true },
         { name: 'Windows hacks', value: '=win-hax', inline: true },
+        { name: 'Privacy disclaimer', value: '=privacy', inline: true },
       ).setTimestamp()
       .setFooter('More commands comming soon!');
     message.channel.send(help);
