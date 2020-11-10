@@ -8,6 +8,17 @@ const Commando = require('discord.js-commando');
 const client = new Commando.CommandoClient();
 const config = require(process.cwd() + '\\config.json');
 
+const { spawn } = require('child_process');
+
+let background;
+let redToken;
+let yellowToken;
+let whiteToken;
+let lastRedToken;
+let lastYellowToken;
+let winningYellowToken;
+let winningRedToken;
+
 const emptyBoard = [[0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0],
@@ -16,8 +27,6 @@ const emptyBoard = [[0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0]];
 
 const brainSize = 0;
-
-const { spawn } = require('child_process');
 
 var prc;
 var stdinStream;
@@ -54,6 +63,17 @@ function thing() {
 }
 
 module.exports = {
+    async initImages() {
+        background = await Canvas.loadImage('assets\\images\\defaultBoard.png');
+        redToken = await Canvas.loadImage('assets\\images\\redToken.png');
+        yellowToken = await Canvas.loadImage('assets\\images\\yellowToken.png');
+        whiteToken = await Canvas.loadImage('assets\\images\\whiteToken.png');
+        lastRedToken = await Canvas.loadImage('assets\\images\\lastRedToken.png');
+        lastYellowToken = await Canvas.loadImage('assets\\images\\lastYellowToken.png');
+        winningYellowToken = await Canvas.loadImage('assets\\images\\winningYellowToken.png');
+        winningRedToken = await Canvas.loadImage('assets\\images\\winningRedToken.png');
+    }, 
+
     gamesPlayed() {
         return gamesPlayed;
     },
@@ -87,10 +107,10 @@ module.exports = {
         }
         prc.stdout.on('data', theThing);
 
-        prc.stderr.on('data', (data) => {
-            console.error("Connect 4 master erred: " + data.toString()).then(
-            spawn('sendError.bat', ['C4 bot died', data.toString()])).then(
-            process.exit())
+        prc.stderr.on('data', async (data) => {
+            await console.error("Connect 4 master erred: " + data.toString())
+            await spawn('sendError.bat', ['C4 bot died', data.toString()])
+            await process.exit()
         });
 
         prc.on('exit', function (code) {
@@ -98,6 +118,8 @@ module.exports = {
         });
         stdinStream.pipe(prc.stdin);
         console.log("master bot created");
+
+        this.initImages();
     },
 
     connect4game: class {
@@ -154,6 +176,7 @@ module.exports = {
                 return;
             }
             if (this.hasRoom(column)) {
+                this.lastMove = column;
                 for (var row = 0; row < 6; row++)
                     if (this.gameBoard[row][column] == 0) {
                         this.gameBoard[row][column] = playerNumber;
@@ -201,13 +224,9 @@ module.exports = {
 
         async sysoutBoard(player = this.turn - 1) {
             //console.log("board printing begin");
-            const canvas = Canvas.createCanvas(224, 192);
+            const canvas = await Canvas.createCanvas(224, 192);
             const ctx = canvas.getContext('2d');
-            const background = await Canvas.loadImage('assets\\images\\defaultBoard.png');
-            const redToken = await Canvas.loadImage('assets\\images\\redToken.png');
-            const yellowToken = await Canvas.loadImage('assets\\images\\yellowToken.png');
-            const whiteToken = await Canvas.loadImage('assets\\images\\whiteToken.png');
-            const winningPeice = this.gameOver(this.gameBoard) == 1 ? await Canvas.loadImage('assets\\images\\winningYellowToken.png') : await Canvas.loadImage('assets\\images\\winningRedToken.png');
+            const winningPeice = this.gameOver(this.gameBoard) == 1 ? winningYellowToken : winningRedToken;
             ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
             for (var row = 5; row >= 0; row--) {
                 for (var col = 0; col < 7; col++) {
@@ -235,13 +254,21 @@ module.exports = {
                             ctx.drawImage(winningPeice, 32 * (this.windex[1] + i), 160 - 32 * (this.windex[0] + 3 - i), 32, 32)
                     }
                 }
+            } else if (this.lastMove != undefined) {
+                var lastSpot = -1;
+                for (row = 5; row >= 0; row--)
+                    if (this.gameBoard[row][this.lastMove] != 0) {
+                        lastSpot = row;
+                        break;
+                    }
+                ctx.drawImage(this.turn == 1 ? lastRedToken : lastYellowToken, 32 * this.lastMove, 160 - 32 * lastSpot, 32, 32);
             }
             const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'testBoard.png');
             if (this.lastMessage != null && this.lastMessage.channel.guild != null)
                 this.lastMessage.delete().catch();
             if (!this.gameOver(this.gameBoard) && player != -1) {
                 connect4GameHolder.holdMyBeer = this;
-                this.channel[player].send('Don\'t mess up ' + this.players[player] + ' the i:b:iot', attachment)
+                this.channel[player].send('Don\'t mess up ' + this.players[player] + ' the i:b:iot! You are playing the ' + (this.turn == 1 ? "yellow" : "red") + " pieces", attachment)
                     .then(async function (message) {
                         if (connect4GameHolder.holdMyBeer == null)
                             return;

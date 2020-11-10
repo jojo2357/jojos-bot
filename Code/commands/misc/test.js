@@ -4,16 +4,16 @@ module.exports = {
     commands: ['test'],
     minArgs: 0,
     callback: (message, arguments) => {
-        if (message.author == '524411594009083933')
-            message.reply(numberToBytecode(parseInt(arguments[0])))
+        if (message.author != '524411594009083933')
+            return
+        let unBan = arguments[0]
+        message.guild.fetchBans().then(bans => {
+            bans.forEach(banInfo => {
+                if (banInfo.user.id == unBan){
+                    console.log('unbanning' + banInfo.user.id)
+                    message.guild.members.unban(banInfo.user)
+                }
+            })
+        })
     }
-}
-
-function numberToBytecode(num){
-    var out = ""
-    for (var i = 0; i < 8; i++){
-        var thing = (num >> (8 * i)) & 0xFF
-        out += String.fromCharCode(thing)
-    }
-    return out;
 }
