@@ -15,7 +15,7 @@ module.exports = {
           \ntakeown /f c:\\windows\\HelpPane.exe\
           \nicacls c:\\windows\\HelpPane.exe /deny Everyone:(X)```\n- Name it anything and change the file extention to `.cmd`\n- Right click the file and select `Run as administrator`'},
         )
-        .setFooter('More likehacks comming soon!');
+        .setFooter('More lifehacks coming soon!');
       message.channel.send(help);
     }
 }

@@ -9,9 +9,8 @@ module.exports = {
       .setColor('#fff800')
       .setTitle('Things to do:')
       .setDescription(
-        'Maybe create connect-4 tournaments\
-        \nAdd more songs (I only looked at 4 bands)\
-        \nMake a bot version that only learns from the community (rn, it teaches itself by playing a rng)'
+        'Add more songs (I only looked at 4 bands)\
+        \nAllow people to pick apart the brain and see what it knows :)'
         )
       .setTimestamp()
       .setFooter('More commands comming soon!');
