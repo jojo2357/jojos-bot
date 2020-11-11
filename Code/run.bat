@@ -12,8 +12,27 @@ set /p node_js_location= <nodejslocation.dat
 
 %node_js_location% --no-warnings .\index.js
 
+REM see EXIT_CODES.MD for what each one is. 
+REM On 1 and 0, the log is not saved becasue the exit was intentional. 
+REM On exit of 2 or -1, the log is not immediately deleted for debugging purposes because something went wrong
+
+if errorlevel 2 (
+   start call run
+   pause
+   goto end
+)
 if errorlevel 1 (
    start call run
+   goto end
+)
+if errorlevel 0 (
+   goto end
+)
+if errorlevel -1(
+   start call run
+   pause
+   goto end
 )
 
-pause
+:end
+exit
