@@ -75,7 +75,7 @@ client.on('message', message => {
         message.channel.send('!p ' + MusicDb.getRandomName());
     } else if ((message.content.includes("pm") && !message.content.includes("pme"))) {
         message.channel.send('Have you considered using 24-hour time? It drastically reduces redundencies');
-    }
+    } 
 })
 
 client.login(config.token); 

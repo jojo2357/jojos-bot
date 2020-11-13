@@ -12,7 +12,7 @@ module.exports = {
                 .setColor('#0cc0b4')
                 .setTitle('Am i looking at a moron?')
                 .setDescription('learn to args my guy. a number 1-7 please')
-                .setFooter('Sux to sux it seems')
+                .setFooter('Sux to sux it seems');
             message.channel.send(ch);
         }
         else if (Manager.usersGame('<@' + message.author + '>') == null)

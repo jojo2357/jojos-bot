@@ -1,12 +1,15 @@
 const Discord = require('discord.js');
 const Commando = require('discord.js-commando');
 const config = require(process.cwd() + '/config.json');
-const client = new Discord.Client();
 const fs = require('fs');
 
-client.login(config.token);
+let client;
 
 module.exports = {
+    setClient(klient) {
+        client = klient;
+    },
+
     commands: ['announce'],
     minArgs: 0,
     callback: (message, arguments) => {
@@ -23,10 +26,5 @@ module.exports = {
                 return;
             }
         });
-        /*try {
-            guildList.forEach((guild) => guild.defaultChannel.send(arguments.join(' ')));
-        } catch (err) {
-            console.log("Could not send message to " + guild.name);
-        }*/
     }
 }

@@ -20,7 +20,7 @@ module.exports = {
         { name: 'java -jar Jarfile.jar', value: 'runs `main` in jar file denoted in `MANIFEST.MF` by the one line: `Main-Class: MainClass`', inline: true },
         { name: '\\` code \\`', value: 'in discord, will appear as ` code `\nonly use for single line code', inline: true },
         { name: '\\``` code \\```', value: 'in discord, will appear as ``` code ```\nonly use for multi line code', inline: true },
-        ).setTimestamp()
+      ).setTimestamp()
       .setFooter('More commands comming soon!');
     message.channel.send(help);
   }

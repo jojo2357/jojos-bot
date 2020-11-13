@@ -5,11 +5,11 @@ const Canvas = require('canvas');
 const fs = require('fs');
 const connect4GameHolder = require('./connect-4-game-holder');
 const Commando = require('discord.js-commando');
-const client = new Commando.CommandoClient();
 const config = require(process.cwd() + '\\config.json');
 
 const { spawn } = require('child_process');
 
+let client;
 let background;
 let redToken;
 let yellowToken;
@@ -34,7 +34,7 @@ var gamesPlayed = 0;
 
 var botLoaded = false;
 
-function boardToString(board) {
+function boardToString(board) {// DEBUG ONLY
     var out = "|";
     for (var i = 5; i >= 0; i--) {
         for (var j = 0; j < 7; j++) {
@@ -45,7 +45,7 @@ function boardToString(board) {
     return out;
 }
 
-function checkLoaded(str = "") {
+function checkLoaded(str = "") {// pass data in here to see if the bot is declaring itself loaded
     if (str.includes('INIT')) {
         thing();
         botLoaded = true;
@@ -58,11 +58,15 @@ function thing() {
     if (client.user != null)
         client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
     else {
-        client.login(config.token).then(() => client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log)).catch(() => console.log("an error occured while setting presence"))
+        client.login(config.token).then(() => client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log)).catch(() => console.log("an error occured while setting presence"));
     }
 }
 
 module.exports = {
+    setClient(klient) {
+        client = klient;
+    },
+
     async initImages() {
         background = await Canvas.loadImage('assets\\images\\defaultBoard.png');
         redToken = await Canvas.loadImage('assets\\images\\redToken.png');
@@ -72,7 +76,7 @@ module.exports = {
         lastYellowToken = await Canvas.loadImage('assets\\images\\lastYellowToken.png');
         winningYellowToken = await Canvas.loadImage('assets\\images\\winningYellowToken.png');
         winningRedToken = await Canvas.loadImage('assets\\images\\winningRedToken.png');
-    }, 
+    },
 
     gamesPlayed() {
         return gamesPlayed;
@@ -107,16 +111,17 @@ module.exports = {
         }
         prc.stdout.on('data', theThing);
 
-        prc.stderr.on('data', async (data) => {
-            await console.error("Connect 4 master erred: " + data.toString());
-            await spawn('sendError.bat', ['C4 bot died', data.toString()]);
-            await process.exit(-1);
-            await process.exit(2); //just in case -1 doesnt work for some unforseen reason
+        prc.stderr.on('data', (data) => {
+            console.error("Connect 4 master erred: " + data.toString());
+            spawn('sendError.bat', ['C4 bot died', data.toString()]);
+            process.exit(-1);
+            process.exit(2); //just in case -1 doesnt work for some unforseen reason
         });
 
         prc.on('exit', function (code) {
             console.log('Connect 4 master bot died with code ' + code);
         });
+
         stdinStream.pipe(prc.stdin);
         console.log("master bot created");
 
@@ -207,12 +212,12 @@ module.exports = {
                 if (this.timeout != 0) {
                     let timeout = this.timeout;
                     this.timerObj = setTimeout(function (bruh, turn) {
-                        bruh.channel[bruh.turn - 1].send("So sorry, but you took longer than " + timeout / 1000 + " seconds so you forfeit.")
-                        bruh.ggMessage(turn)
+                        bruh.channel[bruh.turn - 1].send("So sorry, but you took longer than " + timeout / 1000 + " seconds so you forfeit.");
+                        bruh.ggMessage(turn);
                     }, timeout, this, this.turn == 2 ? 1 : 2);
                 }
             } else {
-                if (this.isSinglePlayer) {
+                if (this.isSinglePlayer) {// DEPRICATED from =m
                     if (playerNumber == 1) {
                         this.channel[this.turn - 1].send("Hey dummy that column is full");
                     }
@@ -223,9 +228,9 @@ module.exports = {
             }
         };
 
-        async sysoutBoard(player = this.turn - 1) {
+        sysoutBoard(player = this.turn - 1) {
             //console.log("board printing begin");
-            const canvas = await Canvas.createCanvas(224, 192);
+            const canvas = Canvas.createCanvas(224, 192);
             const ctx = canvas.getContext('2d');
             const winningPeice = this.gameOver(this.gameBoard) == 1 ? winningYellowToken : winningRedToken;
             ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
@@ -276,6 +281,7 @@ module.exports = {
                         var effectiveThis = connect4GameHolder.holdMyBeer;
                         connect4GameHolder.holdMyBeer.lastMessage = message;
                         connect4GameHolder.holdMyBeer = null;
+                        //DEPRICATED from playing by reaction
                         /*var thing = false;
                         while (!thing) {
                             try {
@@ -299,6 +305,7 @@ module.exports = {
                                 thing = message.deleted;
                             }
                         }*/
+                        //Still allow play by reaction
                         const filter = (reaction, user) => {
                             return '<@' + user.id + '>' == effectiveThis.players[effectiveThis.turn - 1] && ((reaction.emoji.name == '1️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '2️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '3️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '4️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '5️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '6️⃣' && effectiveThis.hasRoom(0)) || (reaction.emoji.name == '7️⃣' && effectiveThis.hasRoom(0)));
                         };
@@ -351,12 +358,10 @@ module.exports = {
                 console.log(this.players[0] + " was undefined");
                 return true;
             }
-            for (var col = 0; col < 7; col++) {
-                for (var row = 0; row < 6; row++) {
+            for (var col = 0; col < 7; col++)
+                for (var row = 0; row < 6; row++)
                     if (this.gameBoard[row][col] != 0)
                         return false;
-                }
-            }
             return true;
         };
 
@@ -400,7 +405,7 @@ module.exports = {
 
         ggMessage(winner) {
             clearTimeout(this.timerObj);
-            console.log("Attempting to kill and remove. winner: " + winner);
+            console.log("Winner: " + winner);
             spawn('sendNotification.bat', ['GG m8', (this.players[0] + ' ' + (winner == 1 ? 'won' : winner == 3 ? 'drew' : 'lost') + ' to ' + (this.isSinglePlayer ? ' the cpu' : this.players[1])).replace('\"', '').replace('\'', '')])
             if (winner != 3) {
                 if (this.isSinglePlayer) {

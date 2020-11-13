@@ -1,14 +1,17 @@
 const Discord = require('discord.js');
 const musick = require('./music-manager');
 
-module.exports = {
+var out;
+var putIn;
+
+module.exports = { 
     commands: ['songs', 'song'],
     minArgs: 1,
     maxArgs: 1,
     expectedArgs: '`<amount of reccomendations>`',
     callback: (message, arguments) => {
-        var out = '!p ' + musick.getRandomName();
-        var putIn = "";
+        out = '!p ' + musick.getRandomName();
+        putIn = "";
         if (parseInt(arguments[0]) < 1 || parseInt(arguments[0]) > 50){
             message.reply("No. bad. stop")
             return;

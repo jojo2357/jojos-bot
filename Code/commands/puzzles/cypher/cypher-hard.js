@@ -1,4 +1,4 @@
-let cypherRaw = 'jojo\'s wacky cypher \n\n'
+let cypherRaw = 'jojo\'s wacky cypher \n\n';
 let plaintext = [];
 
 var fs = require("fs");
@@ -47,12 +47,12 @@ function createCipher() {
     return cipher;
 }
 
-function readData(){
+function readData() {
     var files = fs.readdirSync('assets/cipher-texts/');
     files.forEach(readAndAppend);
     inited = true;
 }
 
-function readAndAppend(file){
+function readAndAppend(file) {
     plaintext.push(fs.readFileSync('assets/cipher-texts/' + file).toString());
 }

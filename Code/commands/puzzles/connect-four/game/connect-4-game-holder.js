@@ -9,11 +9,11 @@ module.exports = {
         if (str.includes("Games: ")) {
             console.log(str.substring(7, str.indexOf('\r')));
             gamesPlayed = parseInt(str.substring(7, str.indexOf('\r')));
-            console.log(gamesPlayed)
+            console.log(gamesPlayed);
         }
     },
 
-    notgamesPlayed(){
+    notgamesPlayed() {
         return gamesPlayed;
     },
 
@@ -88,17 +88,17 @@ module.exports = {
         pending.splice(pending.indexOf(game), 1);
     },
 
-    notifyData(data) {
+    notifyData(data) {//when the connect 4 bot says something
         for (var i = 0; i < games.length; i++) {
             if (data.includes(games[i].ID) && data.includes(':')) {
-                if (data.charAt(22) == '-' && data.charAt(23) == '3') {
+                if (data.charAt(22) == '-' && data.charAt(23) == '3') {// if the computer resigned/can't make a move
                     games[i].ggMessage(1);
                 }
                 games[i].makeMove(parseInt(data.charAt(22)), 2);
                 return;
             }
             if (data.includes(games[i].ID)) {
-                games[i].makeMove(parseInt(data.charAt(0)), games[i].turn)
+                games[i].makeMove(parseInt(data.charAt(0)), games[i].turn);
                 return true;
             }
         }

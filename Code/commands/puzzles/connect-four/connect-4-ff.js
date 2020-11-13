@@ -13,4 +13,4 @@ module.exports = {
             game.ggMessage(game.players.indexOf('<@' + message.author + '>'));
         }
     }
-}
+} 

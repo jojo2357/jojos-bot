@@ -7,7 +7,7 @@ module.exports = {
         client = klient;
     },
 
-    commands: ['restart'],
+    commands: ['restart'], 
     minArgs: 0,
     maxArgs: 0,
     callback: async (message, arguments) => {

@@ -4,34 +4,34 @@ var urls = [];
 var names = [];
 
 module.exports = {
-    init(){
+    init() {
         loadurls();
         loadnames();
     },
 
-    getRandomName(){
+    getRandomName() {
         return names[Math.floor(Math.random() * names.length)];
     },
 
-    getRandomLink(){
+    getRandomLink() {
         return urls[Math.floor(Math.random() * urls.length)];
     },
 
-    amtOfSongs(){
+    amtOfSongs() {
         return names.length;
     }
 }
 
-function loadurls(){
+function loadurls() {
     urls = [];
     urls = fs.readFileSync('assets/music/urls.dat').toString().split('\n');
 }
 
-function loadnames(){
+function loadnames() {
     names = [];
     names = fs.readFileSync('assets/music/names.dat').toString().split('\r\n');
-    for (var i = names.length - 1; i >= 0; i--){
-        if (names[i] === ''){
+    for (var i = names.length - 1; i >= 0; i--) {
+        if (names[i] === '') {
             names.splice(i, 1);
         }
     }

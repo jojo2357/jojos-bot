@@ -8,4 +8,4 @@ module.exports = {
         client.users.cache.get('524411594009083933').send('<@' + userMessage.author + '> sent the following in <#' + userMessage.channel + '>:\n' + text);
         userMessage.reply("Thank you for your input");
     },
-}
+} 

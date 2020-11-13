@@ -1,16 +1,18 @@
 const Discord = require('discord.js');
-const Game = require('./connect-4-game.js');
 const Manager = require('./connect-4-game-holder.js');
+
+var out;
+var gameNum;
 
 module.exports = {
     commands: ['show-all', 'all-games'],
     minArgs: 0,
     maxArgs: 0,
     callback: (message, arguments) => {
-        var out = "      #,  turns, player";
-        var gameNum = 0;
-        for (var gamedex = 0; gamedex < Manager.allGames().length; gamedex++){
-            if (!message.guild.channels.cache.get(Manager.allGames()[gamedex].channel.id) && message.author != "524411594009083933") { 
+        out = "      #,  turns, player";
+        gameNum = 0;
+        for (var gamedex = 0; gamedex < Manager.allGames().length; gamedex++) {
+            if (!message.guild.channels.cache.get(Manager.allGames()[gamedex].channel.id) && message.author != "524411594009083933") {
                 continue;
             }
             out += "\nGame  " + gameNum + ":  " + Manager.allGames()[gamedex].turnNumber + "    " + Manager.allGames()[gamedex].players[0] + "vs " + (!Manager.allGames()[gamedex].isSinglePlayer ? Manager.allGames()[gamedex].players[1] : "cpu") + " in <#" + Manager.allGames()[gamedex].channel + ">";

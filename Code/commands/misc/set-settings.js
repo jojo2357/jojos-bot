@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 
-let defaultSettings = { notifications: false, notificationChannel: 0, timeout: 60000 }
+let defaultSettings = { notifications: false, notificationChannel: 0, timeout: 60000 };
 
 module.exports = {
     commands: ['set'],
@@ -23,7 +23,7 @@ module.exports = {
                 existingSettings.notifications = arguments[2].toLowerCase() == 'true'
                 break;
             case 'notification channel':
-                if (arguments[2].indexOf('#') > 0){
+                if (arguments[2].indexOf('#') > 0) {
                     existingSettings.notificationChannel = arguments[2].substring(2, arguments[2].indexOf('>'))
                     existingSettings.notifications = true;
                 }
@@ -33,12 +33,12 @@ module.exports = {
         }
         fs.writeFileSync('./assets/server-settings/' + message.guild.id + '.json', JSON.stringify(existingSettings))
         const msg = new Discord.MessageEmbed()
-        .setTitle('Server Settings')
-        .setDescription('use =set to change a setting. Example: `=set recieves notifications true` or `=set notification channel #general`')
-        .addFields(
-            { name: 'Recieves Notifications', value: "This setting determines if you recieve notifications about bot restarts, new updates, and inter-server tournaments (coming soon)\n" + existingSettings.notifications},
-            { name: 'Notification Channel', value: "Current notifications channel:\n" + (existingSettings.notificationChannel == 0 ? "not set" : "<#" + existingSettings.notificationChannel + ">")},
-        )
+            .setTitle('Server Settings')
+            .setDescription('use =set to change a setting. Example: `=set recieves notifications true` or `=set notification channel #general`')
+            .addFields(
+                { name: 'Recieves Notifications', value: "This setting determines if you recieve notifications about bot restarts, new updates, and inter-server tournaments (coming soon)\n" + existingSettings.notifications },
+                { name: 'Notification Channel', value: "Current notifications channel:\n" + (existingSettings.notificationChannel == 0 ? "not set" : "<#" + existingSettings.notificationChannel + ">") },
+            );
         message.channel.send(msg);
     }
 }

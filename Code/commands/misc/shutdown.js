@@ -10,4 +10,4 @@ module.exports = {
             process.exit(0);
         await message.channel.send('anyway');
     }
-}
+} 

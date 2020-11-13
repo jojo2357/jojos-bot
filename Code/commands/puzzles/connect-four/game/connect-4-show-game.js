@@ -12,7 +12,7 @@ module.exports = {
                 Manager.usersGame('<@' + message.author + '>').sysoutBoard();
             else
                 message.reply("somethin sus, heres a suggestion: " + Manager.usersGame('<@' + message.author + '>').channel[Manager.usersGame('<@' + message.author + '>').players.indexOf('<@' + message.author + '>')])
-        else 
+        else
             message.channel.send("You don't have a game in progress! Use `=connect-4` to start one!");
     }
-}
+} 
