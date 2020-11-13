@@ -71,6 +71,8 @@ client.on("guildDelete", (guild) => {
     //fs.unlinkSync(process.cwd() + '/assets/server-settings/' + guild.id + '.json').then(console.log("Removed " + message.guild.id + '.json'))
 });
 
+client.login(config.token);
+
 module.exports = {
     setReady() {
         console.log('We are off and racing');

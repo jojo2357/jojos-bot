@@ -2,7 +2,21 @@ const { prefix } = require('../config.json')
 const { spawn } = require('child_process');
 const fs = require("fs");
 
-let blacklisted = []
+let blacklisted = [];
+
+loadBlacklist();
+
+function loadBlacklist() {
+    blacklisted = [];
+    blacklisted = fs.readFileSync('assets/blacklist/blacklist.dat').toString().split('\r\n');
+    for (var i = blacklisted.length - 1; i >= 0; i--) {
+        if (blacklisted[i] === '') {
+            blacklisted.splice(i, 1);
+        }
+    }
+    console.log(blacklisted);
+}
+
 const validatePermissions = (permissions) => {
     const validPermissions = [
         'CREATE_INSTANT_INVITE',
@@ -64,23 +78,14 @@ module.exports = (client, commandOptions) => {
         return;
     }
 
-    console.log(`Registering command "${commands[0]}"`);
-
-    blacklisted = [];
-    blacklisted = fs.readFileSync('assets/blacklist/blacklist.dat').toString().split('\r\n');
-    for (var i = blacklisted.length - 1; i >= 0; i--) {
-        if (blacklisted[i] === '') {
-            blacklisted.splice(i, 1);
-        }
-    }
-    console.log(blacklisted);
-
     if (permissions.length) {
         if (typeof permissions === 'string') {
             permissions = [permissions];
         }
         validatePermissions(permissions);
     }
+
+    console.log(`Registering command "${commands[0]}"`);
 
     // Listen for messages
     client.on('message', (message) => {
