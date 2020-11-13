@@ -10,7 +10,10 @@ module.exports = {
         if (challenges.length == 0) {
             message.channel.send("you dont have any pending challenges!");
         } else if (challenges.length == 1) {
-            challenges[0].acceptGame(message.channel);
+            if (!Manager.usersGame('<@' + message.author + '>'))
+                challenges[0].acceptGame(message.channel);
+            else
+                message.reply("You already have a game in progress! Please finish that one before accepting another!");
         } else if (arguments[0]) {
             for (var i = 0; i < challenges.length; i++) {
                 if (challenges[i].players[0] == '<@' + message.mentions.users.first() + '>') {

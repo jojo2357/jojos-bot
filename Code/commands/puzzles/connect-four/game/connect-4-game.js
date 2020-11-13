@@ -91,6 +91,8 @@ module.exports = {
     },
 
     init() {
+        connect4GameHolder.gamesPlayed = fs.readFileSync(process.cwd() + '/assets/connect-4/game-record/0_computerBrain.dat').toString().split('\n').length - 1;
+
         stdinStream = new stream.Readable({
             read(size) {
                 return true;
@@ -107,7 +109,6 @@ module.exports = {
             //console.log("Connect 4 master says: " + str);
             this.checkLoad(str);
             connect4GameHolder.notifyData(str);
-            connect4GameHolder.checkIfGamesPlayed(str);
         }
         prc.stdout.on('data', theThing);
 
@@ -204,8 +205,8 @@ module.exports = {
                     this.turn = 2;
                     this.turnNumber++;
                 } else {
-                    this.turn = 1;
                     this.sysoutBoard(0);
+                    this.turn = 1;
                 }
                 if (this.timerObj != undefined)
                     clearTimeout(this.timerObj);
@@ -267,14 +268,14 @@ module.exports = {
                         lastSpot = row;
                         break;
                     }
-                ctx.drawImage(this.turn == 1 ? lastRedToken : lastYellowToken, 32 * this.lastMove, 160 - 32 * lastSpot, 32, 32);
+                ctx.drawImage((this.turn != 1 ? lastRedToken : lastYellowToken), 32 * this.lastMove, 160 - 32 * lastSpot, 32, 32);
             }
             const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'testBoard.png');
             if (this.lastMessage != null && this.lastMessage.channel.guild != null)
                 this.lastMessage.delete().catch();
             if (!this.gameOver(this.gameBoard) && player != -1) {
                 connect4GameHolder.holdMyBeer = this;
-                this.channel[player].send('Don\'t mess up ' + this.players[player] + ' the i:b:iot! You are playing the ' + (this.turn == 1 ? "yellow" : "red") + " pieces", attachment)
+                this.channel[player].send('Don\'t mess up ' + this.players[player] + ' the i:b:iot! You are playing the ' + (this.turn != 1 ? "yellow" : "red") + " pieces", attachment)
                     .then(async function (message) {
                         if (connect4GameHolder.holdMyBeer == null)
                             return;
@@ -425,9 +426,13 @@ module.exports = {
                     }
                 }
             } else {
-                this.channel[0].send("Wow you both suck!");
-                if (this.channel[0] != this.channel[1])
-                    this.channel[1].send("Wow you both suck!");
+                if (this.isSinglePlayer)
+                    this.channel[0].send("Wow we both suck!");
+                else {
+                    this.channel[0].send("Wow you both suck!");
+                    if (this.channel[0] != this.channel[1])
+                        this.channel[1].send("Wow you both suck!");
+                }
             }
             this.sysoutBoard(-1);
 

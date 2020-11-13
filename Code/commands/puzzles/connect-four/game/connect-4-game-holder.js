@@ -1,17 +1,9 @@
 var games = [];
 var pending = [];
-var gamesPlayed = 0;
 
 module.exports = {
     holdMyBeer: null,
-
-    checkIfGamesPlayed(str) {
-        if (str.includes("Games: ")) {
-            console.log(str.substring(7, str.indexOf('\r')));
-            gamesPlayed = parseInt(str.substring(7, str.indexOf('\r')));
-            console.log(gamesPlayed);
-        }
-    },
+    gamesPlayed : 0,
 
     notgamesPlayed() {
         return gamesPlayed;
