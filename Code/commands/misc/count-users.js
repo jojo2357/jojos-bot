@@ -1,35 +1,35 @@
 const Discord = require('discord.js');
 
-let client
+let client;
 
 module.exports = {
     setClient(klient) {
-        client = klient
+        client = klient;
     },
 
     commands: ['users'],
     minArgs: 0,
     maxArgs: 0,
     callback: (message, arguments) => {
-        let uniques = 0
-        let total = 0
-        let countedUsers = []
-        let serverMemberCounts = []
+        let uniques = 0;
+        let total = 0;
+        let countedUsers = [];
+        let serverMemberCounts = [];
         client.guilds.cache.forEach((guild) => {
-            let thisCount = 0
+            let thisCount = 0;
             guild.members.cache.forEach((user) => {
                 if (user.bot)
-                    return
+                    return;
                 thisCount++
                 if (!countedUsers.includes(user.id)) {
-                    uniques++
-                    countedUsers.push(user.id)
+                    uniques++;
+                    countedUsers.push(user.id);
                 }
-                total++
+                total++;
             })
-            serverMemberCounts.push(thisCount)
+            serverMemberCounts.push(thisCount);
         })
-        message.channel.send('Unique users in all servers: ' + uniques + "\nTotal users including duplicates: " + total + "\nAverage: " + average(serverMemberCounts).toPrecision(4) + "\nStandard deviation: " + standardDeviation(serverMemberCounts).toPrecision(4) + "\n" +  (100 * normalcdf(average(serverMemberCounts), standardDeviation(serverMemberCounts), 0)).toPrecision(4) + "% of servers have a negative amount of users")
+        message.channel.send('Unique users in all servers: ' + uniques + "\nTotal users including duplicates: " + total + "\nAverage: " + average(serverMemberCounts).toPrecision(4) + "\nStandard deviation: " + standardDeviation(serverMemberCounts).toPrecision(4) + "\n" +  (100 * normalcdf(average(serverMemberCounts), standardDeviation(serverMemberCounts), 0)).toPrecision(4) + "% of servers have a negative amount of users");
     }
 }
 

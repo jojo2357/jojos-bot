@@ -16,12 +16,12 @@ const MusicDb = require('./commands/music/music-manager.js');
 const C4Game = require('./commands/puzzles/connect-four/game/connect-4-game.js');
 const { EventEmitter } = require('events');
 EventEmitter.defaultMaxListeners = 100
-const client = new Commando.CommandoClient({
+let client = new Commando.CommandoClient({
   owner: '524411594009083933',
   commandPrefix: config.prefix
 })
 const { spawn } = require('child_process');
-const sendUsers = require('./commands/misc/count-users.js')
+const sendUsers = [require('./commands/misc/count-users.js'), require('./commands/misc/distribution.js'), require('./commands/misc/restart.js')]
 
 client.on('ready', async () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -163,4 +163,4 @@ module.exports = {
   }
 }
 
-sendUsers.setClient(client)
+sendUsers.forEach(sendTo => sendTo.setClient(client))

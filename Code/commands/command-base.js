@@ -132,7 +132,9 @@ module.exports = (client, commandOptions) => {
         }else 
           console.log(message.author.username + " in dm'd me and asked for " + message.toString() + ' at ' + new Date().toTimeString().split(' ')[0])
         try{
+          var timeIn = new Date().getMilliseconds();
           callback(message, arguments, arguments.join(' '), client)
+          console.log("Took " + new Date().getMilliseconds() + "ms to complete");
         }catch (err){
           message.reply('An error has occured: ' + err + '\n' + err.stack);
         }
