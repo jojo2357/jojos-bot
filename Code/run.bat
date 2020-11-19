@@ -23,6 +23,7 @@ if errorlevel 2 (
 )
 if errorlevel 1 (
    start call run
+   pause
    goto end
 )
 if errorlevel 0 (

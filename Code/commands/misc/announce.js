@@ -22,7 +22,8 @@ module.exports = {
                 return;
             let channelSettings = require(process.cwd() + '/assets/server-settings/' + guild.id + '.json');
             if(channelSettings.notifications){
-                client.channels.cache.get(channelSettings.notificationChannel).send(moosage);
+                if (client.channels.cache.get(channelSettings.notificationChannel) != undefined)
+                    client.channels.cache.get(channelSettings.notificationChannel).send(moosage);
                 return;
             }
         });

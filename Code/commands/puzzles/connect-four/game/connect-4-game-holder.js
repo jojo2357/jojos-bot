@@ -6,7 +6,7 @@ module.exports = {
     gamesPlayed : 0,
 
     notgamesPlayed() {
-        return gamesPlayed;
+        return this.gamesPlayed;
     },
 
     getPending() {

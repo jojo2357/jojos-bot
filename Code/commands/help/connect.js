@@ -13,11 +13,11 @@ module.exports = {
             )
             .addFields(
                 { name: '\u200B', value: '\u200B' },
+                { name: 'Make a move', value: 'simply enter the column number (1-7, 1 is far left, 7 far right, 4 is middle) or react with with the appropriate reaction', inline: true },
                 { name: 'Start a solo game', value: '=connect-4', inline: true },
                 { name: 'Challenge a friend', value: '=connect-4 @urFrend', inline: true },
                 { name: 'Accept only challenge', value: '=accept', inline: true },
                 { name: 'Accept one of many challenges', value: '=accept @challenger', inline: true },
-                { name: 'Make a move', value: 'simply enter the column number or react with with the appropriate reaction', inline: true },
                 { name: 'Show your game', value: '=show', inline: true },
                 { name: 'Quit your game', value: '=ff', inline: true },
                 { name: 'List games', value: '=show-all', inline: true },

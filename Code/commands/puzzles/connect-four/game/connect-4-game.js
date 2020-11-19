@@ -115,7 +115,7 @@ module.exports = {
         prc.stderr.on('data', (data) => {
             console.error("Connect 4 master erred: " + data.toString());
             spawn('sendError.bat', ['C4 bot died', data.toString()]);
-            process.exit(-1);
+            //process.exit(-1);
             process.exit(2); //just in case -1 doesnt work for some unforseen reason
         });
 
@@ -124,7 +124,7 @@ module.exports = {
         });
 
         stdinStream.pipe(prc.stdin);
-        console.log("master bot created");
+        console.log("master c4 bot created");
 
         this.initImages();
     },
@@ -198,15 +198,15 @@ module.exports = {
                         break;
                     }
                 if (playerNumber == 1) {
+                    this.turn = 2;
                     if (this.isSinglePlayer)
                         stdinStream.push(this.ID + ':' + boardToString(this.gameBoard) + '\n');
                     else
                         this.sysoutBoard(playerNumber);
-                    this.turn = 2;
                     this.turnNumber++;
                 } else {
-                    this.sysoutBoard(0);
                     this.turn = 1;
+                    this.sysoutBoard(0);
                 }
                 if (this.timerObj != undefined)
                     clearTimeout(this.timerObj);
@@ -268,14 +268,14 @@ module.exports = {
                         lastSpot = row;
                         break;
                     }
-                ctx.drawImage((this.turn != 1 ? lastRedToken : lastYellowToken), 32 * this.lastMove, 160 - 32 * lastSpot, 32, 32);
+                ctx.drawImage((this.turn == 1 ? lastRedToken : lastYellowToken), 32 * this.lastMove, 160 - 32 * lastSpot, 32, 32);
             }
             const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'testBoard.png');
             if (this.lastMessage != null && this.lastMessage.channel.guild != null)
                 this.lastMessage.delete().catch();
             if (!this.gameOver(this.gameBoard) && player != -1) {
                 connect4GameHolder.holdMyBeer = this;
-                this.channel[player].send('Don\'t mess up ' + this.players[player] + ' the i:b:iot! You are playing the ' + (this.turn != 1 ? "yellow" : "red") + " pieces", attachment)
+                this.channel[player].send('Don\'t mess up ' + this.players[player] + ' the i:b:iot! You are playing the ' + (this.turn == 1 ? "yellow" : "red") + " pieces", attachment)
                     .then(async function (message) {
                         if (connect4GameHolder.holdMyBeer == null)
                             return;
@@ -410,10 +410,40 @@ module.exports = {
             spawn('sendNotification.bat', ['GG m8', (this.players[0] + ' ' + (winner == 1 ? 'won' : winner == 3 ? 'drew' : 'lost') + ' to ' + (this.isSinglePlayer ? ' the cpu' : this.players[1])).replace('\"', '').replace('\'', '')])
             if (winner != 3) {
                 if (this.isSinglePlayer) {
-                    if (winner == 1 || winner == "1")
-                        this.channel[0].send("Wow " + this.players[0] + " you should be so proud that you managed to beat a stupid program. Despite having played " + connect4GameHolder.notgamesPlayed() + " games your massive intelligence has won the day");
-                    else
-                        this.channel[0].send("Wow " + this.players[0] + " I honestly cannot believe that you lost. I mean, if you played " + connect4GameHolder.notgamesPlayed() + " games of connect-4 you might have won");
+                    var streakMessage = "";
+                    if (!fs.existsSync('./assets/connect-4/game-record/' + this.players[0].substring(2, 20) + '.dat')) {
+                        if (winner == 1 || winner == "1")
+                            streakMessage = "I cant find any games that you have played against me, so congrats on your first dub";
+                        else
+                            streakMessage = "I cant find any games that you have played against me, so better luck next time";
+                    } else {
+                        var playerGames = fs.readFileSync('./assets/connect-4/game-record/' + this.players[0].substring(2, 20) + '.dat').toString().split('\n');
+                        var winningOrLosing;
+                        var botStreak = 0;
+                        for (var i = playerGames.length - 2; i >= 0; i--) {
+                            if (playerGames[i].substring(2).length > 9)
+                                continue;
+                            if (winningOrLosing == undefined)
+                                winningOrLosing = playerGames[i].substring(0, 1);
+                            if (playerGames[i].substring(0, 1) != winningOrLosing)
+                                break;
+                            botStreak++;
+                        }
+                        if ((winningOrLosing == "W") == (winner == 1)){
+                            streakMessage = "Your streak is getting longer! ";
+                            if (winningOrLosing == "W")
+                                streakMessage += "You now have " + botStreak + " wins in a row!";
+                            if (winningOrLosing == "L")
+                                streakMessage += "You now have " + botStreak + " losses in a row :/";
+                        }else{
+                            streakMessage = "Your " + botStreak + " game " + (winningOrLosing == "L" ? "losing" : "winning") + " streak has come to an end"
+                        }
+                    }
+                    if (winner == 1 || winner == "1") {
+                        this.channel[0].send("Wow " + this.players[0] + " you should be so proud that you managed to beat a stupid program. Despite having played " + connect4GameHolder.notgamesPlayed() + " games your massive intelligence has won the day.\n" + streakMessage );
+                    } else {
+                        this.channel[0].send("Wow " + this.players[0] + " I honestly cannot believe that you lost. I mean, if you played " + connect4GameHolder.notgamesPlayed() + " games of connect-4 you might have won.\n" + streakMessage);
+                    }
                 } else {
                     if (winner == 1 || winner == "1") {
                         this.channel[0].send("Wow " + this.players[0] + " completely dominated " + this.players[1] + " in only " + this.turnNumber + " moves");

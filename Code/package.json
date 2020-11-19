@@ -10,7 +10,9 @@
   "license": "MIT",
   "dependencies": {
     "@discordjs/opus": "^0.3.2",
+    "canvas": "^2.6.1",
     "cheerio": "^1.0.0-rc.3",
+    "dblapi.js": "^2.4.1",
     "discord.js": "^12.3.1",
     "discord.js-commando": "git+https://github.com/discordjs/commando.git",
     "ffmpeg-static": "^4.2.7",

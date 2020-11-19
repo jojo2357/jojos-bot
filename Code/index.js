@@ -14,25 +14,36 @@ const commandBase = require(`./commands/${baseFile}`);
 const mongo = require('./mongo');
 const MusicDb = require('./commands/music/music-manager.js');
 const C4Game = require('./commands/puzzles/connect-four/game/connect-4-game.js');
+const Euchre = require('./commands/puzzles/euchre/euchre-game.js');
+const Scum = require('./commands/puzzles/scum/scum-game.js');
 const { EventEmitter } = require('events');
 EventEmitter.defaultMaxListeners = 100
 let client = new Commando.CommandoClient({
     owner: '524411594009083933',
     commandPrefix: config.prefix
 })
+
 const { spawn } = require('child_process');
 const sendUsers = [require('./commands/misc/count-users.js'), 
 require('./commands/misc/distribution.js'), 
 require('./commands/misc/restart.js'),
 require('./commands/misc/announce.js'),
-require('./commands/puzzles/connect-four/game/connect-4-game.js')];
+require('./commands/puzzles/connect-four/game/connect-4-game.js'),
+require('./commands/puzzles/scum/scum-game.js')];
+const DBL = require("dblapi.js");
+const dbl = new DBL('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTM2NjY4NzQ1NTA1MTgwOCIsImJvdCI6dHJ1ZSwiaWF0IjoxNjA1NjAwNTMyfQ.bCzNAy1sAVmtNavl1Kl2mdBtusd07_AOR-yKUV7YzX4', client);
 
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}!`);
     client.user.setActivity('thinking about connect-4');
     MusicDb.init();
     C4Game.init();
+    Euchre.init();
+    Scum.init();
     console.log("Presence set!");
+    setInterval(() => {
+        dbl.postStats(client.guilds.size);
+    }, 1800000);
 });
 
 const readCommands = (dir) => {

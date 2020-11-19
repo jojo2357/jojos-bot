@@ -71,11 +71,20 @@ client.on('message', message => {
         message.channel.send('When life gives you boredom, make boredomade');
     } else if (message.content === "uwu") {
         message.channel.send('owo');
+    } else if (message.content === "UwU") {
+        message.channel.send('OwO');
+    } else if (message.content === "owo") {
+        message.channel.send('uwu');
+    } else if (message.content === "OwO") {
+        message.channel.send('UwU');
     } else if (message.content === "random song") {
         message.channel.send('!p ' + MusicDb.getRandomName());
     } else if ((message.content.includes("pm") && !message.content.includes("pme"))) {
         message.channel.send('Have you considered using 24-hour time? It drastically reduces redundencies');
-    } 
+    } else{
+        return;
+    }
+    console.log("sent a message in " + message.guild.name);
 })
 
 client.login(config.token); 

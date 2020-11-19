@@ -6,7 +6,7 @@ const fs = require('fs');
 var user;
 
 module.exports = {
-    commands: ['connect-4', '4-in-row', 'c4', 'challenge'],
+    commands: ['connect-4', '4-in-row', 'c4', 'challenge', 'connect-four'],
     minArgs: 0,
     maxArgs: 1,
     callback: (message, arguments) => {
