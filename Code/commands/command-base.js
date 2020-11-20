@@ -89,7 +89,7 @@ module.exports = (client, commandOptions) => {
 
     // Listen for messages
     client.on('message', (message) => {
-        if (message.author.bot)
+        if (message.author.bot || (message.guild && !(message.channel.permissionsFor(client.user.id).has("SEND_MESSAGES"))))
             return;
         if (blacklisted.includes(message.author.id))
             return;
