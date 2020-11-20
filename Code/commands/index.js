@@ -21,11 +21,13 @@ client.on('message', message => {
             }
         }
     }
-    if (!fs.existsSync(process.cwd() + '/assets/server-settings/' + message.guild.id + '.json'))
-        return;
-    const doesResponses = require(process.cwd() + '/assets/server-settings/' + message.guild.id + '.json').responses;
-    if (!doesResponses)
-        return;
+    if (message.guild){
+        if (!fs.existsSync(process.cwd() + '/assets/server-settings/' + message.guild.id + '.json'))
+            return;
+        const doesResponses = require(process.cwd() + '/assets/server-settings/' + message.guild.id + '.json').responses;
+        if (!doesResponses)
+            return;
+    }
     if (message.content === "Hello!") {
         message.channel.send('hi');
     } else if (message.content === "gn") {
