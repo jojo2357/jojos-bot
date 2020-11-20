@@ -84,7 +84,7 @@ client.on('message', message => {
     } else{
         return;
     }
-    console.log("sent a message in " + message.guild.name);
+    console.log("sent a message in " + message.guild.name + " in " + message.channel.name);
 })
 
 client.login(config.token); 

@@ -11,9 +11,9 @@ const { spawn } = require('child_process');
 
 let client;
 let background;
+let blankBoard;
 let redToken;
 let yellowToken;
-let whiteToken;
 let lastRedToken;
 let lastYellowToken;
 let winningYellowToken;
@@ -69,9 +69,9 @@ module.exports = {
 
     async initImages() {
         background = await Canvas.loadImage('assets\\images\\defaultBoard.png');
+        blankBoard = await Canvas.loadImage('assets\\images\\emptyBoard.png');
         redToken = await Canvas.loadImage('assets\\images\\redToken.png');
         yellowToken = await Canvas.loadImage('assets\\images\\yellowToken.png');
-        whiteToken = await Canvas.loadImage('assets\\images\\whiteToken.png');
         lastRedToken = await Canvas.loadImage('assets\\images\\lastRedToken.png');
         lastYellowToken = await Canvas.loadImage('assets\\images\\lastYellowToken.png');
         winningYellowToken = await Canvas.loadImage('assets\\images\\winningYellowToken.png');
@@ -235,10 +235,11 @@ module.exports = {
             const ctx = canvas.getContext('2d');
             const winningPeice = this.gameOver(this.gameBoard) == 1 ? winningYellowToken : winningRedToken;
             ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-            for (var row = 5; row >= 0; row--) {
-                for (var col = 0; col < 7; col++) {
+            ctx.drawImage(blankBoard, 0, 0, canvas.width, canvas.height);
+            for (var col = 0; col < 7; col++) {
+                for (var row = 0; row < 6; row++) {
                     if (this.gameBoard[row][col] == 0)
-                        ctx.drawImage(whiteToken, 32 * col, 160 - 32 * row, 32, 32);
+                        break;
                     if (this.gameBoard[row][col] == 1)
                         ctx.drawImage(yellowToken, 32 * col, 160 - 32 * row, 32, 32);
                     if (this.gameBoard[row][col] == 2)
