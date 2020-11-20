@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 
-let defaultSettings = { notifications: false, notificationChannel: 0, timeout: 60000 };
+let defaultSettings = { notifications: false, notificationChannel: 0, timeout: 60000, responses: false };
 
 module.exports = {
     commands: ['set'],
@@ -28,6 +28,9 @@ module.exports = {
                     existingSettings.notifications = true;
                 }
                 break;
+            case 'random responses':
+                existingSettings.responses = arguments[2].toLowerCase() == 'true'
+                break;
             default:
                 message.reply("Could not find that setting");
         }
@@ -38,6 +41,7 @@ module.exports = {
             .addFields(
                 { name: 'Recieves Notifications', value: "This setting determines if you recieve notifications about bot restarts, new updates, and inter-server tournaments (coming soon)\n" + existingSettings.notifications },
                 { name: 'Notification Channel', value: "Current notifications channel:\n" + (existingSettings.notificationChannel == 0 ? "not set" : "<#" + existingSettings.notificationChannel + ">") },
+                { name: 'Random Responses', value: "This setting sets whether or not the bot responds to messages like `f` or `bruh`. is either `true` or `false`\n" + existingSettings.responses },
             );
         message.channel.send(msg);
     }
