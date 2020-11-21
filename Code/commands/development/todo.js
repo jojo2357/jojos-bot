@@ -13,7 +13,7 @@ module.exports = {
                 \nAllow people to pick apart the brain and see what it knows :)'
             )
             .setTimestamp()
-            .setFooter('More commands comming soon!');
+            .setFooter('More commands coming soon!');
         message.channel.send(help);
     }
 }

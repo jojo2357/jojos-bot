@@ -22,7 +22,7 @@ module.exports = {
                 { name: 'Windows hacks', value: '=win-hax', inline: true },
                 { name: 'Privacy disclaimer', value: '=privacy', inline: true },
             ).setTimestamp()
-            .setFooter('More commands comming soon!');
+            .setFooter('More commands coming soon!');
         message.channel.send(help);
     }
 }

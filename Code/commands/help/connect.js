@@ -26,7 +26,7 @@ module.exports = {
                 { name: 'Frequently asked questions', value: '=faq', inline: true },
                 { name: 'Tournament commands', value: '=tournament-help', inline: true },
             ).setTimestamp()
-            .setFooter('More commands comming soon!');
+            .setFooter('More commands coming soon!');
         message.channel.send(help);
     }
 }

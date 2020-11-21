@@ -14,7 +14,7 @@ module.exports = {
                 { name: 'Suggest something', value: '=suggest', inline: true },
                 { name: 'Planned Changes', value: '=TODO', inline: true },
             ).setTimestamp()
-            .setFooter('More commands comming soon!');
+            .setFooter('More commands coming soon!');
         message.channel.send(help);
     }
 }

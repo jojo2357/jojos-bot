@@ -14,7 +14,7 @@ module.exports = {
                 'Memory used: ' + ((os.totalmem() / Math.pow(1024, 3) - os.freemem() / Math.pow(1024, 3))).toFixed(2) + ' GB/' +
                 (os.totalmem() / Math.pow(1024, 3)).toFixed(2) + ' GB (' + ((os.totalmem() - os.freemem()) / (os.totalmem()) * 100).toFixed(0) + '%)'
             ).setTimestamp()
-            .setFooter('More commands comming soon!');
+            .setFooter('More commands coming soon!');
         message.channel.send(help);
     }
 }

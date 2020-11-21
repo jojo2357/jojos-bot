@@ -21,7 +21,7 @@ module.exports = {
         { name: '\\` code \\`', value: 'in discord, will appear as ` code `\nonly use for single line code', inline: true },
         { name: '\\``` code \\```', value: 'in discord, will appear as ``` code ```\nonly use for multi line code', inline: true },
       ).setTimestamp()
-      .setFooter('More commands comming soon!');
+      .setFooter('More commands coming soon!');
     message.channel.send(help);
   }
 }

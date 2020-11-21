@@ -19,7 +19,7 @@ module.exports = {
       { name: 'View participants in a tournament', value: '=show-tournament `ID`', inline: true },
       { name: 'Leave tournament', value: 'jk havent added that yet', inline: true },
     ).setTimestamp()
-    .setFooter('More commands comming soon!');
+    .setFooter('More commands coming soon!');
   message.channel.send(help);
   }
 }
