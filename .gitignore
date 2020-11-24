@@ -4,6 +4,7 @@ Code/connect-4-bot/*
 Code/assets/connect-4/*
 Code/assets/server-settings/*
 Code/assets/blacklist/*
+Code/assets/webhook-hosting/*
 Code/node_modules/**/*
 Code/nodejslocation.dat
 

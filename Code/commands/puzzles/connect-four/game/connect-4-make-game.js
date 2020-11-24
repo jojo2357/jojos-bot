@@ -12,15 +12,13 @@ module.exports = {
     callback: (message, arguments) => {
         user = arguments[0];
         if (user != undefined && arguments.length > 0 && user.indexOf('>') > 0) {
-            console.log(user.substring(2, user.indexOf(">")))
             if (user.indexOf('!') >= 0)
                 user = user.substring(3, user.indexOf(">"));
             else
                 user = user.substring(2, user.indexOf(">"));
-            console.log(user)
         }
         if (Manager.usersGame('<@' + message.author.id + '>') != null) {
-            message.channel.send('sorry, <@' + message.author.id + '>' + ', but you already have a game in progress in <#' + Manager.usersGame('<@' + message.author + '>').channel + '>');
+            message.channel.send('sorry, <@' + message.author.id + '>' + ', but you already have a game in progress in ' + Manager.usersGame('<@' + message.author + '>').channel);
             return;
         }
         if (message.guild != null && !message.guild.member(user) && user != undefined) {

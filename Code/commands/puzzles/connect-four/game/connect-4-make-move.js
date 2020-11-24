@@ -18,7 +18,7 @@ module.exports = {
         else if (Manager.usersGame('<@' + message.author + '>') == null)
             message.channel.send('<@' + message.author + '> you dont have a game, silly! Use `=connect-4` to start one!')
         else if (Manager.usersGame('<@' + message.author + '>').channel != message.channel)
-            message.channel.send("You have a game in progress in <#" + Manager.usersGame('<@' + message.author + '>').channel + ">")
+            message.channel.send("You have a game in progress in " + Manager.usersGame('<@' + message.author + '>').channel)
         message.channel.send('Using `=m` is no longer supported. to make a move, only type the number of the column')
         message.delete();
     }

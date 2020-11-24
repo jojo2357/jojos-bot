@@ -15,7 +15,7 @@ module.exports = {
             if (!message.guild.channels.cache.get(Manager.allGames()[gamedex].channel.id) && message.author != "524411594009083933") {
                 continue;
             }
-            out += "\nGame  " + gameNum + ":  " + Manager.allGames()[gamedex].turnNumber + "    " + Manager.allGames()[gamedex].players[0] + "vs " + (!Manager.allGames()[gamedex].isSinglePlayer ? Manager.allGames()[gamedex].players[1] : "cpu") + " in <#" + Manager.allGames()[gamedex].channel + ">";
+            out += "\nGame  " + gameNum + ":  " + Manager.allGames()[gamedex].turnNumber + "    " + Manager.allGames()[gamedex].players[0] + "vs " + (!Manager.allGames()[gamedex].isSinglePlayer ? Manager.allGames()[gamedex].players[1] : "cpu") + " in " + Manager.allGames()[gamedex].channel;
             gameNum++;
         }
         if (gameNum == 0)

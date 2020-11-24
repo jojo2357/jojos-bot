@@ -412,13 +412,13 @@ module.exports = {
             if (winner != 3) {
                 if (this.isSinglePlayer) {
                     var streakMessage = "";
-                    if (!fs.existsSync('./assets/connect-4/game-record/' + this.players[0].substring(2, 20) + '.dat')) {
+                    if (!fs.existsSync('./assets/connect-4/game-record/' + this.players[0].substring(2, this.players[0].indexOf('>')) + '.dat')) {
                         if (winner == 1 || winner == "1")
                             streakMessage = "I cant find any games that you have played against me, so congrats on your first dub";
                         else
                             streakMessage = "I cant find any games that you have played against me, so better luck next time";
                     } else {
-                        var playerGames = fs.readFileSync('./assets/connect-4/game-record/' + this.players[0].substring(2, 20) + '.dat').toString().split('\n');
+                        var playerGames = fs.readFileSync('./assets/connect-4/game-record/' + this.players[0].substring(2, this.players[0].indexOf('>')) + '.dat').toString().split('\n');
                         var winningOrLosing;
                         var botStreak = 0;
                         for (var i = playerGames.length - 2; i >= 0; i--) {
@@ -472,13 +472,13 @@ module.exports = {
             if (this.gameOver(this.gameBoard) != 0)
                 connect4GameHolder.gamesPlayed++;
             if (this.tourney == undefined) {
-                if (!fs.existsSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat'))
-                    fs.open('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat', function (err) { });
-                fs.appendFileSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "W" : winner == 3 ? "D" : "L") + ' ' + (this.isSinglePlayer ? brainSize : this.players[1]) + '\n');
+                if (!fs.existsSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, this.players[0].indexOf('>')) + '.dat'))
+                    fs.open('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, this.players[0].indexOf('>')) + '.dat', function (err) { });
+                fs.appendFileSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, this.players[0].indexOf('>')) + '.dat', "" + ((winner == 1 || winner == "1") ? "W" : winner == 3 ? "D" : "L") + ' ' + (this.isSinglePlayer ? brainSize : this.players[1]) + '\n');
                 if (!this.isSinglePlayer) {
-                    if (!fs.existsSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat'))
-                        fs.open('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat', function (err) { });
-                    fs.appendFileSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, 20) + '.dat', "" + ((winner == 1 || winner == "1") ? "L" : winner == 3 ? "D" : "W") + ' ' + this.players[0] + '\n');
+                    if (!fs.existsSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, this.players[1].indexOf('>')) + '.dat'))
+                        fs.open('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, this.players[1].indexOf('>')) + '.dat', function (err) { });
+                    fs.appendFileSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, this.players[1].indexOf('>')) + '.dat', "" + ((winner == 1 || winner == "1") ? "L" : winner == 3 ? "D" : "W") + ' ' + this.players[0] + '\n');
                 } else {
                     if (!fs.existsSync('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat'))
                         fs.open('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat', function (err) { });

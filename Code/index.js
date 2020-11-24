@@ -24,15 +24,39 @@ let client = new Commando.CommandoClient({
 })
 
 const { spawn } = require('child_process');
-const sendUsers = [require('./commands/misc/count-users.js'), 
-require('./commands/misc/distribution.js'), 
+const sendUsers = [require('./commands/misc/count-users.js'),
+require('./commands/misc/distribution.js'),
 require('./commands/misc/restart.js'),
 require('./commands/misc/announce.js'),
 require('./commands/puzzles/connect-four/game/connect-4-game.js'),
 require('./commands/puzzles/scum/scum-game.js')];
 const DBL = require("dblapi.js");
-const dbl = new DBL(config.top_ggToken, client);
+const express = require('express');
+const http = require('http');
 
+const app = express();
+const server = http.createServer(app);
+const dbl = new DBL(config.top_ggToken, { webhookAuth: config.top_ggWebhook, webhookServer: server }, client);
+
+//voteNotifications:
+app.use(express.urlencoded());
+app.use(express.json());
+
+app.post('/', (req, res) => {
+    if (client.users.cache.find((person => req.body.user == person.id))) {
+        spawn("sendNotification.bat", ['A vote! 😊', client.users.cache.find((person => req.body.user == person.id)).username + ' voted for us! tysm!']);
+        console.log(client.users.cache.find((person => req.body.user == person.id)).username + ' voted for us! tysm!');
+    } else {
+        spawn("sendNotification.bat", ['A vote! 😊', 'We got voted for! tysm!']);
+        console.log('We got voted for! tysm!');
+    }
+});
+
+server.listen(5055, () => {
+    console.log('Listening');
+});
+
+//init:
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}!`);
     client.user.setActivity('thinking about connect-4');
