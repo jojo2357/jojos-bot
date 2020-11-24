@@ -31,7 +31,7 @@ require('./commands/misc/announce.js'),
 require('./commands/puzzles/connect-four/game/connect-4-game.js'),
 require('./commands/puzzles/scum/scum-game.js')];
 const DBL = require("dblapi.js");
-const dbl = new DBL('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTM2NjY4NzQ1NTA1MTgwOCIsImJvdCI6dHJ1ZSwiaWF0IjoxNjA1NjAwNTMyfQ.bCzNAy1sAVmtNavl1Kl2mdBtusd07_AOR-yKUV7YzX4', client);
+const dbl = new DBL(config.top_ggToken, client);
 
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}!`);

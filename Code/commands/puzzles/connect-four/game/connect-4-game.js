@@ -432,6 +432,7 @@ module.exports = {
                         }
                         if ((winningOrLosing == "W") == (winner == 1)){
                             streakMessage = "Your streak is getting longer! ";
+                            botStreak++;
                             if (winningOrLosing == "W")
                                 streakMessage += "You now have " + botStreak + " wins in a row!";
                             if (winningOrLosing == "L")
