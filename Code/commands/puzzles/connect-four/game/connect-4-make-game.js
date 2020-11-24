@@ -12,11 +12,11 @@ module.exports = {
     callback: (message, arguments) => {
         user = arguments[0];
         if (user != undefined && arguments.length > 0 && user.indexOf('>') > 0) {
-            console.log(user)
+            console.log(user.substring(2, user.indexOf(">")))
             if (user.indexOf('!') >= 0)
-                user = user.substring(3, 21);
+                user = user.substring(3, user.indexOf(">"));
             else
-                user = user.substring(2, 20);
+                user = user.substring(2, user.indexOf(">"));
             console.log(user)
         }
         if (Manager.usersGame('<@' + message.author.id + '>') != null) {
@@ -71,7 +71,7 @@ module.exports = {
             const ch = new Discord.MessageEmbed()
                 .setColor('#0cc0b4')
                 .setTitle('Connect 4 duel to the death')
-                .setDescription('<@' + message.author + '>' + ' boutta loose bigtime. Remember though, if you want to play another human, just mention them after `=connect-4`. You can also use `=help` to see more commands. to make a move, type a number 1-7 (1 is far left, 7 far right)')
+                .setDescription('<@' + message.author + '>' + ' boutta loose bigtime. Remember though, if you want to play another human, just @ them after `=connect-4`. You can also use `=help` to see more commands.\n**to make a move, type a number 1-7 (1 is far left, 7 far right)**')
                 .setTimestamp()
                 .setFooter('Haha, good luck! Brain is loading')
             message.channel.send(ch);
