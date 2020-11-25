@@ -38,7 +38,22 @@ const app = express();
 const server = http.createServer(app);
 const dbl = new DBL(config.top_ggToken, { webhookAuth: config.top_ggWebhook, webhookServer: server }, client);
 
-//voteNotifications:
+dbl.webhook.on('ready', hook => {
+    console.log("listening")
+});
+
+//tysm @Militia21 😊. You NEED to put /dblwebhook at the end of the website otherwise use the other janky thing
+dbl.webhook.on('vote', vote => {
+    if (client.users.cache.find((person => vote.user == person.id))) {
+        spawn("sendNotification.bat", ['A vote! 😊', client.users.cache.find((person => vote.user == person.id)).username + ' voted for us! tysm!']);
+        console.log(client.users.cache.find((person => vote.user == person.id)).username + ' voted for us! tysm!');
+    } else {
+        spawn("sendNotification.bat", ['A vote! 😊', 'We got voted for! tysm!']);
+        console.log('We got voted for! tysm!');
+    }
+});
+
+//janky hacked, no /dblwebhook extension notificaion listener:
 app.use(express.urlencoded());
 app.use(express.json());
 
@@ -51,6 +66,8 @@ app.post('/', (req, res) => {
         console.log('We got voted for! tysm!');
     }
 });
+
+//const exposeLocalHost = spawn(process.cwd() + "/assets/webhook-hosting/ngrok.exe", []);
 
 server.listen(5055, () => {
     console.log('Listening');

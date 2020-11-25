@@ -22,6 +22,8 @@ module.exports = {
                 { name: 'Notifications and settings', value: '=settings-help', inline: true },
                 { name: 'Windows hacks', value: '=win-hax', inline: true },
                 { name: 'Privacy disclaimer', value: '=privacy', inline: true },
+                { name: 'Vote perks', value: '=vote-perks', inline: true },
+                { name: 'Top.gg vote link', value: '=vote', inline: true },
             ).setTimestamp()
             .setFooter('More commands coming soon!');
         message.channel.send(help);
