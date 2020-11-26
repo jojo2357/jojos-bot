@@ -131,7 +131,10 @@ module.exports = (client, commandOptions) => {
                     callback(message, arguments, arguments.join(' '), client);
                     console.log("Took " + new Date().getMilliseconds() + "ms to complete");
                 } catch (err) {
-                    message.reply('An error has occured: ' + err + '\n' + err.stack);
+                    var out = err.stack.toString().toLowerCase();
+                    while (out.includes(process.cwd().toLowerCase()))
+                        out = out.replace(process.cwd().toLowerCase(), '');
+                    message.reply('An error has occured: ' + err + '\n' + out);
                 }
                 return;
             }

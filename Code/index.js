@@ -29,7 +29,9 @@ require('./commands/misc/distribution.js'),
 require('./commands/misc/restart.js'),
 require('./commands/misc/announce.js'),
 require('./commands/puzzles/connect-four/game/connect-4-game.js'),
-require('./commands/puzzles/scum/scum-game.js')];
+require('./commands/puzzles/scum/scum-game.js'),
+require('./commands/random-responses/server-info.js'),
+require('./commands/random-responses/verify.js')];
 const DBL = require("dblapi.js");
 const express = require('express');
 const http = require('http');
