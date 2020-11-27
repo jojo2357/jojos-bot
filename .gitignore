@@ -5,6 +5,7 @@ Code/assets/connect-4/*
 Code/assets/server-settings/*
 Code/assets/blacklist/*
 Code/assets/webhook-hosting/*
+Code/assets/vote-log/recent-votes.dat
 Code/node_modules/**/*
 Code/nodejslocation.dat
 

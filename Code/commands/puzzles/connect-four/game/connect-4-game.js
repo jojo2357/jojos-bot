@@ -11,7 +11,9 @@ const { spawn } = require('child_process');
 
 let client;
 let background;
+let specialBackground;
 let blankBoard;
+let specialBoard;
 let redToken;
 let yellowToken;
 let lastRedToken;
@@ -33,6 +35,21 @@ var stdinStream;
 var gamesPlayed = 0;
 
 var botLoaded = false;
+
+function playerVoted(id) {
+    votes = fs.readFileSync('./assets/vote-log/recent-votes.dat').toString().replace('\r', '').split('\n');
+    const filteredVotes = votes.filter(voteThing => 
+        Date.now() - parseInt(voteThing.split('@')[1]) <= 1000 * 3600 * 12
+    );
+    if (filteredVotes.length != votes.length)
+        fs.writeFileSync('./assets/vote-log/recent-votes.dat', filteredVotes.join('\n'));
+    var returnVal = false;
+    filteredVotes.forEach(vote => {
+        if (id == vote.split('@')[0])
+            returnVal = true;
+    })
+    return returnVal;
+}
 
 function boardToString(board) {// DEBUG ONLY
     var out = "|";
@@ -70,6 +87,8 @@ module.exports = {
     async initImages() {
         background = await Canvas.loadImage('assets\\images\\defaultBoard.png');
         blankBoard = await Canvas.loadImage('assets\\images\\emptyBoard.png');
+        specialBackground = await Canvas.loadImage('assets\\images\\specialBoard.png');
+        specialBoard = await Canvas.loadImage('assets\\images\\emptySpecialBoard.png');
         redToken = await Canvas.loadImage('assets\\images\\redToken.png');
         yellowToken = await Canvas.loadImage('assets\\images\\yellowToken.png');
         lastRedToken = await Canvas.loadImage('assets\\images\\lastRedToken.png');
@@ -232,34 +251,41 @@ module.exports = {
         sysoutBoard(player = this.turn - 1) {
             //console.log("board printing begin");
             const canvas = Canvas.createCanvas(224, 192);
-            const ctx = canvas.getContext('2d');
+            const defaultBoard = canvas.getContext('2d');
             const winningPeice = this.gameOver(this.gameBoard) == 1 ? winningYellowToken : winningRedToken;
-            ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-            ctx.drawImage(blankBoard, 0, 0, canvas.width, canvas.height);
+            var voteBoard = playerVoted(this.players[0].substring(2, this.players[0].indexOf('>'))) || (!this.isSinglePlayer && playerVoted(this.players[1].substring(2, this.players[0].indexOf('>'))));
+            if (!voteBoard) {
+                defaultBoard.drawImage(background, 0, 0, canvas.width, canvas.height);
+                //defaultBoard.drawImage(blankBoard, 0, 0, canvas.width, canvas.height);
+            }else {
+                defaultBoard.drawImage(specialBackground, 0, 0, canvas.width, canvas.height);
+                //defaultBoard.drawImage(specialBoard, 0, 0, canvas.width, canvas.height);
+            }
+            defaultBoard.drawImage(blankBoard, 0, 0, canvas.width, canvas.height);
             for (var col = 0; col < 7; col++) {
                 for (var row = 0; row < 6; row++) {
                     if (this.gameBoard[row][col] == 0)
                         break;
                     if (this.gameBoard[row][col] == 1)
-                        ctx.drawImage(yellowToken, 32 * col, 160 - 32 * row, 32, 32);
+                        defaultBoard.drawImage(yellowToken, 32 * col, 160 - 32 * row, 32, 32);
                     if (this.gameBoard[row][col] == 2)
-                        ctx.drawImage(redToken, 32 * col, 160 - 32 * row, 32, 32);
+                        defaultBoard.drawImage(redToken, 32 * col, 160 - 32 * row, 32, 32);
                 }
             }
             if (this.gameOver(this.gameBoard) != 0) {
                 for (var i = 0; i < 4; i++) {
                     switch (this.winstyle) {
                         case 1:
-                            ctx.drawImage(winningPeice, 32 * (this.windex[1] + i), 160 - 32 * this.windex[0], 32, 32)
+                            defaultBoard.drawImage(winningPeice, 32 * (this.windex[1] + i), 160 - 32 * this.windex[0], 32, 32)
                             break;
                         case 2:
-                            ctx.drawImage(winningPeice, 32 * (this.windex[1] + i), 160 - 32 * (this.windex[0] + i), 32, 32)
+                            defaultBoard.drawImage(winningPeice, 32 * (this.windex[1] + i), 160 - 32 * (this.windex[0] + i), 32, 32)
                             break;
                         case 3:
-                            ctx.drawImage(winningPeice, 32 * this.windex[1], 160 - 32 * (this.windex[0] + i), 32, 32)
+                            defaultBoard.drawImage(winningPeice, 32 * this.windex[1], 160 - 32 * (this.windex[0] + i), 32, 32)
                             break;
                         case 4:
-                            ctx.drawImage(winningPeice, 32 * (this.windex[1] + i), 160 - 32 * (this.windex[0] + 3 - i), 32, 32)
+                            defaultBoard.drawImage(winningPeice, 32 * (this.windex[1] + i), 160 - 32 * (this.windex[0] + 3 - i), 32, 32)
                     }
                 }
             } else if (this.lastMove != undefined) {
@@ -269,7 +295,7 @@ module.exports = {
                         lastSpot = row;
                         break;
                     }
-                ctx.drawImage((this.turn == 1 ? lastRedToken : lastYellowToken), 32 * this.lastMove, 160 - 32 * lastSpot, 32, 32);
+                defaultBoard.drawImage((this.turn == 1 ? lastRedToken : lastYellowToken), 32 * this.lastMove, 160 - 32 * lastSpot, 32, 32);
             }
             const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'testBoard.png');
             if (this.lastMessage != null && this.lastMessage.channel.guild != null)
@@ -430,20 +456,20 @@ module.exports = {
                                 break;
                             botStreak++;
                         }
-                        if (winningOrLosing == "D"){
-                        }else if ((winningOrLosing == "W") == (winner == 1)){
+                        if (winningOrLosing == "D") {
+                        } else if ((winningOrLosing == "W") == (winner == 1)) {
                             streakMessage = "Your streak is getting longer! ";
                             botStreak++;
                             if (winningOrLosing == "W")
                                 streakMessage += "You now have " + botStreak + " wins in a row!";
                             if (winningOrLosing == "L")
                                 streakMessage += "You now have " + botStreak + " losses in a row :/";
-                        }else{
+                        } else {
                             streakMessage = "Your " + botStreak + " game " + (winningOrLosing == "L" ? "losing" : "winning") + " streak has come to an end"
                         }
                     }
                     if (winner == 1 || winner == "1") {
-                        this.channel[0].send("Wow " + this.players[0] + " you should be so proud that you managed to beat a stupid program. Despite having played " + connect4GameHolder.notgamesPlayed() + " games your massive intelligence has won the day.\n" + streakMessage );
+                        this.channel[0].send("Wow " + this.players[0] + " you should be so proud that you managed to beat a stupid program. Despite having played " + connect4GameHolder.notgamesPlayed() + " games your massive intelligence has won the day.\n" + streakMessage);
                     } else {
                         this.channel[0].send("Wow " + this.players[0] + " I honestly cannot believe that you lost. I mean, if you played " + connect4GameHolder.notgamesPlayed() + " games of connect-4 you might have won.\n" + streakMessage);
                     }

@@ -1,0 +1,1 @@
+Votes are only stored for 12 hours after the vote on top.gg. After that, it is deleted and the voting perks are lost until another vote comes in

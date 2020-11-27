@@ -30,7 +30,6 @@ require('./commands/misc/restart.js'),
 require('./commands/misc/announce.js'),
 require('./commands/puzzles/connect-four/game/connect-4-game.js'),
 require('./commands/puzzles/scum/scum-game.js'),
-require('./commands/random-responses/server-info.js'),
 require('./commands/random-responses/verify.js')];
 const DBL = require("dblapi.js");
 const express = require('express');
@@ -53,6 +52,14 @@ dbl.webhook.on('vote', vote => {
         spawn("sendNotification.bat", ['A vote! 😊', 'We got voted for! tysm!']);
         console.log('We got voted for! tysm!');
     }
+    var votes = fs.readFileSync('./assets/vote-log/recent-votes.dat').toString().replace('\r', '').split('\n');
+    votes.push(vote.user + '@' + Date.now());
+    console.log(votes);
+    votes = votes.filter(voteThing => 
+        //console.log(Date.now() - parseInt(voteThing.split('@')[1]) <= 1000 * 3600 * 12);
+        Date.now() - parseInt(voteThing.split('@')[1]) <= 1000 * 3600 * 12
+    );
+    fs.writeFileSync('./assets/vote-log/recent-votes.dat', votes.join('\n'));
 });
 
 //janky hacked, no /dblwebhook extension notificaion listener:
@@ -81,7 +88,7 @@ client.on('ready', async () => {
     client.user.setActivity('thinking about connect-4');
     MusicDb.init();
     C4Game.init();
-    Euchre.init();
+    Euchre.init(client);
     Scum.init();
     console.log("Presence set!");
     setInterval(() => {

@@ -1,8 +1,4 @@
 module.exports = {
-    setClient(klient) {
-        client = klient;
-    },
-
     commands: ['server-info'],
     minArgs: 0,
     maxArgs: 0,
