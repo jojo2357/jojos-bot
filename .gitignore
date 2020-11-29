@@ -10,7 +10,7 @@ Code/node_modules/**/*
 Code/nodejslocation.dat
 
 # in-development:
-Code/commands/puzzles/euchre/*
+# Code/commands/puzzles/euchre/*
 Code/commands/puzzles/scum/*
 
 Code/assets/euchre/**/*
