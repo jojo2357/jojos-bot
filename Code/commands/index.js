@@ -3,12 +3,14 @@ const client = new Commando.CommandoClient()
 const config = require('../config.json');
 const MusicDb = require('./music/music-manager.js');
 const Manager = require('./puzzles/connect-four/game/connect-4-game-holder.js');
+const EuchreManager = require('./puzzles/euchre/euchre-game-manager.js');
 const fs = require('fs');
 
 client.on('message', message => {
-    if (message.author.bot || (message.guild && !(message.channel.permissionsFor(client.user.id).has("SEND_MESSAGES")))) {
+    if (message.author.bot || (message.guild && !(message.channel.permissionsFor(client.user.id).has("SEND_MESSAGES"))) && message.content.charAt(0) != config.prefix) {
         return;
     }
+    //connect-4
     if (message.toString().length == 1 && message.toString().substr(0,1) <= '7' && message.toString().substr(0,1) >= '1'){
         var huh = Manager.usersGame('<@' + message.author.id + '>')
         //var luh = huh.players.indexOf('<@' + message.author.id + '>')
@@ -20,6 +22,11 @@ client.on('message', message => {
                 return;
             }
         }
+    }
+    if (message.channel.type == "dm" && EuchreManager.findGameWithUser(message.author.id) != undefined && EuchreManager.findGameWithUser(message.author.id).players.includes(message.author.id)){
+        EuchreManager.findGameWithUser(message.author.id).makeMove(message.author.id + ':' + message.content);
+        //console.log(message.content);
+        return;
     }
     if (message.guild){
         if (!fs.existsSync(process.cwd() + '/assets/server-settings/' + message.guild.id + '.json'))

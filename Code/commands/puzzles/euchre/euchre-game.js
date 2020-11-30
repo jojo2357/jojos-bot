@@ -17,9 +17,6 @@ let sysoutGame = function (channel, playerCards = ["", "", "", "", ""], board = 
     const ctx = canvas.getContext('2d');
     //Player cards
     for (var i = 0; i < 5; i++) {
-        var huh = parseInt(playerCards[i]);
-        var wah = parseInt(playerCards[i]) / 6;
-        var waa = parseInt(playerCards[i]) % 6;
         if (playerCards[i] && playerCards[i] >= 0)
             ctx.drawImage(cards[Math.floor(parseInt(playerCards[i]) / 6)][parseInt(playerCards[i]) % 6], 25 * i + 75, 270, 71, 96);
         else
@@ -101,12 +98,16 @@ module.exports = {
     },
 
     EuchreGame: class {
-        players = [];
+        players = [''];
         channels = new Map(); //player => channel
 
         constructor(playerIds) {
             prc.stdout.on('data', this.handleComputer);
-            stdinStream.push(playerIds + "\n");
+            this.players = playerIds;
+            var playerList = playerIds.join(',').replace('cpu', ' ');
+            while (playerList.includes('cpu'))
+                playerList = playerList.replace('cpu', ' ');
+            stdinStream.push(playerList + "\n");
         }
 
         shuffleDeck() {

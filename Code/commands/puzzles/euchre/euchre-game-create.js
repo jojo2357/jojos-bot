@@ -17,10 +17,7 @@ module.exports = {
                 });
         });
         if (failed) return;
-        var playerList = arguments.join(',').replace('cpu', ' ');
-        while (playerList.includes('cpu'))
-            playerList = playerList.replace('cpu', ' ');
-        var game = new euchreGame.EuchreGame(playerList);
+        var game = new euchreGame.EuchreGame(arguments);
         euchreManager.addGame(game);
     }
 }
