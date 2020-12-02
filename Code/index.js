@@ -16,6 +16,7 @@ const MusicDb = require('./commands/music/music-manager.js');
 const C4Game = require('./commands/puzzles/connect-four/game/connect-4-game.js');
 const Euchre = require('./commands/puzzles/euchre/euchre-game.js');
 const Scum = require('./commands/puzzles/scum/scum-game.js');
+const bruhlist = require('./util/bruhlist.js');
 const { EventEmitter } = require('events');
 EventEmitter.defaultMaxListeners = 100
 let client = new Commando.CommandoClient({
@@ -90,6 +91,7 @@ client.on('ready', async () => {
     C4Game.init();
     Euchre.init(client);
     Scum.init();
+    bruhlist.loadbruhList();
     console.log("Presence set!");
     setInterval(() => {
         dbl.postStats(client.guilds.size);
@@ -133,12 +135,5 @@ client.on("guildDelete", (guild) => {
 });
 
 client.login(config.token);
-
-module.exports = {
-    setReady() {
-        console.log('We are off and racing');
-        client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers');
-    }
-}
 
 sendUsers.forEach(sendTo => sendTo.setClient(client))

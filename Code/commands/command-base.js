@@ -1,21 +1,10 @@
 const { prefix } = require('../config.json')
 const { spawn } = require('child_process');
+const bruhList = require('../util/bruhlist.js');
+const prefixMap = require('../util/customPrefixes.js');
 const fs = require("fs");
 
-let blacklisted = [];
 
-loadBlacklist();
-
-function loadBlacklist() {
-    blacklisted = [];
-    blacklisted = fs.readFileSync('assets/blacklist/blacklist.dat').toString().split('\r\n');
-    for (var i = blacklisted.length - 1; i >= 0; i--) {
-        if (blacklisted[i] === '') {
-            blacklisted.splice(i, 1);
-        }
-    }
-    console.log(blacklisted);
-}
 
 const validatePermissions = (permissions) => {
     const validPermissions = [
@@ -89,23 +78,29 @@ module.exports = (client, commandOptions) => {
 
     // Listen for messages
     client.on('message', (message) => {
+        var timeIn = new Date().getMilliseconds();
         if (message.author.bot || (message.guild && !(message.channel.permissionsFor(client.user.id).has("SEND_MESSAGES"))))
             return;
-        if (blacklisted.includes(message.author.id))
+        if (bruhList.bruhlisted.includes(message.author.id))
             return;
         const { member, content, guild } = message;
 
+        var useThisPrefix = message.guild != undefined ? prefixMap.get(message.guild.id) : prefix;
+
         for (const alias of commands) {
-            const command = `${prefix}${alias.toLowerCase()}`
+            const command = `${useThisPrefix}${alias.toLowerCase()}`
             if (content.toLowerCase().startsWith(`${command} `) || content.toLowerCase() === command) {
-                for (const permission of permissions) {
+                
+                //Readd for perm
+                /*for (const permission of permissions) {
                     if (!member.hasPermission(permission)) {
                         message.reply(permissionError);
                         return;
                     }
-                }
+                }*/
 
-                for (const requiredRole of requiredRoles) {
+                //Readd for role
+                /*for (const requiredRole of requiredRoles) {
                     const role = guild.roles.cache.find(
                         (role) => role.name === requiredRole
                     )
@@ -114,12 +109,12 @@ module.exports = (client, commandOptions) => {
                         message.reply(`You must have the "${requiredRole}" role to use this command.`);
                         return;
                     }
-                }
+                }*/
                 const arguments = content.split(/[ ]+/);
                 arguments.shift();
 
                 if (arguments.length < minArgs || (maxArgs !== null && arguments.length > maxArgs)) {
-                    message.reply(`Use ${prefix}${alias} ${expectedArgs}`);
+                    message.reply(`Use ${useThisPrefix}${alias} ${expectedArgs}`);
                     return;
                 }
                 if (message.guild != null) {
@@ -127,14 +122,17 @@ module.exports = (client, commandOptions) => {
                 } else
                     console.log(message.author.username + " in dm'd me and asked for " + message.toString() + ' at ' + new Date().toTimeString().split(' ')[0]);
                 try {
-                    var timeIn = new Date().getMilliseconds();
-                    callback(message, arguments, arguments.join(' '), client);
-                    console.log("Took " + new Date().getMilliseconds() + "ms to complete");
+                    message.channel.startTyping().then(
+                        callback(message, arguments, arguments.join(' '), client)
+                    ).then(message.channel.stopTyping(true));
+                    console.log("Took " + (new Date().getMilliseconds() - timeIn) + "ms to complete");
                 } catch (err) {
+                    message.channel.stopTyping()
                     var out = err.stack.toString().toLowerCase();
                     while (out.includes(process.cwd().toLowerCase()))
                         out = out.replace(process.cwd().toLowerCase(), '');
                     message.reply('An error has occured: ' + err + '\n' + out);
+                    console.log("En error occuerd in " + (new Date().getMilliseconds() - timeIn) + "ms and had this to say:\n" + out)
                 }
                 return;
             }
