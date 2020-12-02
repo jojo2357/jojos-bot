@@ -45,6 +45,7 @@ module.exports = {
             default:
                 message.reply("Could not find that setting");
         }
+        existingSettings = assertComplete(existingSettings);
         fs.writeFileSync('./assets/server-settings/' + message.guild.id + '.json', JSON.stringify(existingSettings))
         if (refreshMap)
             prefixManager.updateMap();
@@ -59,4 +60,16 @@ module.exports = {
             );
         message.channel.send(msg);
     }
+}
+
+function assertComplete(jsonSettings) {
+    if (jsonSettings.notifications == undefined)
+        jsonSettings.notifications = defaultSettings.notifications;
+    if (jsonSettings.notificationChannel == undefined)
+        jsonSettings.notificationChannel = defaultSettings.notificationChannel;
+    if (jsonSettings.responses == undefined)
+        jsonSettings.responses = defaultSettings.responses;
+    if (jsonSettings.prefix == undefined)
+        jsonSettings.prefix = defaultSettings.prefix;
+    return jsonSettings;
 }
