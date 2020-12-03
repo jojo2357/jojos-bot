@@ -12,7 +12,7 @@ module.exports = {
     callback: (message, arguments) => {
         out = '!p ' + musick.getRandomName();
         putIn = "";
-        if (parseInt(arguments[0]) < 1 || parseInt(arguments[0]) > 50){
+        if (parseInt(arguments[0]) < 1 || parseInt(arguments[0]) > 50 || isNaN(parseInt(arguments[0]))){
             message.reply("No. bad. stop")
             return;
         }
@@ -25,7 +25,7 @@ module.exports = {
         }
         const ch = new Discord.MessageEmbed()
             .setColor('#0cc0b4')
-            .setTitle('Heres ' + arguments[0] + ' random songs')
+            .setTitle('Here\'s ' + parseInt(arguments[0]) + ' random song' + (parseInt(arguments[0]) == 1 ? '' : 's'))
             .setDescription(out)
             .setFooter('they are most definitely better than whatever meyers is playing');
         message.channel.send(ch);

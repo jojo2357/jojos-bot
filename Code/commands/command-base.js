@@ -81,11 +81,11 @@ module.exports = (client, commandOptions) => {
         var timeIn = new Date().getMilliseconds();
         if (message.author.bot || (message.guild && !(message.channel.permissionsFor(client.user.id).has("SEND_MESSAGES"))))
             return;
-        if (bruhList.bruhlisted.includes(message.author.id))
+        if (bruhList.bruhListed.includes(message.author.id))
             return;
         const { member, content, guild } = message;
 
-        var useThisPrefix = message.guild != undefined ? prefixMap.get(message.guild.id) : prefix;
+        var useThisPrefix = guild != undefined ? prefixMap.get(guild.id) : prefix;
 
         for (const alias of commands) {
             const command = `${useThisPrefix}${alias.toLowerCase()}`
@@ -123,7 +123,7 @@ module.exports = (client, commandOptions) => {
                     console.log(message.author.username + " in dm'd me and asked for " + message.toString() + ' at ' + new Date().toTimeString().split(' ')[0]);
                 try {
                     message.channel.startTyping().then(
-                        callback(message, arguments, arguments.join(' '), client)
+                        callback(message, arguments)
                     ).then(message.channel.stopTyping(true));
                     console.log("Took " + (new Date().getMilliseconds() - timeIn) + "ms to complete");
                 } catch (err) {
