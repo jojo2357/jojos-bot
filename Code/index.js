@@ -16,9 +16,7 @@ let client = new Commando.CommandoClient({
     owner: '524411594009083933',
     commandPrefix: config.prefix
 })
-
-const { spawn } = require('child_process');
-
+const { sendNotification } = require('./util/sendNotifiaction.js');
 const sendUsers = [require('./commands/misc/count-users.js'),
 require('./commands/misc/distribution.js'),
 require('./commands/misc/restart.js'),
@@ -45,10 +43,10 @@ dbl.webhook.on('ready', () => {
 //tysm @Militia21 😊. You NEED to put /dblwebhook at the end of the website otherwise use the other janky thing
 dbl.webhook.on('vote', vote => {
     if (client.users.cache.find((person => vote.user == person.id))) {
-        spawn("sendNotification.bat", ['A vote! 😊', client.users.cache.find((person => vote.user == person.id)).username + ' voted for us! tysm!']);
+        sendNotification(['A vote! 😊', client.users.cache.find((person => vote.user == person.id)).username + ' voted for us! tysm!']);
         console.log(client.users.cache.find((person => vote.user == person.id)).username + ' voted for us! tysm!');
     } else {
-        spawn("sendNotification.bat", ['A vote! 😊', 'We got voted for! tysm!']);
+        sendNotification(['A vote! 😊', 'We got voted for! tysm!']);
         console.log('We got voted for! tysm!');
     }
     var votes = fs.readFileSync('./assets/vote-log/recent-votes.dat').toString().replace('\r', '').split('\n');
@@ -67,10 +65,10 @@ app.use(express.json());
 
 app.post('/', (req, res) => {
     if (client.users.cache.find((person => req.body.user == person.id))) {
-        spawn("sendNotification.bat", ['A vote! 😊', client.users.cache.find((person => req.body.user == person.id)).username + ' voted for us! tysm!']);
+        sendNotification(['A vote! 😊', client.users.cache.find((person => req.body.user == person.id)).username + ' voted for us! tysm!']);
         console.log(client.users.cache.find((person => req.body.user == person.id)).username + ' voted for us! tysm!');
     } else {
-        spawn("sendNotification.bat", ['A vote! 😊', 'We got voted for! tysm!']);
+        sendNotification(['A vote! 😊', 'We got voted for! tysm!']);
         console.log('We got voted for! tysm!');
     }
 });
@@ -84,7 +82,10 @@ server.listen(5055, () => {
 //init:
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}!`);
-    client.user.setActivity('thinking about connect-4');
+
+    client.user.setActivity({ name: 'thinking about connect-4', status: 'dnd' });
+    client.user.setAFK(false);
+    //client.user.setActivity(new Discord.Presence(client, {status: 'dnd', name: 'thinking about connect-4'}))
     MusicDb.init();
     C4Game.init();
     Euchre.init(client);
@@ -112,17 +113,17 @@ const readCommands = (dir) => {
 readCommands('commands');
 
 client.on("guildCreate", (guild) => {
-    spawn('sendNotification.bat', ['Added to server', 'omgomgomgomgogm i got added to' + (guild.name).replace('\"', '').replace('\'', '') + '!!!'])
+    sendNotification(['Added to server', 'omgomgomgomgogm i got added to' + (guild.name).replace('\"', '').replace('\'', '') + '!!!'])
     client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
-    console.log(`Joined new guild: ${guild.name}`);
+    console.log(`Joined new guild: ${guild.name} at ` + new Date().toTimeString().split(' ')[0]);
     if (guild.systemChannel != null)
         guild.systemChannel.send("Hey! thanks for adding me! You can use `=help` to see commands and how to get started.")
 });
 
 client.on("guildDelete", (guild) => {
-    spawn('sendNotification.bat', ['Removed from server', 'sobsobsobsobsobsob 😭 i got removed from' + (guild.name).replace('\"', '').replace('\'', '') + '!!!'])
+    sendNotification(['Removed from server', 'sobsobsobsobsobsob 😭 i got removed from' + (guild.name).replace('\"', '').replace('\'', '') + '!!!'])
     client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
-    console.log(`Left guild: ${guild.name}`);
+    console.log(`Left guild: ${guild.name} at ` + new Date().toTimeString().split(' ')[0]);
     //if (fs.existsSync(process.cwd() + '/assets/server-settings/' + guild.id + '.json'))
     //fs.unlinkSync(process.cwd() + '/assets/server-settings/' + guild.id + '.json').then(console.log("Removed " + message.guild.id + '.json'))
 });

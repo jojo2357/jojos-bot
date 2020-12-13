@@ -1,13 +1,12 @@
-const { Console } = require('console');
 const Discord = require('discord.js');
 const stream = require('stream');
 const Canvas = require('canvas');
 const fs = require('fs');
 const connect4GameHolder = require('./connect-4-game-holder');
-const Commando = require('discord.js-commando');
-const config = require(process.cwd() + '\\config.json');
+const config = require('../../../../config.json');
 
 const { spawn } = require('child_process');
+const sendNotifiaction = require('../../../../util/sendNotifiaction');
 
 let client;
 let background;
@@ -38,7 +37,7 @@ var botLoaded = false;
 
 function playerVoted(id) {
     votes = fs.readFileSync('./assets/vote-log/recent-votes.dat').toString().replace('\r', '').split('\n');
-    const filteredVotes = votes.filter(voteThing => 
+    const filteredVotes = votes.filter(voteThing =>
         Date.now() - parseInt(voteThing.split('@')[1]) <= 1000 * 3600 * 12
     );
     if (filteredVotes.length != votes.length)
@@ -71,10 +70,11 @@ function checkLoaded(str = "") {// pass data in here to see if the bot is declar
     }
 }
 
-function thing() {
-    if (client.user != null)
-        client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log);
-    else {
+async function thing() {
+    if (client.user != null) {
+        await client.user.setPresence({ activity: { name: '=connect-4 in ' + client.guilds.cache.size + ' servers' }, status: 'dnd' }).then(console.log).catch(console.log);
+        console.log("======================================================")
+    } else {
         client.login(config.token).then(() => client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log)).catch(() => console.log("an error occured while setting presence"));
     }
 }
@@ -85,16 +85,16 @@ module.exports = {
     },
 
     async initImages() {
-        background = await Canvas.loadImage('assets\\images\\defaultBoard.png');
-        blankBoard = await Canvas.loadImage('assets\\images\\emptyBoard.png');
-        specialBackground = await Canvas.loadImage('assets\\images\\specialBoard.png');
-        specialBoard = await Canvas.loadImage('assets\\images\\emptySpecialBoard.png');
-        redToken = await Canvas.loadImage('assets\\images\\redToken.png');
-        yellowToken = await Canvas.loadImage('assets\\images\\yellowToken.png');
-        lastRedToken = await Canvas.loadImage('assets\\images\\lastRedToken.png');
-        lastYellowToken = await Canvas.loadImage('assets\\images\\lastYellowToken.png');
-        winningYellowToken = await Canvas.loadImage('assets\\images\\winningYellowToken.png');
-        winningRedToken = await Canvas.loadImage('assets\\images\\winningRedToken.png');
+        background = await Canvas.loadImage('./assets/images/defaultBoard.png');
+        blankBoard = await Canvas.loadImage('./assets/images/emptyBoard.png');
+        specialBackground = await Canvas.loadImage('./assets/images/specialBoard.png');
+        specialBoard = await Canvas.loadImage('./assets/images/emptySpecialBoard.png');
+        redToken = await Canvas.loadImage('./assets/images/redToken.png');
+        yellowToken = await Canvas.loadImage('./assets/images/yellowToken.png');
+        lastRedToken = await Canvas.loadImage('./assets/images/lastRedToken.png');
+        lastYellowToken = await Canvas.loadImage('./assets/images/lastYellowToken.png');
+        winningYellowToken = await Canvas.loadImage('./assets/images/winningYellowToken.png');
+        winningRedToken = await Canvas.loadImage('./assets/images/winningRedToken.png');
     },
 
     gamesPlayed() {
@@ -118,7 +118,7 @@ module.exports = {
             }
         });
 
-        prc = spawn('java', ['-Xms4g', '-cp', process.cwd() + '\\connect-4-bot\\', 'ConnectFourMain', '' + brainSize]);
+        prc = spawn('java', ['-cp', process.cwd() + '/connect-4-bot/', 'ConnectFourMain', '' + brainSize]);
 
         prc.stdout.checkLoad = checkLoaded;
 
@@ -133,7 +133,7 @@ module.exports = {
 
         prc.stderr.on('data', (data) => {
             console.error("Connect 4 master erred: " + data.toString());
-            spawn('sendError.bat', ['C4 bot died', data.toString()]);
+            sendNotifiaction(['C4 bot died', data.toString()]);
             //process.exit(-1);
             process.exit(2); //just in case -1 doesnt work for some unforseen reason
         });
@@ -257,7 +257,7 @@ module.exports = {
             if (!voteBoard) {
                 defaultBoard.drawImage(background, 0, 0, canvas.width, canvas.height);
                 //defaultBoard.drawImage(blankBoard, 0, 0, canvas.width, canvas.height);
-            }else {
+            } else {
                 defaultBoard.drawImage(specialBackground, 0, 0, canvas.width, canvas.height);
                 //defaultBoard.drawImage(specialBoard, 0, 0, canvas.width, canvas.height);
             }
@@ -434,7 +434,7 @@ module.exports = {
         ggMessage(winner) {
             clearTimeout(this.timerObj);
             console.log("Winner: " + winner);
-            spawn('sendNotification.bat', ['GG m8', (this.players[0] + ' ' + (winner == 1 ? 'won' : winner == 3 ? 'drew' : 'lost') + ' to ' + (this.isSinglePlayer ? ' the cpu' : this.players[1])).replace('\"', '').replace('\'', '')])
+            sendNotifiaction(['GG m8', (this.players[0] + ' ' + (winner == 1 ? 'won' : winner == 3 ? 'drew' : 'lost') + ' to ' + (this.isSinglePlayer ? ' the cpu' : this.players[1])).replace('\"', '').replace('\'', '')])
             if (winner != 3) {
                 if (this.isSinglePlayer) {
                     var streakMessage = "";

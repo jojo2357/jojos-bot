@@ -17,7 +17,7 @@ module.exports = {
             .setAuthor('Jojo2357\'s bot')
             .setDescription('All commands. Type in the chat the description for more info about those commands.\nIf you have any questions, friend me at jojo2357#1417 and I can help you out')
             .addFields(
-                { name: 'Connect-4 help', value: 'connect-4-help', inline: true },
+                { name: 'Connect-4 help', value: prefix + 'connect-4-help', inline: true },
                 { name: 'Create a connect 4 game', value: prefix + 'connect-4', inline: true },
                 { name: 'Cypher', value: prefix + 'cypher', inline: true },
                 { name: 'Music Recommendations', value: prefix + 'song', inline: true },

@@ -125,6 +125,7 @@ module.exports = (client, commandOptions) => {
                     message.channel.startTyping().then(
                         callback(message, arguments)
                     ).then(message.channel.stopTyping(true));
+                    message.channel.stopTyping(true);
                     console.log("Took " + (new Date().getMilliseconds() - timeIn) + "ms to complete");
                 } catch (err) {
                     message.channel.stopTyping()

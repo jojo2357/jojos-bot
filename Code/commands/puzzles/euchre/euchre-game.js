@@ -13,33 +13,35 @@ var prc;
 var stdinStream;
 
 let sysoutGame = function (channel, playerCards = ["", "", "", "", ""], board = ["", "", "", ""], bidDicators = ['4', '4', '4', '4'], score = ['0', '0', '0', '0', '0', '0'], message = "Empty Message") {
-    const canvas = Canvas.createCanvas(282, 366);
-    const ctx = canvas.getContext('2d');
-    //Player cards
-    for (var i = 0; i < 5; i++) {
-        if (playerCards[i] && playerCards[i] >= 0)
-            ctx.drawImage(cards[Math.floor(parseInt(playerCards[i]) / 6)][parseInt(playerCards[i]) % 6], 25 * i + 75, 270, 71, 96);
-        else
-            ctx.drawImage(blankCard, 25 * i + 75, 270, 71, 96);
-    }
-    //bid squares:
-    ctx.drawImage(bidIndicators[bidDicators[0]], 150, 140 + 0, 21, 22);
-    ctx.drawImage(bidIndicators[bidDicators[1]], 125, 125 + 0, 21, 22);
-    ctx.drawImage(bidIndicators[bidDicators[3]], 175, 125 + 0, 21, 22);
-    ctx.drawImage(bidIndicators[bidDicators[2]], 150, 110 + 0, 21, 22);
-    ctx.font = '20px Arial';
-    ctx.fillStyle = '#66FFFF';
-    ctx.fillText(`         G, P, T\nUs:     ${score[0]}, ${score[1]}, ${score[2]}\nThem: ${score[3]}, ${score[4]}, ${score[5]}`, 0, 20);
-    for (var i = 0; i < 4; i++) {
-        if (board[i] <= 26)
-            ctx.drawImage(cards[Math.floor(parseInt(board[i]) / 6)][parseInt(board[i]) % 6], 150 - 19 - 80 * Math.sin(i * 0.5 * Math.PI), 90 + 80 * Math.cos(i * 0.5 * Math.PI))
-        else
-            ctx.drawImage(secondRound[board[i] - 27], 150 - 19 - 80 * Math.sin(i * 0.5 * Math.PI), 90 + 80 * Math.cos(i * 0.5 * Math.PI))
-    }
+    return new Promise(function (resolve, reject) {
+        const canvas = Canvas.createCanvas(282, 366);
+        const ctx = canvas.getContext('2d');
+        //Player cards
+        playerCards = playerCards.filter(card => card != "-1");
+        for (var i = 0; i < playerCards.length; i++)
+            if (playerCards[i] && playerCards[i] >= 0)
+                ctx.drawImage(cards[Math.floor(parseInt(playerCards[i]) / 6)][parseInt(playerCards[i]) % 6], 25 * (i + 0.5 * (5 - playerCards.length)) + 85, 270, 71, 96);
+            else
+                ctx.drawImage(blankCard, 25 * i + 75, 270, 71, 96);
+        //bid squares:
+        ctx.drawImage(bidIndicators[bidDicators[0]], 150, 140 + 0, 21, 22);
+        ctx.drawImage(bidIndicators[bidDicators[1]], 125, 125 + 0, 21, 22);
+        ctx.drawImage(bidIndicators[bidDicators[3]], 175, 125 + 0, 21, 22);
+        ctx.drawImage(bidIndicators[bidDicators[2]], 150, 110 + 0, 21, 22);
+        ctx.font = '20px Arial';
+        ctx.fillStyle = '#66FFFF';
+        ctx.fillText(`         G, P, T\nUs:     ${score[0]}, ${score[1]}, ${score[2]}\nThem: ${score[3]}, ${score[4]}, ${score[5]}`, 0, 20);
+        for (var i = 0; i < 4; i++) {
+            if (board[i] <= 26)
+                ctx.drawImage(cards[Math.floor(parseInt(board[i]) / 6)][parseInt(board[i]) % 6], 150 - 19 - 80 * Math.sin(i * 0.5 * Math.PI), 90 + 80 * Math.cos(i * 0.5 * Math.PI), 71, 96)
+            else
+                ctx.drawImage(secondRound[board[i] - 27], 150 - 19 - 80 * Math.sin(i * 0.5 * Math.PI), 90 + 80 * Math.cos(i * 0.5 * Math.PI), 71, 96)
+        }
 
-    const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'game.png');
-    channel.send(message, attachment);
-}
+        const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'game.png');
+        channel.send(message, attachment).then(resolve).catch(reject);
+    });
+};
 
 module.exports = {
     init(klient) {
@@ -101,13 +103,13 @@ module.exports = {
         players = [''];
         channels = new Map(); //player => channel
 
-        constructor(playerIds) {
+        constructor(playerIds = ['cpu', 'cpu', 'cpu', 'cpu']) {
             prc.stdout.on('data', this.handleComputer);
+            for (var i = 0; i < 4; i++) {
+                playerIds[i] = playerIds[i].replace('<', '').replace('@', '').replace('!', '').replace('>', '').replace('cpu', ' ');
+            }
             this.players = playerIds;
-            var playerList = playerIds.join(',').replace('cpu', ' ');
-            while (playerList.includes('cpu'))
-                playerList = playerList.replace('cpu', ' ');
-            stdinStream.push(playerList + "\n");
+            stdinStream.push(playerIds.join(',') + "\n");
         }
 
         shuffleDeck() {
@@ -142,9 +144,9 @@ module.exports = {
                 const split = data.split(':');
                 var uzer = client.users.cache.find(person => split[0] == person.id);
                 if (!split.includes("Cards"))
-                    client.users.cache.find(person => split[0] == person.id).send(split[1 + split.indexOf("Message")]);
+                    Promise.resolve(uzer.send(split[1 + split.indexOf("Message")]).catch(console.log));
                 else
-                    sysoutGame(client.users.cache.find(person => split[0] == person.id), split[1 + split.indexOf("Cards")].split(','), split[1 + split.indexOf("Board")].split(','), split[1 + split.indexOf("Trump")].split(','), split[1 + split.indexOf("Score")].split(','), split.includes('Message') ? split[1 + split.indexOf("Message")] : "Empty Message")
+                    Promise.resolve(sysoutGame(uzer, split[1 + split.indexOf("Cards")].split(','), split[1 + split.indexOf("Board")].split(','), split[1 + split.indexOf("Trump")].split(','), split[1 + split.indexOf("Score")].split(','), split.includes('Message') ? split[1 + split.indexOf("Message")] : "").catch(console.log))
             });
         }
     }

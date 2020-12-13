@@ -4,10 +4,11 @@ const config = require('../config.json');
 const MusicDb = require('./music/music-manager.js');
 const Manager = require('./puzzles/connect-four/game/connect-4-game-holder.js');
 const EuchreManager = require('./puzzles/euchre/euchre-game-manager.js');
+const PrefixManager = require('../util/customPrefixes.js');
 const fs = require('fs');
 
 client.on('message', message => {
-    if (message.author.bot || (message.guild && !(message.channel.permissionsFor(client.user.id).has("SEND_MESSAGES"))) && message.content.charAt(0) != config.prefix) {
+    if (message.author.bot || (message.guild && !(message.channel.permissionsFor(client.user.id).has("SEND_MESSAGES"))) || message.content.charAt(0) == PrefixManager.get(message.guild == undefined ? "default" : message.guild.id)) {
         return;
     }
     //connect-4
