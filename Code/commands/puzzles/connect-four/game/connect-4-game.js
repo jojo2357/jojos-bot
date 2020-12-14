@@ -6,7 +6,7 @@ const connect4GameHolder = require('./connect-4-game-holder');
 const config = require('../../../../config.json');
 
 const { spawn } = require('child_process');
-const sendNotifiaction = require('../../../../util/sendNotifiaction');
+const { sendNotification } = require('../../../../util/sendNotifiaction');
 
 let client;
 let background;
@@ -133,7 +133,7 @@ module.exports = {
 
         prc.stderr.on('data', (data) => {
             console.error("Connect 4 master erred: " + data.toString());
-            sendNotifiaction(['C4 bot died', data.toString()]);
+            sendNotification.sendNotification(['C4 bot died', data.toString()]);
             //process.exit(-1);
             process.exit(2); //just in case -1 doesnt work for some unforseen reason
         });
@@ -434,7 +434,7 @@ module.exports = {
         ggMessage(winner) {
             clearTimeout(this.timerObj);
             console.log("Winner: " + winner);
-            sendNotifiaction(['GG m8', (this.players[0] + ' ' + (winner == 1 ? 'won' : winner == 3 ? 'drew' : 'lost') + ' to ' + (this.isSinglePlayer ? ' the cpu' : this.players[1])).replace('\"', '').replace('\'', '')])
+            sendNotification(['GG m8', (this.players[0] + ' ' + (winner == 1 ? 'won' : winner == 3 ? 'drew' : 'lost') + ' to ' + (this.isSinglePlayer ? ' the cpu' : this.players[1])).replace('\"', '').replace('\'', '')])
             if (winner != 3) {
                 if (this.isSinglePlayer) {
                     var streakMessage = "";

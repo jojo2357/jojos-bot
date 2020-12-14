@@ -1,5 +1,6 @@
 const euchreGame = require("./euchre-game");
 const euchreManager = require("./euchre-game-manager");
+const os = require('os');
 
 module.exports = {
     commands: ['euchre'],
@@ -8,6 +9,10 @@ module.exports = {
     callback: (message, arguments) => {
         if (message.author.id != '524411594009083933' && message.author.id != '777008421940887583')
             return;
+        if (os.platform().toString().toLowerCase().includes('win')){
+            message.reply("I'm sorry but im just a pi, i cant do that stuff just yet");
+            return;
+        }
         var failed = false;
         arguments.forEach(arg => {
             if (arg != 'cpu'){

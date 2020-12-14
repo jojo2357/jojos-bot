@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 const Canvas = require('canvas');
 const stream = require('stream');
+const fs = require('fs');
+const os = require('os');
 const { spawn } = require('child_process');
 
 let cards;
@@ -46,6 +48,12 @@ let sysoutGame = function (channel, playerCards = ["", "", "", "", ""], board = 
 module.exports = {
     init(klient) {
         client = klient;
+
+        if (!fs.existsSync(process.cwd() + '/assets/euchre/ConsoleApplication2.exe') || !os.platform().toString().toLowerCase().includes('win')) {
+            console.log("Euchre bot not found or os not compatible");
+            return;
+        }
+
         stdinStream = new stream.Readable({
             read(size) {
                 return true;
