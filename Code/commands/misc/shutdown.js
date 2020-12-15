@@ -1,4 +1,5 @@
 const os = require('os');
+const remoteConsole = require('../../util/remoteConsole.js');
 
 module.exports = {
     commands: ['shutdown'],
@@ -7,7 +8,7 @@ module.exports = {
         await message.channel.send('oh no!');
         if (message.author == '524411594009083933')
             if (!arguments[0] || os.platform().toString().toLowerCase().includes(arguments[0]))
-                process.exit(0);
+                remoteConsole.killHostStatus().then(process.exit(0));
             else
                 message.send("I am " + os.platform().toString() + "");
         else

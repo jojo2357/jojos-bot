@@ -1,4 +1,6 @@
 const Discord = require('discord.js');
+const os = require('os');
+const remoteConsole = require("../../util/remoteConsole.js");
 
 let client;
 
@@ -15,9 +17,10 @@ module.exports = {
                 client.user.setActivity('Restarting, please wait');
                 await message.channel.send('Hasta la pasta');
                 await client.user.setAFK(true);
+                await remoteConsole.killHostStatus();
                 process.exit(1);
             } else
-                message.send("I am " + os.platform().toString() + "");
+                message.channel.send("I am " + os.platform().toString() + "");
         } else
             await message.channel.send('In ur dreams sukers');
     }

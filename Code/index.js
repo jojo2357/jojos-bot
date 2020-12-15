@@ -17,6 +17,7 @@ let client = new Commando.CommandoClient({
     commandPrefix: config.prefix
 })
 const { sendNotification } = require('./util/sendNotifiaction.js');
+const remoteConsole = require('./util/remoteConsole.js');
 const sendUsers = [require('./commands/misc/count-users.js'),
 require('./commands/misc/distribution.js'),
 require('./commands/misc/restart.js'),
@@ -26,7 +27,8 @@ require('./commands/misc/bruhlist.js'),
 require('./commands/misc/unBruhlist.js'),
 require('./commands/puzzles/connect-four/game/connect-4-game.js'),
 require('./commands/puzzles/scum/scum-game.js'),
-require('./commands/random-responses/verify.js')];
+require('./commands/random-responses/verify.js'),
+remoteConsole];
 
 const DBL = require("dblapi.js");
 const express = require('express');
@@ -79,6 +81,7 @@ server.listen(5055, () => {
     console.log('Listening');
 });
 
+var remoteConsoleActive = false;
 //init:
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -95,6 +98,16 @@ client.on('ready', async () => {
     setInterval(() => {
         dbl.postStats(client.guilds.size);
     }, 1800000);
+
+    remoteConsole.sendHostStatus();
+    setInterval(() => {
+        remoteConsole.sendHostStatus();
+    }, 60000);
+    
+    if (remoteConsoleActive) setInterval(() => {
+        remoteConsole.sendConsoleUpdates();
+    }, 3600000);
+    console.log("Loggers set");
 });
 
 const readCommands = (dir) => {
