@@ -8,6 +8,7 @@ Code/assets/webhook-hosting/*
 Code/assets/vote-log/recent-votes.dat
 Code/node_modules/**/*
 Code/nodejslocation.dat
+Code/recentData.dat
 
 # in-development:
 # Code/commands/puzzles/euchre/*

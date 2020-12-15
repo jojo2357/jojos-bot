@@ -81,7 +81,6 @@ server.listen(5055, () => {
     console.log('Listening');
 });
 
-var remoteConsoleActive = false;
 //init:
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -104,7 +103,7 @@ client.on('ready', async () => {
         remoteConsole.sendHostStatus();
     }, 60000);
     
-    if (remoteConsoleActive) setInterval(() => {
+    if (config.remoteConsole) setInterval(() => {
         remoteConsole.sendConsoleUpdates();
     }, 3600000);
     console.log("Loggers set");

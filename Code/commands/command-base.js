@@ -1,10 +1,7 @@
-const { prefix } = require('../config.json')
-const { spawn } = require('child_process');
+const { prefix, remoteConsole } = require('../config.json');
 const bruhList = require('../util/bruhlist.js');
 const prefixMap = require('../util/customPrefixes.js');
-const fs = require("fs");
-
-
+const remoteLogger = require('../util/remoteConsole.js');
 
 const validatePermissions = (permissions) => {
     const validPermissions = [
@@ -127,6 +124,8 @@ module.exports = (client, commandOptions) => {
                     ).then(message.channel.stopTyping(true));
                     message.channel.stopTyping(true);
                     console.log("Took " + (new Date().getMilliseconds() - timeIn) + "ms to complete");
+                    if (remoteConsole) 
+                        remoteLogger.addRecentData(`${message.author.id}:${message.guild?message.guild.id:"DM"}:${message.toString()};${new Date().toTimeString().split(' ')[0]}`);
                 } catch (err) {
                     message.channel.stopTyping()
                     var out = err.stack.toString().toLowerCase();

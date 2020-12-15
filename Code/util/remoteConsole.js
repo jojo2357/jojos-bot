@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const os = require('os');
+const fs = require('fs');
 
 let client;
 let lastHostStatus;
@@ -9,21 +10,24 @@ module.exports = {
         client = klient;
     },
 
-    recentData: [],
     startTime: new Date().getMilliseconds(),
 
     async killHostStatus(){
-        lastHostStatus && await lastHostStatus.edit("Bot died");
+        lastHostStatus && await lastHostStatus.delete().catch();
+        await this.sendConsoleUpdates();
     },
 
     async sendHostStatus() {
+        const tot = os.totalmem();
+        const free = os.freemem();
+        const used = tot - free;
         const help = new Discord.MessageEmbed()
-            .setColor(((Math.ceil(55 + 400 * (-0.5 + (os.totalmem() - os.freemem()) / (os.totalmem())))) << 16 | (Math.ceil(255 - (400 * (-0.5 + ((os.totalmem() - os.freemem()) / (os.totalmem())))))) << 8) & 0xFFFF00)
+        .setColor(((Math.ceil(55 + 400 * (-0.5 + (used) / (tot)))) << 16 | (Math.ceil(255 - (400 * (-0.5 + ((used) / (tot)))))) << 8) & 0xFFFF00)
             .setTitle('Current state of machine:')
             .setDescription(
-                'Operating system: ' + os.platform().toString() + '\n' +
-                'Memory used: ' + ((os.totalmem() / Math.pow(1024, 3) - os.freemem() / Math.pow(1024, 3))).toFixed(2) + ' GB/' +
-                (os.totalmem() / Math.pow(1024, 3)).toFixed(2) + ' GB (' + ((os.totalmem() - os.freemem()) / (os.totalmem()) * 100).toFixed(0) + '%)'
+                'Operating system: ' + os.platform().toString() + '\n' + 
+                'Memory used: ' + ((used / Math.pow(1024, 3))).toFixed(2) + ' GB/' +
+                (tot / Math.pow(1024, 3)).toFixed(2) + ' GB (' + ((used) / (tot) * 100).toFixed(0) + '%)'
             ).setTimestamp()
             .setFooter('More commands coming soon!');
         if (lastHostStatus) 
@@ -32,9 +36,18 @@ module.exports = {
             lastHostStatus = await client.users.cache.get('524411594009083933').send(help);
     },
 
-    sendConsoleUpdates() {
-        this.recentData.forEach(data =>
-            client.users.cache.get('524411594009083933').send(data).then(msg => msg.delete({ timeout: 3600000 })).catch()
-        );
+    async sendConsoleUpdates() {
+        if (fs.readFileSync('recentData.dat').toString().length > 2000)
+            await client.users.cache.get('524411594009083933').send(new Discord.MessageAttachment('recentData.dat'));
+        else
+            await client.users.cache.get('524411594009083933').send(fs.readFileSync('recentData.dat').toString());
+        console.log('sent console updates');
+        fs.unlinkSync('recentData.dat');
     },
+
+    async addRecentData(data) {
+        if (!fs.existsSync('recentData.dat'))
+            fs.writeFileSync('recentData.dat', '');
+        fs.appendFileSync('recentData.dat', data + '\n');
+    }
 }
