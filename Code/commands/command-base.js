@@ -55,6 +55,7 @@ module.exports = (client, commandOptions) => {
         permissions = [],
         requiredRoles = [],
         callback,
+        restrictedToUsers = [],//this is for admin only that should be hardcoded for safety
     } = commandOptions;
 
     if (typeof commands === 'string') {
@@ -87,7 +88,7 @@ module.exports = (client, commandOptions) => {
         for (const alias of commands) {
             const command = `${useThisPrefix}${alias.toLowerCase()}`
             if (content.toLowerCase().startsWith(`${command} `) || content.toLowerCase() === command) {
-                
+
                 //Readd for perm
                 /*for (const permission of permissions) {
                     if (!member.hasPermission(permission)) {
@@ -109,14 +110,17 @@ module.exports = (client, commandOptions) => {
                 }*/
                 const arguments = content.split(/[ ]+/);
                 arguments.shift();
-
+                if (restrictedToUsers && restrictedToUsers.length > 0 && !restrictedToUsers.includes(message.author.id)){
+                    message.channel.stopTyping();
+                    return;
+                }
                 if (arguments.length < minArgs || (maxArgs !== null && arguments.length > maxArgs)) {
                     message.reply(`Use ${useThisPrefix}${alias} ${expectedArgs}`);
                     return;
                 }
-                if (message.guild != null) {
+                if (message.guild != null)
                     console.log(message.author.username + " in " + message.guild.name + " asked for " + message.toString() + ' at ' + new Date().toTimeString().split(' ')[0]);
-                } else
+                else
                     console.log(message.author.username + " in dm'd me and asked for " + message.toString() + ' at ' + new Date().toTimeString().split(' ')[0]);
                 try {
                     message.channel.startTyping().then(
@@ -124,15 +128,15 @@ module.exports = (client, commandOptions) => {
                     ).then(message.channel.stopTyping(true));
                     message.channel.stopTyping(true);
                     console.log("Took " + (new Date().getMilliseconds() - timeIn) + "ms to complete");
-                    if (remoteConsole) 
-                        remoteLogger.addRecentData(`${message.author.id}:${message.guild?message.guild.id:"DM"}:${message.toString()};${new Date().toTimeString().split(' ')[0]}`);
+                    if (remoteConsole)
+                        remoteLogger.addRecentData(`<@${message.author.id}>:${message.guild ? message.guild.id : "DM"}:${message.toString()};${new Date().toTimeString().split(' ')[0]}`);
                 } catch (err) {
-                    message.channel.stopTyping()
+                    message.channel.stopTyping();
                     var out = err.stack.toString().toLowerCase();
                     while (out.includes(process.cwd().toLowerCase()))
                         out = out.replace(process.cwd().toLowerCase(), '');
                     message.reply('An error has occured: ' + err + '\n' + out);
-                    console.log("En error occuerd in " + (new Date().getMilliseconds() - timeIn) + "ms and had this to say:\n" + out)
+                    console.log("En error occuerd in " + (new Date().getMilliseconds() - timeIn) + "ms and had this to say:\n" + out);
                 }
                 return;
             }

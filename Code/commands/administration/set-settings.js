@@ -1,9 +1,8 @@
 const { MessageEmbed } = require('discord.js');
 const { existsSync, writeFileSync } = require('fs');
-const { prefix } = require('../../config.json');
-const { updateMap } = require('../../util/customPrefixes.js')
+const prefixLibrary = require('../../util/customPrefixes.js');
 
-let defaultSettings = { notifications: false, notificationChannel: 0, timeout: 60000, responses: false, prefix: prefix };
+let defaultSettings = { notifications: false, notificationChannel: 0, timeout: 60000, responses: false, prefix: require('../../config.json').prefix };
 
 module.exports = {
     commands: ['set'],
@@ -48,7 +47,7 @@ module.exports = {
         existingSettings = assertComplete(existingSettings);
         writeFileSync('./assets/server-settings/' + message.guild.id + '.json', JSON.stringify(existingSettings))
         if (refreshMap)
-            updateMap();
+            prefixLibrary.updateMap();
         const msg = new MessageEmbed()
             .setTitle('Server Settings')
             .setDescription('use =set to change a setting. Example: `=set recieves notifications true` or `=set notification channel #general`')

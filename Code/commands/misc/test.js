@@ -1,9 +1,8 @@
 module.exports = {
     commands: ['test'],
     minArgs: 0,
+    restrictedToUsers: ['524411594009083933'],
     callback: (message, arguments) => {
-        if (message.author != '524411594009083933')
-            return;
         let unBan = arguments[0];
         message.guild.fetchBans().then(bans => {
             bans.forEach(banInfo => {

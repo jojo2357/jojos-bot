@@ -8,7 +8,7 @@ module.exports = {
     commands: ['settings-help', 'server-settings'],
     minArgs: 0,
     maxArgs: 0,
-    callback: (message, arguments) => {
+    callback: (message) => {
         var prefex;
         if (message.guild != undefined)
             prefex = prefixManager.get(message.guild.id);

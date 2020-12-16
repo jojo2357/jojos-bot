@@ -4,9 +4,8 @@ module.exports = {
     commands: 'rc',
     minArgs: 0,
     maxArgs: 0,
+    restrictedToUsers: ['524411594009083933'],
     callback: (message) => {
-        if (message.author.id != '524411594009083933')
-            return;
         var stuff = require('../../config.json');
         stuff.remoteConsole = !stuff.remoteConsole;
         message.reply('Remote console is now ' + (stuff.remoteConsole ? 'enabled' : 'disabled'));

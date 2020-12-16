@@ -9,9 +9,8 @@ module.exports = {
 
     commands: ['announce'],
     minArgs: 0,
+    restrictedToUsers: ["524411594009083933"],
     callback: (message, arguments) => {
-        if (message.author.id != "524411594009083933")
-            return;
         let moosage = arguments.join(' ');
 
         /*var guildList =*/

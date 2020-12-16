@@ -6,6 +6,7 @@ module.exports = {
     commands: ['euchre'],
     minArgs: 4,
     maxArgs: 4,
+    restrictedToUsers: ['524411594009083933', '777008421940887583'],
     callback: (message, arguments) => {
         if (message.author.id != '524411594009083933' && message.author.id != '777008421940887583')
             return;
