@@ -1,8 +1,8 @@
-const Discord = require('discord.js');
-const Canvas = require('canvas');
+const { MessageAttachment } = require('discord.js');
+const { createCanvas, loadImage} = require('canvas');
 const stream = require('stream');
 const fs = require('fs');
-const os = require('os');
+const { platform } = require('os');
 const { spawn } = require('child_process');
 
 let cards;
@@ -16,7 +16,7 @@ var stdinStream;
 
 let sysoutGame = function (channel, playerCards = ["", "", "", "", ""], board = ["", "", "", ""], bidDicators = ['4', '4', '4', '4'], score = ['0', '0', '0', '0', '0', '0'], message = "Empty Message") {
     return new Promise(function (resolve, reject) {
-        const canvas = Canvas.createCanvas(282, 366);
+        const canvas = createCanvas(282, 366);
         const ctx = canvas.getContext('2d');
         //Player cards
         playerCards = playerCards.filter(card => card != "-1");
@@ -40,7 +40,7 @@ let sysoutGame = function (channel, playerCards = ["", "", "", "", ""], board = 
                 ctx.drawImage(secondRound[board[i] - 27], 150 - 19 - 80 * Math.sin(i * 0.5 * Math.PI), 90 + 80 * Math.cos(i * 0.5 * Math.PI), 71, 96)
         }
 
-        const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'game.png');
+        const attachment = new MessageAttachment(canvas.toBuffer(), 'game.png');
         channel.send(message, attachment).then(resolve).catch(reject);
     });
 };
@@ -49,7 +49,7 @@ module.exports = {
     init(klient) {
         client = klient;
 
-        if (!fs.existsSync(process.cwd() + '/assets/euchre/ConsoleApplication2.exe') || !os.platform().toString().toLowerCase().includes('win')) {
+        if (!fs.existsSync(process.cwd() + '/assets/euchre/ConsoleApplication2.exe') || !platform().toString().toLowerCase().includes('win')) {
             console.log("Euchre bot not found or os not compatible");
             return;
         }
@@ -85,14 +85,14 @@ module.exports = {
     },
 
     async loadCards() {
-        blankCard = await Canvas.loadImage('assets/images/square.png');
+        blankCard = await loadImage('assets/images/square.png');
 
         cards = [
-            [await Canvas.loadImage('assets/images/Nhear.png'), await Canvas.loadImage('assets/images/Tnhear.png'), await Canvas.loadImage('assets/images/Jhear.png'), await Canvas.loadImage('assets/images/Qhear.png'), await Canvas.loadImage('assets/images/Khear.png'), await Canvas.loadImage('assets/images/Ahear.png')],
-            [await Canvas.loadImage('assets/images/Ndia.png'), await Canvas.loadImage('assets/images/Tndia.png'), await Canvas.loadImage('assets/images/Jdia.png'), await Canvas.loadImage('assets/images/Qdia.png'), await Canvas.loadImage('assets/images/Kdia.png'), await Canvas.loadImage('assets/images/Adia.png')],
-            [await Canvas.loadImage('assets/images/Nclubs.png'), await Canvas.loadImage('assets/images/Tnclubs.png'), await Canvas.loadImage('assets/images/Jclubs.png'), await Canvas.loadImage('assets/images/Qclubs.png'), await Canvas.loadImage('assets/images/Kclubs.png'), await Canvas.loadImage('assets/images/Aclubs.png')],
-            [await Canvas.loadImage('assets/images/Nspa.png'), await Canvas.loadImage('assets/images/Tnspa.png'), await Canvas.loadImage('assets/images/Jspa.png'), await Canvas.loadImage('assets/images/Qspa.png'), await Canvas.loadImage('assets/images/Kspa.png'), await Canvas.loadImage('assets/images/Aspa.png')],
-            [await Canvas.loadImage('assets/images/Square.png'), await Canvas.loadImage('assets/images/Order.png'), await Canvas.loadImage('assets/images/Pass.png')]
+            [await loadImage('assets/images/Nhear.png'), await loadImage('assets/images/Tnhear.png'), await loadImage('assets/images/Jhear.png'), await loadImage('assets/images/Qhear.png'), await loadImage('assets/images/Khear.png'), await loadImage('assets/images/Ahear.png')],
+            [await loadImage('assets/images/Ndia.png'), await loadImage('assets/images/Tndia.png'), await loadImage('assets/images/Jdia.png'), await loadImage('assets/images/Qdia.png'), await loadImage('assets/images/Kdia.png'), await loadImage('assets/images/Adia.png')],
+            [await loadImage('assets/images/Nclubs.png'), await loadImage('assets/images/Tnclubs.png'), await loadImage('assets/images/Jclubs.png'), await loadImage('assets/images/Qclubs.png'), await loadImage('assets/images/Kclubs.png'), await loadImage('assets/images/Aclubs.png')],
+            [await loadImage('assets/images/Nspa.png'), await loadImage('assets/images/Tnspa.png'), await loadImage('assets/images/Jspa.png'), await loadImage('assets/images/Qspa.png'), await loadImage('assets/images/Kspa.png'), await loadImage('assets/images/Aspa.png')],
+            [await loadImage('assets/images/Square.png'), await loadImage('assets/images/Order.png'), await loadImage('assets/images/Pass.png')]
         ];
 
         cards[0].reverse();
@@ -100,10 +100,10 @@ module.exports = {
         cards[2].reverse();
         cards[3].reverse();
 
-        secondRound = [await Canvas.loadImage('assets/images/Heart.png'), await Canvas.loadImage('assets/images/Diamon.png'), await Canvas.loadImage('assets/images/Clubs.png'), await Canvas.loadImage('assets/images/Spades.png'), await Canvas.loadImage('assets/images/NoBid.png')]
+        secondRound = [await loadImage('assets/images/Heart.png'), await loadImage('assets/images/Diamon.png'), await loadImage('assets/images/Clubs.png'), await loadImage('assets/images/Spades.png'), await loadImage('assets/images/NoBid.png')]
 
         bidIndicators = [
-            await Canvas.loadImage('assets/images/bitmap33.png'), await Canvas.loadImage('assets/images/bitmap34.png'), await Canvas.loadImage('assets/images/bitmap35.png'), await Canvas.loadImage('assets/images/bitmap36.png'), await Canvas.loadImage('assets/images/bitmap37.png')
+            await loadImage('assets/images/bitmap33.png'), await loadImage('assets/images/bitmap34.png'), await loadImage('assets/images/bitmap35.png'), await loadImage('assets/images/bitmap36.png'), await loadImage('assets/images/bitmap37.png')
         ];
     },
 

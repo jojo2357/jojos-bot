@@ -1,4 +1,3 @@
-const Discord = require('discord.js');
 const Manager = require('./connect-4-tournament-manager.js');
 const Tournament = require('./connect-4-tournament.js');
 

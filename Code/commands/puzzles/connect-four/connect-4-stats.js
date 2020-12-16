@@ -1,4 +1,4 @@
-const Discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const fs = require('fs');
 
 var shortAuthor;
@@ -186,7 +186,7 @@ function getAndPrint(shortAuthor, title = 'Connect 4 stats', message) {
     out += "\nLifetime record: " + w + '/' + d + '/' + l;
     out += "\nLifetime wr: " + (100 * w / tot).toFixed(2) + '%';
     out += "\nLifetime games: " + tot;
-    const ch = new Discord.MessageEmbed()
+    const ch = new MessageEmbed()
         .setColor('#0cc0b4')
         .setTitle(title)
         .setDescription(out)

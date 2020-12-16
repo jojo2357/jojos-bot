@@ -1,9 +1,8 @@
 let cypherRaw = 'jojo\'s wacky cypher \n\n';
 let plaintext = [];
 
-var fs = require("fs");
-const Discord = require('discord.js');
-const { Console } = require("console");
+const {readdirSync, readFileSync} = require("fs");
+const { MessageEmbed } = require('discord.js');
 
 let inited = false;
 
@@ -12,7 +11,7 @@ module.exports = {
     minArgs: 0,
     maxArgs: 0,
     callback: (message, arguments) => {
-        const ch = new Discord.MessageEmbed()
+        const ch = new MessageEmbed()
             .setColor('#0cc0b4')
             .setTitle(cypherRaw)
             .setDescription(scramble(createCipher(), plaintext[Math.floor(Math.random() * plaintext.length)]))
@@ -48,11 +47,11 @@ function createCipher() {
 }
 
 function readData() {
-    var files = fs.readdirSync('assets/cipher-texts/');
+    var files = readdirSync('assets/cipher-texts/');
     files.forEach(readAndAppend);
     inited = true;
 }
 
 function readAndAppend(file) {
-    plaintext.push(fs.readFileSync('assets/cipher-texts/' + file).toString());
+    plaintext.push(readFileSync('assets/cipher-texts/' + file).toString());
 }

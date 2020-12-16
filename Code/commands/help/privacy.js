@@ -1,10 +1,7 @@
-const Discord = require('discord.js');
-
 module.exports = {
     commands: 'privacy',
-    minArgs: 0,
     maxArgs: 0,
-    callback: (message, arguments) => {
+    callback: (message) => {
         message.channel.send("This bot permanently records the following information:\n -User ID and outcome (win/loss/tie) and opponent ID of every connect-4 game played\
             \n-Server ID and Notification settings, along with the ID of the notifications channel\
             \n-Suggestions go to my DM's where they are permanently recorded and cannot be deleted so careful what you say! I will not share any suggestions, however, unless there is an inherent risk of self harm, harming others, or other things that may be of concern to the community.\

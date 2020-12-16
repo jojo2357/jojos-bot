@@ -3,7 +3,7 @@ var pending = [];
 
 module.exports = {
     holdMyBeer: null,
-    gamesPlayed : 0,
+    gamesPlayed: 0,
 
     notgamesPlayed() {
         return this.gamesPlayed;

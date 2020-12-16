@@ -1,11 +1,10 @@
-const Discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = {
     commands: ['TODO', 'todo', 'changelog'],
-    minArgs: 0,
     maxArgs: 0,
-    callback: (message, arguments) => {
-        const help = new Discord.MessageEmbed()
+    callback: (message) => {
+        const help = new MessageEmbed()
             .setColor('#fff800')
             .setTitle('Things to do:')
             .setDescription(

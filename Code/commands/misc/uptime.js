@@ -1,5 +1,3 @@
-const Discord = require('discord.js')
-
 const startTime = Date.now();
 
 module.exports = {

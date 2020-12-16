@@ -1,12 +1,10 @@
-const Discord = require('discord.js');
-const Game = require('./connect-4-game.js');
 const Manager = require('./connect-4-game-holder.js');
 
 module.exports = {
     commands: ['show'],
     minArgs: 0,
     maxArgs: 0,
-    callback: (message, arguments) => {
+    callback: (message) => {
         if (Manager.usersGame('<@' + message.author + '>') != null)
             if (Manager.usersGame('<@' + message.author + '>').channel[Manager.usersGame('<@' + message.author + '>').turn - 1].id == message.channel.id)
                 Manager.usersGame('<@' + message.author + '>').sysoutBoard();

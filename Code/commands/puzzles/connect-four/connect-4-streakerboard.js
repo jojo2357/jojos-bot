@@ -1,5 +1,5 @@
-const Discord = require('discord.js');
-const fs = require('fs');
+const { MessageEmbed } = require('discord.js');
+const { readdirSync, readFileSync } = require('fs');
 
 module.exports = {
     commands: ['hot', 'cold'],
@@ -8,12 +8,12 @@ module.exports = {
     callback: (message, arguments) => {
         var winners = [];
         var losers = [];
-        fs.readdirSync(process.cwd() + '/assets/connect-4/game-record').forEach(file => {
+        readdirSync(process.cwd() + '/assets/connect-4/game-record').forEach(file => {
             if (file.includes('Brain'))
                 return;
             //var otherThing = process.cwd() + '/assets/connect-4/game-record/' + file;
             //var thing = fs.openSync(process.cwd() + '/assets/connect-4/game-record/' + file).toString();
-            const stuff = getStreak(fs.readFileSync(process.cwd() + '/assets/connect-4/game-record/' + file).toString().split('\n'));
+            const stuff = getStreak(readFileSync(process.cwd() + '/assets/connect-4/game-record/' + file).toString().split('\n'));
             if (stuff[1] == 'W')
                 winners.push([stuff[0], file.split('.')[0]]);
             else if (stuff[1] == 'L')
@@ -35,14 +35,14 @@ module.exports = {
         if (message.content.includes("hot")) {
             var out = "Wins, player";
             winners.forEach(thing => out += '\n' + (thing[0] + "<@" + thing[1] + ">"));
-            embed = new Discord.MessageEmbed()
+            embed = new MessageEmbed()
                 .setColor('#fff800')
                 .setTitle('Whos on a hot streak:')
                 .setDescription(out);
         } else {
             var out = "Losses, player";
             losers.forEach(thing => out += '\n' + (thing[0] + "<@" + thing[1] + ">"));
-            embed = new Discord.MessageEmbed()
+            embed = new MessageEmbed()
                 .setColor('#fff800')
                 .setTitle('Whos on a cold streak:')
                 .setDescription(out);

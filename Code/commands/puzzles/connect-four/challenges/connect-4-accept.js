@@ -1,4 +1,3 @@
-const Discord = require('discord.js');
 const Manager = require('../game/connect-4-game-holder');
 
 module.exports = {

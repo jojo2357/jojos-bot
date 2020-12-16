@@ -1,5 +1,4 @@
-const Discord = require('discord.js');
-const Commando = require('discord.js-commando');
+//const Discord = require('discord.js');
 const path = require('path');
 const config = require('./config.json');
 const fs = require('fs');
@@ -11,20 +10,20 @@ const Euchre = require('./commands/puzzles/euchre/euchre-game.js');
 const Scum = require('./commands/puzzles/scum/scum-game.js');
 const bruhlist = require('./util/bruhlist.js');
 const { EventEmitter } = require('events');
-EventEmitter.defaultMaxListeners = 100
-let client = new Commando.CommandoClient({
+EventEmitter.defaultMaxListeners = 100;
+let client = new (require('discord.js-commando')).CommandoClient({
     owner: '524411594009083933',
     commandPrefix: config.prefix
-})
+});
 const { sendNotification } = require('./util/sendNotifiaction.js');
 const remoteConsole = require('./util/remoteConsole.js');
 const sendUsers = [require('./commands/misc/count-users.js'),
 require('./commands/misc/distribution.js'),
-require('./commands/misc/restart.js'),
-require('./commands/misc/announce.js'),
-require('./commands/misc/suggest.js'),
-require('./commands/misc/bruhlist.js'),
-require('./commands/misc/unBruhlist.js'),
+require('./commands/administration/restart.js'),
+require('./commands/administration/announce.js'),
+require('./commands/administration/suggest.js'),
+require('./commands/administration/bruhlist.js'),
+require('./commands/administration/unBruhlist.js'),
 require('./commands/puzzles/connect-four/game/connect-4-game.js'),
 require('./commands/puzzles/scum/scum-game.js'),
 require('./commands/random-responses/verify.js'),
@@ -32,10 +31,9 @@ remoteConsole];
 
 const DBL = require("dblapi.js");
 const express = require('express');
-const http = require('http');
 
 const app = express();
-const server = http.createServer(app);
+const server = require('http').createServer(app);
 const dbl = new DBL(config.top_ggToken, { webhookAuth: config.top_ggWebhook, webhookServer: server }, client);
 
 dbl.webhook.on('ready', () => {

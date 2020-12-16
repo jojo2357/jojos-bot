@@ -1,17 +1,17 @@
-const Discord = require('discord.js');
-const prefixManager = require('../../util/customPrefixes.js');
+const { MessageEmbed } = require('discord.js');
+const customPrefixes = require('../../util/customPrefixes.js');
 
 module.exports = {
     commands: ['dev', 'dev-notes', 'other'],
     minArgs: 0,
     maxArgs: 0,
-    callback: (message, arguments) => {
+    callback: (message) => {
         var prefix;
         if (message.guild != undefined)
-            prefix = prefixManager.get(message.guild.id);
+            prefix = customPrefixes.get(message.guild.id);
         else
-            prefix = prefixManager.get('default');
-        const help = new Discord.MessageEmbed()
+            prefix = customPrefixes.get('default');
+        const help = new MessageEmbed()
             .setColor('#fff800')
             .setTitle('Developer Notes')
             .setDescription('Bot built, managed, and hosted by jojo2357#1417 with inspiration from PTZ#3259\nlicensed under MIT')

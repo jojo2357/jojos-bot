@@ -1,36 +1,35 @@
-const Commando = require('discord.js-commando')
-const client = new Commando.CommandoClient()
+const client = new (require('discord.js-commando')).CommandoClient();
 const config = require('../config.json');
 const MusicDb = require('./music/music-manager.js');
 const Manager = require('./puzzles/connect-four/game/connect-4-game-holder.js');
 const EuchreManager = require('./puzzles/euchre/euchre-game-manager.js');
 const PrefixManager = require('../util/customPrefixes.js');
-const fs = require('fs');
+const { existsSync } = require('fs');
 
 client.on('message', message => {
     if (message.author.bot || (message.guild && !(message.channel.permissionsFor(client.user.id).has("SEND_MESSAGES"))) || message.content.charAt(0) == PrefixManager.get(message.guild == undefined ? "default" : message.guild.id)) {
         return;
     }
     //connect-4
-    if (message.toString().length == 1 && message.toString().substr(0,1) <= '7' && message.toString().substr(0,1) >= '1'){
+    if (message.toString().length == 1 && message.toString().substr(0, 1) <= '7' && message.toString().substr(0, 1) >= '1') {
         var huh = Manager.usersGame('<@' + message.author.id + '>')
         //var luh = huh.players.indexOf('<@' + message.author.id + '>')
-        if (Manager.usersGame('<@' + message.author.id + '>') != null && Manager.usersGame('<@' + message.author.id + '>').channel[Manager.usersGame('<@' + message.author.id + '>').players.indexOf('<@' + message.author.id + '>')].id == message.channel.id && Manager.usersGame('<@' + message.author.id + '>').hasRoom(message.toString().substr(0,1) - 1)) {
+        if (Manager.usersGame('<@' + message.author.id + '>') != null && Manager.usersGame('<@' + message.author.id + '>').channel[Manager.usersGame('<@' + message.author.id + '>').players.indexOf('<@' + message.author.id + '>')].id == message.channel.id && Manager.usersGame('<@' + message.author.id + '>').hasRoom(message.toString().substr(0, 1) - 1)) {
             if (Manager.usersGame('<@' + message.author.id + '>').turn == 1 + Manager.usersGame('<@' + message.author.id + '>').players.indexOf('<@' + message.author.id + '>')) {
-                Manager.usersGame('<@' + message.author.id + '>').makeMove(message.toString().substr(0,1) - 1, 1 + Manager.usersGame('<@' + message.author.id + '>').players.indexOf('<@' + message.author.id + '>'));
+                Manager.usersGame('<@' + message.author.id + '>').makeMove(message.toString().substr(0, 1) - 1, 1 + Manager.usersGame('<@' + message.author.id + '>').players.indexOf('<@' + message.author.id + '>'));
                 message.guild && message.delete().catch();
                 console.log(message.author.username + " moved " + message.toString() + ' at ' + new Date().toTimeString().split(' ')[0])
                 return;
             }
         }
     }
-    if (message.channel.type == "dm" && EuchreManager.findGameWithUser(message.author.id) != undefined && EuchreManager.findGameWithUser(message.author.id).players.includes(message.author.id)){
+    if (message.channel.type == "dm" && EuchreManager.findGameWithUser(message.author.id) != undefined && EuchreManager.findGameWithUser(message.author.id).players.includes(message.author.id)) {
         EuchreManager.findGameWithUser(message.author.id).makeMove(message.author.id + ':' + message.content);
         //console.log(message.content);
         return;
     }
-    if (message.guild){
-        if (!fs.existsSync(process.cwd() + '/assets/server-settings/' + message.guild.id + '.json'))
+    if (message.guild) {
+        if (!existsSync(process.cwd() + '/assets/server-settings/' + message.guild.id + '.json'))
             return;
         const doesResponses = require(process.cwd() + '/assets/server-settings/' + message.guild.id + '.json').responses;
         if (!doesResponses)
@@ -98,7 +97,7 @@ client.on('message', message => {
         message.channel.send('!p ' + MusicDb.getRandomName());
     } else if ((message.content.includes("pm") && !message.content.includes("pme"))) {
         message.channel.send('Have you considered using 24-hour time? It drastically reduces redundencies');
-    } else{
+    } else {
         return;
     }
     /*if (message.guild == null)

@@ -1,5 +1,3 @@
-const Discord = require('discord.js');
-
 let client;
 
 let uniques;
@@ -23,7 +21,7 @@ module.exports = {
     commands: ['users'],
     minArgs: 0,
     maxArgs: 0,
-    callback: (message, arguments) => {
+    callback: (message) => {
         uniques = 0;
         total = 0;
         countedUsers = [];

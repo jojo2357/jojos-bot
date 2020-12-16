@@ -1,11 +1,11 @@
-const Discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = {
     commands: ['vote-perks'],
     minArgs: 0,
     maxArgs: 0,
-    callback: (message, arguments) => {
-        const msg = new Discord.MessageEmbed()
+    callback: (message) => {
+        const msg = new MessageEmbed()
             .setColor('#fff800')
             .setTitle('Vote perks')
             .setDescription('Here are some perks you can get by voting for me at https://top.gg/bot/699366687455051808/vote')

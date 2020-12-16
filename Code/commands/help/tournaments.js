@@ -1,5 +1,5 @@
-const Discord = require('discord.js');
-const prefixManager = require('../../util/customPrefixes.js');
+const { MessageEmbed } = require('discord.js');
+const customPrefixes = require('../../util/customPrefixes.js');
 
 module.exports = {
     commands: ['tournament-help', 'tourney-help'],
@@ -8,10 +8,10 @@ module.exports = {
     callback: (message, arguments) => {
         var prefix;
         if (message.guild != undefined)
-            prefix = prefixManager.get(message.guild.id);
+            prefix = customPrefixes.get(message.guild.id);
         else
-            prefix = prefixManager.get('default');
-        const help = new Discord.MessageEmbed()
+            prefix = customPrefixes.get('default');
+        const help = new MessageEmbed()
             .setColor('#fff800')
             .setTitle('Connect tournament help')
             .setDescription('**Global** tournaments allow participants to sign up from any server that the bot is in.\n**Local** tournaments only allow participants from the server that it was created in to join.')

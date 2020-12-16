@@ -1,9 +1,9 @@
-const Discord = require('discord.js');
-const stream = require('stream');
-const Canvas = require('canvas');
+const { MessageAttachment } = require('discord.js');
+const { Readable } = require('stream');
+const { loadImage, createCanvas} = require('canvas');
 const fs = require('fs');
 const connect4GameHolder = require('./connect-4-game-holder');
-const config = require('../../../../config.json');
+const {token} = require('../../../../config.json');
 
 const { spawn } = require('child_process');
 const { sendNotification } = require('../../../../util/sendNotifiaction');
@@ -75,7 +75,7 @@ async function thing() {
         await client.user.setPresence({ activity: { name: '=connect-4 in ' + client.guilds.cache.size + ' servers' }, status: 'dnd' }).then(console.log).catch(console.log);
         console.log("======================================================")
     } else {
-        client.login(config.token).then(() => client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log)).catch(() => console.log("an error occured while setting presence"));
+        client.login(token).then(() => client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log)).catch(() => console.log("an error occured while setting presence"));
     }
 }
 
@@ -85,16 +85,16 @@ module.exports = {
     },
 
     async initImages() {
-        background = await Canvas.loadImage('./assets/images/defaultBoard.png');
-        blankBoard = await Canvas.loadImage('./assets/images/emptyBoard.png');
-        specialBackground = await Canvas.loadImage('./assets/images/specialBoard.png');
-        specialBoard = await Canvas.loadImage('./assets/images/emptySpecialBoard.png');
-        redToken = await Canvas.loadImage('./assets/images/redToken.png');
-        yellowToken = await Canvas.loadImage('./assets/images/yellowToken.png');
-        lastRedToken = await Canvas.loadImage('./assets/images/lastRedToken.png');
-        lastYellowToken = await Canvas.loadImage('./assets/images/lastYellowToken.png');
-        winningYellowToken = await Canvas.loadImage('./assets/images/winningYellowToken.png');
-        winningRedToken = await Canvas.loadImage('./assets/images/winningRedToken.png');
+        background = await loadImage('./assets/images/defaultBoard.png');
+        blankBoard = await loadImage('./assets/images/emptyBoard.png');
+        specialBackground = await loadImage('./assets/images/specialBoard.png');
+        specialBoard = await loadImage('./assets/images/emptySpecialBoard.png');
+        redToken = await loadImage('./assets/images/redToken.png');
+        yellowToken = await loadImage('./assets/images/yellowToken.png');
+        lastRedToken = await loadImage('./assets/images/lastRedToken.png');
+        lastYellowToken = await loadImage('./assets/images/lastYellowToken.png');
+        winningYellowToken = await loadImage('./assets/images/winningYellowToken.png');
+        winningRedToken = await loadImage('./assets/images/winningRedToken.png');
     },
 
     gamesPlayed() {
@@ -112,7 +112,7 @@ module.exports = {
     init() {
         connect4GameHolder.gamesPlayed = fs.readFileSync(process.cwd() + '/assets/connect-4/game-record/0_computerBrain.dat').toString().split('\n').length - 1;
 
-        stdinStream = new stream.Readable({
+        stdinStream = new Readable({
             read(size) {
                 return true;
             }
@@ -250,7 +250,7 @@ module.exports = {
 
         sysoutBoard(player = this.turn - 1) {
             //console.log("board printing begin");
-            const canvas = Canvas.createCanvas(224, 192);
+            const canvas = createCanvas(224, 192);
             const defaultBoard = canvas.getContext('2d');
             const winningPeice = this.gameOver(this.gameBoard) == 1 ? winningYellowToken : winningRedToken;
             var voteBoard = playerVoted(this.players[0].substring(2, this.players[0].indexOf('>'))) || (!this.isSinglePlayer && playerVoted(this.players[1].substring(2, this.players[0].indexOf('>'))));
@@ -297,7 +297,7 @@ module.exports = {
                     }
                 defaultBoard.drawImage((this.turn == 1 ? lastRedToken : lastYellowToken), 32 * this.lastMove, 160 - 32 * lastSpot, 32, 32);
             }
-            const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'testBoard.png');
+            const attachment = new MessageAttachment(canvas.toBuffer(), 'testBoard.png');
             if (this.lastMessage != null && this.lastMessage.channel.guild != null)
                 this.lastMessage.delete().catch();
             if (!this.gameOver(this.gameBoard) && player != -1) {

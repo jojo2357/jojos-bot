@@ -1,4 +1,4 @@
-const fs = require('fs');
+const { existsSync } = require('fs');
 
 let client;
 
@@ -16,7 +16,7 @@ module.exports = {
 
         /*var guildList =*/
         client.guilds.cache.forEach(guild => {
-            if (!fs.existsSync('./assets/server-settings/' + guild.id + '.json'))
+            if (!existsSync('./assets/server-settings/' + guild.id + '.json'))
                 return;
             let channelSettings = require(process.cwd() + '/assets/server-settings/' + guild.id + '.json');
             if (channelSettings.notifications) {

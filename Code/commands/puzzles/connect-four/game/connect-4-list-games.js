@@ -1,4 +1,4 @@
-const Discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const Manager = require('./connect-4-game-holder.js');
 
 var out;
@@ -20,7 +20,7 @@ module.exports = {
         }
         if (gameNum == 0)
             out = "There are no games going on in this server!\nUse `=connect-4` to start one!";
-        const ch = new Discord.MessageEmbed()
+        const ch = new MessageEmbed()
             .setColor('#0cc0b4')
             .setTitle('Connect 4 games in progress')
             .setDescription(out)

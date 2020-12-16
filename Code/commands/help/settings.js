@@ -1,6 +1,6 @@
 const { MessageEmbed } = require('discord.js');
-const { existsSync, writeFileSync} = require('fs');
-const prefixManager = require('../../util/customPrefixes.js');
+const { existsSync, writeFileSync } = require('fs');
+const customPrefixes = require('../../util/customPrefixes.js');
 
 let defaultSettings = { notifications: false, notificationChannel: 0, timeout: 60000, responses: false, prefix: require('../../config.json').prefix }
 
@@ -8,12 +8,12 @@ module.exports = {
     commands: ['settings-help', 'server-settings'],
     minArgs: 0,
     maxArgs: 0,
-    callback: (message, arguments) => {
+    callback: (message) => {
         var prefex;
         if (message.guild != undefined)
-            prefex = prefixManager.get(message.guild.id);
+            prefex = customPrefixes.get(message.guild.id);
         else
-            prefex = prefixManager.get('default');
+            prefex = customPrefixes.get('default');
         if (!existsSync('./assets/server-settings/' + message.guild.id + '.json'))
             writeFileSync('./assets/server-settings/' + message.guild.id + '.json', JSON.stringify(defaultSettings));
         var thisServerSettings = require(process.cwd() + '/assets/server-settings/' + message.guild.id + '.json');

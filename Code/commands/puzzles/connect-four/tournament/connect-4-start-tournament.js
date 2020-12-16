@@ -1,6 +1,4 @@
-const Discord = require('discord.js');
 const Manager = require('./connect-4-tournament-manager.js');
-const Tournament = require('./connect-4-tournament.js');
 
 module.exports = {
     commands: ['begin'],
@@ -12,11 +10,9 @@ module.exports = {
             //Manager.tournament.createGames();
             var now = new Date();
             var millisTill10 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(arguments[0]), parseInt(arguments[1]), 0, 0) - now;
-            if (millisTill10 < 0) {
+            if (millisTill10 < 0) 
                  millisTill10 += 86400000; // it's after 10am, try 10am tomorrow.
-            }
             //Manager.tournament.push(new )
-            let findID = message.author.id;
             for (var i = 0; i < Manager.tournaments.length; i++)
                 if (Manager.tournaments[i].owner == message.author.id){
                     if (!Manager.tournaments[i].public && Manager.tournaments[i].hostServer.id != message.guild.id){

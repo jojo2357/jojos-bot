@@ -1,6 +1,4 @@
-const Discord = require('discord.js');
 const Manager = require('./connect-4-tournament-manager.js');
-const { tournament } = require('./connect-4-tournament.js');
 
 module.exports = {
     commands: ['sign-up'],

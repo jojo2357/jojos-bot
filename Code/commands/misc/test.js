@@ -1,5 +1,3 @@
-const Discord = require('discord.js');
-
 module.exports = {
     commands: ['test'],
     minArgs: 0,

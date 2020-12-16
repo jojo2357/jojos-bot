@@ -1,4 +1,4 @@
-var fs = require("fs");
+var { readFileSync } = require("fs");
 
 var urls = [];
 var names = [];
@@ -24,12 +24,12 @@ module.exports = {
 
 function loadurls() {
     urls = [];
-    urls = fs.readFileSync('assets/music/urls.dat').toString().split('\n');
+    urls = readFileSync('assets/music/urls.dat').toString().split('\n');
 }
 
 function loadnames() {
     names = [];
-    names = fs.readFileSync('assets/music/names.dat').toString().split('\r\n');
+    names = readFileSync('assets/music/names.dat').toString().split('\r\n');
     for (var i = names.length - 1; i >= 0; i--) {
         if (names[i] === '') {
             names.splice(i, 1);

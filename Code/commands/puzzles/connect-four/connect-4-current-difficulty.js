@@ -1,4 +1,4 @@
-const Discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const Game = require('./game/connect-4-game.js');
 const Manager = require('./game/connect-4-game-holder.js');
 
@@ -6,8 +6,8 @@ module.exports = {
     commands: ['diff', 'difficulty', 'brain-status'],
     minArgs: 0,
     maxArgs: 0,
-    callback: (message, arguments) => {
-        const msg = new Discord.MessageEmbed()
+    callback: (message) => {
+        const msg = new MessageEmbed()
             .setTitle("Connect-4 bot brains")
             .setDescription(
                 "Brain    Loaded\n\

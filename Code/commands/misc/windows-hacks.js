@@ -1,11 +1,11 @@
-const Discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = {
     commands: ['win-hax'],
     minArgs: 0,
     maxArgs: 0,
-    callback: (message, arguments) => {
-        const help = new Discord.MessageEmbed()
+    callback: (message) => {
+        const help = new MessageEmbed()
             .setColor('#0099ff')
             .setTitle('Ways to make windows experience better')
             .setDescription('Windows is kinda trash ngl. They force shit down ur throat and make you sob with Microsoft Edge. Here are some tricks that may make your windows experience less bad\nFeel free to use `=suggest` to suggest a new tip/trick!')

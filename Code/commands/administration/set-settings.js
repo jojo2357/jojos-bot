@@ -1,7 +1,7 @@
-const Discord = require('discord.js');
-const fs = require('fs');
+const { MessageEmbed } = require('discord.js');
+const { existsSync, writeFileSync } = require('fs');
 const { prefix } = require('../../config.json');
-const prefixManager = require('../../util/customPrefixes.js')
+const { updateMap } = require('../../util/customPrefixes.js')
 
 let defaultSettings = { notifications: false, notificationChannel: 0, timeout: 60000, responses: false, prefix: prefix };
 
@@ -15,8 +15,8 @@ module.exports = {
             message.reply("You are not the owner of this server");
             return;
         }
-        if (!fs.existsSync('./assets/server-settings/' + message.guild.id + '.json')) {
-            fs.writeFileSync('./assets/server-settings/' + message.guild.id + '.json', JSON.stringify(defaultSettings));
+        if (!existsSync('./assets/server-settings/' + message.guild.id + '.json')) {
+            writeFileSync('./assets/server-settings/' + message.guild.id + '.json', JSON.stringify(defaultSettings));
         }
         var refreshMap = false;
         var existingSettings = require(process.cwd() + '/assets/server-settings/' + message.guild.id + '.json');
@@ -46,10 +46,10 @@ module.exports = {
                 message.reply("Could not find that setting");
         }
         existingSettings = assertComplete(existingSettings);
-        fs.writeFileSync('./assets/server-settings/' + message.guild.id + '.json', JSON.stringify(existingSettings))
+        writeFileSync('./assets/server-settings/' + message.guild.id + '.json', JSON.stringify(existingSettings))
         if (refreshMap)
-            prefixManager.updateMap();
-        const msg = new Discord.MessageEmbed()
+            updateMap();
+        const msg = new MessageEmbed()
             .setTitle('Server Settings')
             .setDescription('use =set to change a setting. Example: `=set recieves notifications true` or `=set notification channel #general`')
             .addFields(

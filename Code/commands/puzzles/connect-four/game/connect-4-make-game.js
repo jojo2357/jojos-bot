@@ -1,5 +1,5 @@
-const Discord = require('discord.js');
-const Game = require('./connect-4-game.js');
+const { MessageEmbed } = require('discord.js');
+const { connect4game, botLoaded } = require('./connect-4-game.js');
 const Manager = require('./connect-4-game-holder.js');
 const fs = require('fs');
 
@@ -47,18 +47,18 @@ module.exports = {
                 message.channel.send("Sorry, but you two already have a pending challenge. Wait for them to accept your challenge");
                 return;
             }
-            var game = new Game.connect4game(['<@' + message.author + '>', '<@' + user + '>'], message.channel);
+            var game = new connect4game(['<@' + message.author + '>', '<@' + user + '>'], message.channel);
             game.timeout = 3600000;
             Manager.addPending(game);
             message.channel.send('Hey <@' + user + '>! <@' + message.author + '> has challenged you to a connect-4 duel to the death. use `=accept` to accept')
         } else {
-            if (!Game.botLoaded()) {
+            if (!botLoaded()) {
                 message.channel.send('Brain is still loading, be patient');
                 return;
             }
             if (message.guild != undefined && !fs.existsSync('./assets/server-settings/' + message.guild.id + '.json'))
                 message.channel.send("**HEY**!! This server has not configured settings! Use `=server-settings` to get started in order to recieve updates and warnings before the bot restarts in order to not lose game data!")
-            var game = new Game.connect4game(['<@' + message.author + '>', null], message.channel);
+            var game = new connect4game(['<@' + message.author + '>', null], message.channel);
             if (message.guild == undefined) {
                 game.timeout = 0;
             } else {
@@ -66,7 +66,7 @@ module.exports = {
             }
             game.makeInitialSend();
             Manager.addGame(game);
-            const ch = new Discord.MessageEmbed()
+            const ch = new MessageEmbed()
                 .setColor('#0cc0b4')
                 .setTitle('Connect 4 duel to the death')
                 .setDescription('<@' + message.author + '>' + ' boutta loose bigtime. Remember though, if you want to play another human, just @ them after `=connect-4`. You can also use `=help` to see more commands.\n**to make a move, type a number 1-7 (1 is far left, 7 far right)**')

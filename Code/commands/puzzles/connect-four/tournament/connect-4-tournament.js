@@ -1,6 +1,4 @@
 const fs = require('fs');
-const Discord = require('discord.js');
-const { error } = require('console');
 const gameManager = require('../game/connect-4-game-holder.js');
 const Game = require('../game/connect-4-game.js');
 const Manager = require(process.cwd() + '/commands/puzzles/connect-four/tournament/connect-4-tournament-manager.js');

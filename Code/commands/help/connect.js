@@ -1,17 +1,16 @@
-const Discord = require('discord.js');
-const prefixManager = require('../../util/customPrefixes.js');
+const { MessageEmbed } = require('discord.js');
+const customPrefixes = require('../../util/customPrefixes.js');
 
 module.exports = {
     commands: ['help-c4', 'help-connect-4', 'connect-4-help'],
-    minArgs: 0,
     maxArgs: 0,
     callback: (message, arguments) => {
         var prefix;
         if (message.guild != undefined)
-            prefix = prefixManager.get(message.guild.id);
+            prefix = customPrefixes.get(message.guild.id);
         else
-            prefix = prefixManager.get('default');
-        const help = new Discord.MessageEmbed()
+            prefix = customPrefixes.get('default');
+        const help = new MessageEmbed()
             .setColor('#fff800')
             .setTitle('Connect 4 Help')
             .setDescription('um, really hope you know how to play connect four. https://en.wikipedia.org/wiki/Connect_Four ig :shrug:\

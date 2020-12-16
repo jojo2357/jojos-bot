@@ -1,4 +1,4 @@
-const Discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const Manager = require('../game/connect-4-game-holder.js');
  
 module.exports = {
@@ -14,7 +14,7 @@ module.exports = {
         for (var i = 0; i < Manager.getChallenges('<@' + message.author + '>').length; i++){
             out += "Challenger: " + Manager.getChallenges('<@' + message.author + '>')[i].players[0] + (Manager.usersGame('<@' + message.author + '>') != null ? ":regional_indicator_x:" : "");
         }
-        const ch = new Discord.MessageEmbed()
+        const ch = new MessageEmbed()
             .setColor('#0cc0b4')
             .setTitle('Your pending challenges')
             .setDescription(out);

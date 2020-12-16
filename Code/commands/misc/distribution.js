@@ -1,4 +1,4 @@
-const Discord = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 
 let client;
 
@@ -8,9 +8,8 @@ module.exports = {
     },
 
     commands: ['dist'],
-    minArgs: 0,
     maxArgs: 0,
-    callback: (message, arguments) => {
+    callback: (message) => {
         let guildUsers = [];
         let max = 0;
         client.guilds.cache.forEach(guild => {
@@ -28,7 +27,7 @@ module.exports = {
             out += `\n${(" ").repeat(10 - (`${Math.pow(10, i - 1) + 1}, ${Math.pow(10, i)}`).length)}${Math.pow(10, i - 1) + 1}, ${Math.pow(10, i)} | ${guildWithSize}`;
         }
         out += "```"
-        const outMsg = new Discord.MessageEmbed()
+        const outMsg = new MessageEmbed()
             .setColor('#fff800')
             .setTitle('Distribution of servers by size:')
             .setDescription(out)
