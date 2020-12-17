@@ -22,11 +22,10 @@ require('./commands/misc/distribution.js'),
 require('./commands/administration/restart.js'),
 require('./commands/administration/announce.js'),
 require('./commands/administration/suggest.js'),
-require('./commands/administration/bruhlist.js'),
-require('./commands/administration/unBruhlist.js'),
 require('./commands/puzzles/connect-four/game/connect-4-game.js'),
 require('./commands/puzzles/scum/scum-game.js'),
 require('./commands/random-responses/verify.js'),
+require('./util/getUser.js'),
 remoteConsole];
 
 const DBL = require("dblapi.js");

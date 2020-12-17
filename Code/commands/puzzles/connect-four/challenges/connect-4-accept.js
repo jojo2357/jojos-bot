@@ -1,4 +1,4 @@
-const Manager = require('../game/connect-4-game-holder');
+const Manager = require('./../game/connect-4-game-holder');
 
 module.exports = {
     commands: ['accept'],

@@ -3,10 +3,10 @@ const { Readable } = require('stream');
 const { loadImage, createCanvas} = require('canvas');
 const fs = require('fs');
 const connect4GameHolder = require('./connect-4-game-holder');
-const {token} = require('../../../../config.json');
+const {token} = require('./../../../../config.json');
 
 const { spawn } = require('child_process');
-const { sendNotification } = require('../../../../util/sendNotifiaction');
+const { sendNotification } = require('./../../../../util/sendNotifiaction');
 
 let client;
 let background;

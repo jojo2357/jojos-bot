@@ -1,7 +1,9 @@
-const { prefix, remoteConsole } = require('../config.json');
-const bruhList = require('../util/bruhlist.js');
-const prefixMap = require('../util/customPrefixes.js');
-const remoteLogger = require('../util/remoteConsole.js');
+const { prefix, remoteConsole } = require('./../config.json');
+const bruhList = require('./../util/bruhlist.js');
+const prefixMap = require('./../util/customPrefixes.js');
+const remoteLogger = require('./../util/remoteConsole.js');
+
+let recentCommands = new Map();
 
 const validatePermissions = (permissions) => {
     const validPermissions = [
@@ -110,7 +112,7 @@ module.exports = (client, commandOptions) => {
                 }*/
                 const arguments = content.split(/[ ]+/);
                 arguments.shift();
-                if (restrictedToUsers && restrictedToUsers.length > 0 && !restrictedToUsers.includes(message.author.id)){
+                if (restrictedToUsers && restrictedToUsers.length > 0 && !restrictedToUsers.includes(message.author.id)) {
                     message.channel.stopTyping();
                     return;
                 }
@@ -124,6 +126,18 @@ module.exports = (client, commandOptions) => {
                     console.log(message.author.username + " in dm'd me and asked for " + message.toString() + ' at ' + new Date().toTimeString().split(' ')[0]);
                 if (remoteConsole)
                     remoteLogger.addRecentData(`<@${message.author.id}>:${message.toString()}`);
+                if (recentCommands.has(message.author.id))
+                    if (recentCommands.get(message.author.id) > 5){
+                        bruhList.addbruhList(message.author.id);
+                        message.reply('This is your last command, if you want to be unbruhlisted, contact my owner or wait to have permissions restored');
+                        if (remoteConsole) 
+                            remoteLogger.addRecentData(`I bruhlisted ${message.author.id}`);
+                    }else{
+                        recentCommands[message.author.id]++;
+                        setTimeout((userId) => recentCommands[userId]--, 10000, message.author.id)
+                    }
+                else
+                    recentCommands.set(message.author.id, 0);
                 try {
                     message.channel.startTyping().then(
                         callback(message, arguments)

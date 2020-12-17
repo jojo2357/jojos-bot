@@ -13,7 +13,7 @@ module.exports = {
                 return;
             //var otherThing = process.cwd() + '/assets/connect-4/game-record/' + file;
             //var thing = fs.openSync(process.cwd() + '/assets/connect-4/game-record/' + file).toString();
-            const stuff = getStreak(readFileSync(process.cwd() + '/assets/connect-4/game-record/' + file).toString().split('\n'));
+            const stuff = this.getStreak(readFileSync(process.cwd() + '/assets/connect-4/game-record/' + file).toString().split('\n'));
             if (stuff[1] == 'W')
                 winners.push([stuff[0], file.split('.')[0]]);
             else if (stuff[1] == 'L')
@@ -48,20 +48,21 @@ module.exports = {
                 .setDescription(out);
         }
         message.channel.send(embed);
+    },
+
+    getStreak(playerGames) {
+        var winningOrLosing;
+        var botStreak = 0;
+        for (var i = playerGames.length - 2; i >= 0; i--) {
+            if (playerGames[i].substring(2).length > 9)
+                continue;
+            if (winningOrLosing == undefined)
+                winningOrLosing = playerGames[i].substring(0, 1);
+            if (playerGames[i].substring(0, 1) != winningOrLosing)
+                break;
+            botStreak++;
+        }
+        return [botStreak, winningOrLosing];
     }
 }
 
-function getStreak(playerGames) {
-    var winningOrLosing;
-    var botStreak = 0;
-    for (var i = playerGames.length - 2; i >= 0; i--) {
-        if (playerGames[i].substring(2).length > 9)
-            continue;
-        if (winningOrLosing == undefined)
-            winningOrLosing = playerGames[i].substring(0, 1);
-        if (playerGames[i].substring(0, 1) != winningOrLosing)
-            break;
-        botStreak++;
-    }
-    return [botStreak, winningOrLosing];
-}

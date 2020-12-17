@@ -1,4 +1,5 @@
 const { readFileSync, writeFileSync} = require('fs');
+const getUser = require('./getUser.js');
 
 module.exports = {
     bruhListed: [''],
@@ -15,6 +16,8 @@ module.exports = {
     },
 
     addbruhList(personID){
+        person = getUser.getUserFromMention(personID);
+        personID = person.id;
         var bruhList = readFileSync('assets/blacklist/blacklist.dat').toString().split('\r\n');
         if (bruhList.includes(personID))
             return false;
@@ -26,12 +29,15 @@ module.exports = {
     },
 
     removebruhList(personID){
+        person = getUser.getUserFromMention(personID);
+        personID = person.id;
         var bruhList = readFileSync('assets/blacklist/blacklist.dat').toString().split('\r\n');
         if (!bruhList.includes(personID))
             return false;
         bruhList.splice(bruhList.indexOf(personID), 1);
         this.bruhListed.splice(this.bruhListed.indexOf(personID), 1);
         writeFileSync('assets/blacklist/blacklist.dat', bruhList.join('\r\n'));
+        console.log(bruhList);
         return true;
     }
 }

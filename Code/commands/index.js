@@ -1,9 +1,9 @@
 const client = new (require('discord.js-commando')).CommandoClient();
-const config = require('../config.json');
+const config = require('./../config.json');
 const MusicDb = require('./music/music-manager.js');
 const Manager = require('./puzzles/connect-four/game/connect-4-game-holder.js');
 const EuchreManager = require('./puzzles/euchre/euchre-game-manager.js');
-const PrefixManager = require('../util/customPrefixes.js');
+const PrefixManager = require('./../util/customPrefixes.js');
 const { existsSync } = require('fs');
 
 client.on('message', message => {

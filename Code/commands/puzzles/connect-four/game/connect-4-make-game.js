@@ -2,6 +2,8 @@ const { MessageEmbed } = require('discord.js');
 const { connect4game, botLoaded } = require('./connect-4-game.js');
 const Manager = require('./connect-4-game-holder.js');
 const fs = require('fs');
+const { getStreak } = require('./../connect-4-streakerboard.js');
+const {readFileSync} = require('fs');
 
 var user;
 
@@ -25,6 +27,8 @@ module.exports = {
             message.channel.send('Sorry i cant find that user in this server. Please try again');
             return;
         }
+        if (getStreak(readFileSync(process.cwd() + '/assets/connect-4/game-record/' + user + ".dat").toString().split('\n'))[0] > 20 && getStreak(readFileSync(process.cwd() + '/assets/connect-4/game-record/' + user + ".dat").toString().split('\n'))[1] == 'L')
+            message.reply('you arent allowed for some reason :|');
         if (user == '699366687455051808') {
             message.channel.send("Yes, I will play against you foolish mortal")
             user = null;

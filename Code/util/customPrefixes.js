@@ -1,5 +1,5 @@
 const { readdirSync } = require('fs');
-const { prefix } = require('../config.json');
+const { prefix } = require('./../config.json');
 
 module.exports = {
     prefixMap: new Map(),

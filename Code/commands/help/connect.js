@@ -1,5 +1,5 @@
 const { MessageEmbed } = require('discord.js');
-const customPrefixes = require('../../util/customPrefixes.js');
+const customPrefixes = require('./../../util/customPrefixes.js');
 
 module.exports = {
     commands: ['help-c4', 'help-connect-4', 'connect-4-help'],

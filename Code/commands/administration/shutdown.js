@@ -1,5 +1,5 @@
 const { platform } = require('os');
-const remoteConsole = require('../../util/remoteConsole.js');
+const remoteConsole = require('./../../util/remoteConsole.js');
 
 module.exports = {
     commands: ['shutdown'],

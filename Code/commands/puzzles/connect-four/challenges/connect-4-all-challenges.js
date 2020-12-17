@@ -1,5 +1,5 @@
 const { MessageEmbed } = require('discord.js');
-const Manager = require('../game/connect-4-game-holder.js');
+const Manager = require('./../game/connect-4-game-holder.js');
 
 module.exports = {
     commands: ['all-challenges'],

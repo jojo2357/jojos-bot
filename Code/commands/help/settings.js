@@ -1,8 +1,8 @@
 const { MessageEmbed } = require('discord.js');
 const { existsSync, writeFileSync } = require('fs');
-const customPrefixes = require('../../util/customPrefixes.js');
+const customPrefixes = require('./../../util/customPrefixes.js');
 
-let defaultSettings = { notifications: false, notificationChannel: 0, timeout: 60000, responses: false, prefix: require('../../config.json').prefix }
+let defaultSettings = { notifications: false, notificationChannel: 0, timeout: 60000, responses: false, prefix: require('./../../config.json').prefix }
 
 module.exports = {
     commands: ['settings-help', 'server-settings'],

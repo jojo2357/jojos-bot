@@ -1,5 +1,5 @@
 const { MessageEmbed } = require('discord.js');
-const customPrefixes = require('../../util/customPrefixes.js');
+const customPrefixes = require('./../../util/customPrefixes.js');
 
 module.exports = {
     commands: ['dev', 'dev-notes', 'other'],
