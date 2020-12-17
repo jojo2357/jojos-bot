@@ -21,7 +21,6 @@ module.exports = {
     },
 
     async sendHostStatus() {
-        message.channel.send('Unique users in all servers: ' + uniques + "\nTotal users including duplicates: " + total + "\nAverage: " + average(serverMemberCounts).toPrecision(4) + "\nStandard deviation: " + standardDeviation(serverMemberCounts).toPrecision(4) + "\n" + (100 * normalcdf(average(serverMemberCounts), standardDeviation(serverMemberCounts), 0)).toPrecision(4) + "% of servers have a negative amount of users");
         const tot = totalmem();
         const free = freemem();
         const used = tot - free;
