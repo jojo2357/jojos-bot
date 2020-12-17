@@ -70,7 +70,7 @@ client.on('message', message => {
     } else if (message.content === 'my info') {
         message.channel.send(`Your username: ${message.author.username}\nYour ID: ${message.author.id}`);
     } else if (message.content === 'server info') {
-        message.channel.send(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}`);
+        message.channel.send(`Server name: ${message.guild.name}\nTotal members: ${message.guild.memberCount}\nServer ID: ${message.guild.id}\nCreation date: ${message.guild.createdAt.toDateString()}`);
     } else if (message.content === "bruh") {
         message.channel.send('bruh urself');
     } else if (message.content === "bot info" || message.content === "info") {

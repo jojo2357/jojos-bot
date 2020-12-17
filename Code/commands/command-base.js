@@ -122,19 +122,23 @@ module.exports = (client, commandOptions) => {
                     console.log(message.author.username + " in " + message.guild.name + " asked for " + message.toString() + ' at ' + new Date().toTimeString().split(' ')[0]);
                 else
                     console.log(message.author.username + " in dm'd me and asked for " + message.toString() + ' at ' + new Date().toTimeString().split(' ')[0]);
+                if (remoteConsole)
+                    remoteLogger.addRecentData(`<@${message.author.id}>:${message.toString()}`);
                 try {
                     message.channel.startTyping().then(
                         callback(message, arguments)
                     ).then(message.channel.stopTyping(true));
                     message.channel.stopTyping(true);
                     console.log("Took " + (new Date().getMilliseconds() - timeIn) + "ms to complete");
-                    if (remoteConsole)
-                        remoteLogger.addRecentData(`<@${message.author.id}>:${message.guild ? message.guild.id : "DM"}:${message.toString()};${new Date().toTimeString().split(' ')[0]}`);
                 } catch (err) {
                     message.channel.stopTyping();
                     var out = err.stack.toString().toLowerCase();
                     while (out.includes(process.cwd().toLowerCase()))
                         out = out.replace(process.cwd().toLowerCase(), '');
+                    if (remoteConsole) {
+                        remoteLogger.addRecentData(out);
+                        remoteLogger.sendConsoleUpdates();
+                    }
                     message.reply('An error has occured: ' + err + '\n' + out);
                     console.log("En error occuerd in " + (new Date().getMilliseconds() - timeIn) + "ms and had this to say:\n" + out);
                 }
