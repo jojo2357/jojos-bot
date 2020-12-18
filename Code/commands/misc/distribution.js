@@ -14,8 +14,7 @@ module.exports = {
         let max = 0;
         client.guilds.cache.forEach(guild => {
             guildUsers.push(guild.memberCount);
-            if (guild.memberCount > max)
-                max = guild.memberCount;
+            max = Math.max(max, guild.memberCount);
         });
         var out = "```size range | # of servers"
         for (var i = 1; Math.pow(10, i - 1) < max; i++) {

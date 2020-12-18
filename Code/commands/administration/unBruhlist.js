@@ -7,7 +7,7 @@ module.exports = {
     maxArgs: 1,
     restrictedToUsers: ['524411594009083933'],
     callback: (message, arguments) => {
-        const bruhID;
+        var bruhID;
         try {
             bruhID = getUser.getUserFromMention(arguments[0]).id;
         } catch (err) {

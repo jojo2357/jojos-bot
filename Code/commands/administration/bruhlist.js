@@ -9,7 +9,7 @@ module.exports = {
     restrictedToUsers: ['524411594009083933'],
     callback: (message, arguments) => {
         if (arguments.length > 0) {
-            const bruhID;
+            var bruhID;
             try {
                 bruhID = getUser.getUserFromMention(arguments[0]).id;
             } catch (err) {
@@ -26,7 +26,7 @@ module.exports = {
                 message.reply('could not find ' + bruhID + ' in my cache so to be safe i wont add them');
         } else {
             var bruhList = bruhlist.bruhListed;
-            var out
+            var out;
             if (bruhList.length > 0) {
                 out = "User";
                 bruhList.forEach(bruh => out += "\n<@" + bruh + ">");

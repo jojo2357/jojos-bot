@@ -1,10 +1,5 @@
 let client;
 
-let uniques;
-let total;
-let countedUsers;
-let serverMemberCounts;
-
 let thisCount;
 
 const a1 = 0.254829592;
@@ -22,25 +17,38 @@ module.exports = {
     minArgs: 0,
     maxArgs: 0,
     callback: (message) => {
-        uniques = 0;
-        total = 0;
-        countedUsers = [];
-        serverMemberCounts = [];
+        var botCount = 0;
+        var max = 0;
+        var uniqueBots = 0;
+        let uniques = 0;
+        let total = 0;
+        let countedUsers = [];
+        let serverMemberCounts = [];
         client.guilds.cache.forEach((guild) => {
             thisCount = 0;
             guild.members.cache.forEach((user) => {
-                if (user.bot)
-                    return;
+                if (user.user.bot)
+                    botCount++;
                 thisCount++;
                 if (!countedUsers.includes(user.id)) {
+                    if (user.user.bot)
+                        uniqueBots++;
                     uniques++;
                     countedUsers.push(user.id);
                 }
                 total++;
             })
             serverMemberCounts.push(thisCount);
+            max = Math.max(max, thisCount);
         })
-        message.channel.send('Unique users in all servers: ' + uniques + "\nTotal users including duplicates: " + total + "\nAverage: " + average(serverMemberCounts).toPrecision(4) + "\nStandard deviation: " + standardDeviation(serverMemberCounts).toPrecision(4) + "\n" + (100 * normalcdf(average(serverMemberCounts), standardDeviation(serverMemberCounts), 0)).toPrecision(4) + "% of servers have a negative amount of users");
+        message.channel.send('Unique users in all servers: ' + uniques + "\n" +
+            "Total users including duplicates: " + total + "\n" +
+            "Average: " + average(serverMemberCounts).toPrecision(4) + "\n" +
+            "Standard deviation: " + standardDeviation(serverMemberCounts).toPrecision(4) + "\n"
+            + (100 * normalcdf(average(serverMemberCounts), standardDeviation(serverMemberCounts), 0)).toPrecision(4) + "% of servers have a negative amount of users\n" +
+            "Max: " + max + '\n' +
+            'Median: ' + median(serverMemberCounts) + '\n' + 
+            'Bots: ' + botCount + ' (' + uniqueBots + ' unique bots)');
     }
 }
 
@@ -78,4 +86,15 @@ function normalcdf(mean, sigma, to) {
         sign = -1;
     }
     return (0.5) * (1 + sign * erf);
+}
+
+function median(data = [0]) {
+    data.sort((a, b) => {
+        if (a > b)
+            return 1;
+        if (a < b)
+            return -1;
+        return 0;
+    });
+    return (data[Math.floor((data.length - 1) / 2)] + data[Math.ceil((data.length - 1) / 2)]) / 2;
 }
