@@ -24,7 +24,10 @@ client.on('message', message => {
         }
     }
     if (message.channel.type == "dm" && EuchreManager.findGameWithUser(message.author.id) != undefined && EuchreManager.findGameWithUser(message.author.id).players.includes(message.author.id)) {
-        EuchreManager.findGameWithUser(message.author.id).makeMove(message.author.id + ':' + message.content);
+        if (message.content == 'r')
+            EuchreManager.findGameWithUser(message.author.id).resendFor(message.author.id);
+        else
+            EuchreManager.findGameWithUser(message.author.id).makeMove(message.author.id + ':' + message.content);
         //console.log(message.content);
         return;
     }

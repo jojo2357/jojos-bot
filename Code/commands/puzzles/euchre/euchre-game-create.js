@@ -10,7 +10,7 @@ module.exports = {
     callback: (message, arguments) => {
         if (message.author.id != '524411594009083933' && message.author.id != '777008421940887583')
             return;
-        if (platform().toString().toLowerCase().includes('win')) {
+        if (!platform().toString().toLowerCase().includes('win')) {
             message.reply("I'm sorry but im just a pi, i cant do that stuff just yet");
             return;
         }

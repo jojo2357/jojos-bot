@@ -1,5 +1,5 @@
 const { MessageAttachment } = require('discord.js');
-const { createCanvas, loadImage} = require('canvas');
+const { createCanvas, loadImage } = require('canvas');
 const stream = require('stream');
 const fs = require('fs');
 const { platform } = require('os');
@@ -10,39 +10,38 @@ let blankCard;
 let bidIndicators;
 let client;
 let secondRound;
+let lastBoard = new Map();
 
 var prc;
 var stdinStream;
 
 let sysoutGame = function (channel, playerCards = ["", "", "", "", ""], board = ["", "", "", ""], bidDicators = ['4', '4', '4', '4'], score = ['0', '0', '0', '0', '0', '0'], message = "Empty Message") {
-    return new Promise(function (resolve, reject) {
-        const canvas = createCanvas(282, 366);
-        const ctx = canvas.getContext('2d');
-        //Player cards
-        playerCards = playerCards.filter(card => card != "-1");
-        for (var i = 0; i < playerCards.length; i++)
-            if (playerCards[i] && playerCards[i] >= 0)
-                ctx.drawImage(cards[Math.floor(parseInt(playerCards[i]) / 6)][parseInt(playerCards[i]) % 6], 25 * (i + 0.5 * (5 - playerCards.length)) + 85, 270, 71, 96);
-            else
-                ctx.drawImage(blankCard, 25 * i + 75, 270, 71, 96);
-        //bid squares:
-        ctx.drawImage(bidIndicators[bidDicators[0]], 150, 140 + 0, 21, 22);
-        ctx.drawImage(bidIndicators[bidDicators[1]], 125, 125 + 0, 21, 22);
-        ctx.drawImage(bidIndicators[bidDicators[3]], 175, 125 + 0, 21, 22);
-        ctx.drawImage(bidIndicators[bidDicators[2]], 150, 110 + 0, 21, 22);
-        ctx.font = '20px Arial';
-        ctx.fillStyle = '#66FFFF';
-        ctx.fillText(`         G, P, T\nUs:     ${score[0]}, ${score[1]}, ${score[2]}\nThem: ${score[3]}, ${score[4]}, ${score[5]}`, 0, 20);
-        for (var i = 0; i < 4; i++) {
-            if (board[i] <= 26)
-                ctx.drawImage(cards[Math.floor(parseInt(board[i]) / 6)][parseInt(board[i]) % 6], 150 - 19 - 80 * Math.sin(i * 0.5 * Math.PI), 90 + 80 * Math.cos(i * 0.5 * Math.PI), 71, 96)
-            else
-                ctx.drawImage(secondRound[board[i] - 27], 150 - 19 - 80 * Math.sin(i * 0.5 * Math.PI), 90 + 80 * Math.cos(i * 0.5 * Math.PI), 71, 96)
-        }
+    const canvas = createCanvas(282, 366);
+    const ctx = canvas.getContext('2d');
+    //Player cards
+    playerCards = playerCards.filter(card => card != "-1");
+    for (var i = 0; i < playerCards.length; i++)
+        if (playerCards[i] && playerCards[i] >= 0)
+            ctx.drawImage(cards[Math.floor(parseInt(playerCards[i]) / 6)][parseInt(playerCards[i]) % 6], 25 * (i + 0.5 * (5 - playerCards.length)) + 85, 270, 71, 96);
+        else
+            ctx.drawImage(blankCard, 25 * i + 75, 270, 71, 96);
+    //bid squares:
+    ctx.drawImage(bidIndicators[bidDicators[0]], 150, 140 + 0, 21, 22);
+    ctx.drawImage(bidIndicators[bidDicators[1]], 125, 125 + 0, 21, 22);
+    ctx.drawImage(bidIndicators[bidDicators[3]], 175, 125 + 0, 21, 22);
+    ctx.drawImage(bidIndicators[bidDicators[2]], 150, 110 + 0, 21, 22);
+    ctx.font = '20px Arial';
+    ctx.fillStyle = '#66FFFF';
+    ctx.fillText(`         G, P, T\nUs:     ${score[0]}, ${score[1]}, ${score[2]}\nThem: ${score[3]}, ${score[4]}, ${score[5]}`, 0, 20);
+    for (var i = 0; i < 4; i++) {
+        if (board[i] <= 26)
+            ctx.drawImage(cards[Math.floor(parseInt(board[i]) / 6)][parseInt(board[i]) % 6], 150 - 19 - 80 * Math.sin(i * 0.5 * Math.PI), 90 + 80 * Math.cos(i * 0.5 * Math.PI), 71, 96)
+        else
+            ctx.drawImage(secondRound[board[i] - 27], 150 - 19 - 80 * Math.sin(i * 0.5 * Math.PI), 90 + 80 * Math.cos(i * 0.5 * Math.PI), 71, 96)
+    }
 
-        const attachment = new MessageAttachment(canvas.toBuffer(), 'game.png');
-        channel.send(message, attachment).then(resolve).catch(reject);
-    });
+    const attachment = new MessageAttachment(canvas.toBuffer(), 'game.png');
+    Promise.resolve(channel.send(message, attachment));
 };
 
 module.exports = {
@@ -148,14 +147,27 @@ module.exports = {
                 this.tempData.push(line);
             });
             console.log(this.tempData);
-            this.tempData.forEach(data => {
+            while (this.tempData.length > 0) {
+                var data = this.tempData[0];
                 const split = data.split(':');
                 var uzer = client.users.cache.find(person => split[0] == person.id);
                 if (!split.includes("Cards"))
-                    Promise.resolve(uzer.send(split[1 + split.indexOf("Message")]).catch(console.log));
-                else
-                    Promise.resolve(sysoutGame(uzer, split[1 + split.indexOf("Cards")].split(','), split[1 + split.indexOf("Board")].split(','), split[1 + split.indexOf("Trump")].split(','), split[1 + split.indexOf("Score")].split(','), split.includes('Message') ? split[1 + split.indexOf("Message")] : "").catch(console.log))
-            });
+                    uzer.send(split[1 + split.indexOf("Message")]).catch(console.log);
+                else{
+                    sysoutGame(uzer, split[1 + split.indexOf("Cards")].split(','), split[1 + split.indexOf("Board")].split(','), split[1 + split.indexOf("Trump")].split(','), split[1 + split.indexOf("Score")].split(','), split.includes('Message') ? split[1 + split.indexOf("Message")] : "");//.catch(console.log);
+                    lastBoard[split[0]] = data;
+                }
+                this.tempData.splice(0, 1);
+            }
         }
-    }
+
+        resendFor(userID){
+            if (lastBoard[userID] != undefined){
+                const split = lastBoard[userID].split(':');
+                sysoutGame(client.users.cache.find(person => userID == person.id), split[1 + split.indexOf("Cards")].split(','), split[1 + split.indexOf("Board")].split(','), split[1 + split.indexOf("Trump")].split(','), split[1 + split.indexOf("Score")].split(','), split.includes('Message') ? split[1 + split.indexOf("Message")] : "");
+            }
+        }
+    },
+
+
 }

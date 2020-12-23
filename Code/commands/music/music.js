@@ -1,5 +1,5 @@
 const { MessageEmbed } = require('discord.js');
-const { getRandomName} = require('./music-manager');
+const musicManager = require('./music-manager');
 
 var out;
 var putIn;
@@ -10,16 +10,16 @@ module.exports = {
     maxArgs: 1,
     expectedArgs: '`<amount of reccomendations>`',
     callback: (message, arguments) => {
-        out = '!p ' + getRandomName();
+        out = '!p ' + musicManager.getRandomName();
         putIn = "";
         if (parseInt(arguments[0]) < 1 || parseInt(arguments[0]) > 50 || isNaN(parseInt(arguments[0]))) {
             message.reply("No. bad. stop")
             return;
         }
         for (var i = 0; i < parseInt(arguments[0]) - 1; i++) {
-            putIn = getRandomName();
+            putIn = musicManager.getRandomName();
             while (out.includes(putIn)) {
-                putIn = musick.getRandomName();
+                putIn = musicManager.getRandomName();
             }
             out += '\n!p ' + putIn;
         }

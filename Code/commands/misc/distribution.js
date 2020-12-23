@@ -23,7 +23,7 @@ module.exports = {
                 if (users > Math.pow(10, i - 1) && users <= Math.pow(10, i))
                     guildWithSize++;
             })
-            out += `\n${(" ").repeat(10 - (`${Math.pow(10, i - 1) + 1}, ${Math.pow(10, i)}`).length)}${Math.pow(10, i - 1) + 1}, ${Math.pow(10, i)} | ${guildWithSize}`;
+            out += `\n${(" ").repeat(12 - (`${Math.pow(10, i - 1) + 1}, ${Math.pow(10, i)}`).length)}${Math.pow(10, i - 1) + 1}, ${Math.pow(10, i)} | ${guildWithSize}`;
         }
         out += "```"
         const outMsg = new MessageEmbed()
