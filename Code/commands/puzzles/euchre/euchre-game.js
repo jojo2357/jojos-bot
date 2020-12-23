@@ -16,28 +16,29 @@ var prc;
 var stdinStream;
 
 let sysoutGame = function (channel, playerCards = ["", "", "", "", ""], board = ["", "", "", ""], bidDicators = ['4', '4', '4', '4'], score = ['0', '0', '0', '0', '0', '0'], message = "Empty Message") {
-    const canvas = createCanvas(282, 366);
+    const canvas = createCanvas(180, 226);
     const ctx = canvas.getContext('2d');
     //Player cards
     playerCards = playerCards.filter(card => card != "-1");
     for (var i = 0; i < playerCards.length; i++)
         if (playerCards[i] && playerCards[i] >= 0)
-            ctx.drawImage(cards[Math.floor(parseInt(playerCards[i]) / 6)][parseInt(playerCards[i]) % 6], 25 * (i + 0.5 * (5 - playerCards.length)) + 85, 270, 71, 96);
-        else
-            ctx.drawImage(blankCard, 25 * i + 75, 270, 71, 96);
+            ctx.drawImage(cards[Math.floor(parseInt(playerCards[i]) / 6)][parseInt(playerCards[i]) % 6], Math.floor(25 * (i + 0.5 * (5 - playerCards.length))) + 5, 130, 71, 96);
+        /*else
+            ctx.drawImage(blankCard, 25 * i + 35, 240, 71, 96);*/
     //bid squares:
-    ctx.drawImage(bidIndicators[bidDicators[0]], 150, 140 + 0, 21, 22);
-    ctx.drawImage(bidIndicators[bidDicators[1]], 125, 125 + 0, 21, 22);
-    ctx.drawImage(bidIndicators[bidDicators[3]], 175, 125 + 0, 21, 22);
-    ctx.drawImage(bidIndicators[bidDicators[2]], 150, 110 + 0, 21, 22);
-    ctx.font = '20px Arial';
+    ctx.drawImage(bidIndicators[bidDicators[0]], 85 - 3, 64 + 3, Math.floor(21 / 2), Math.floor(22 / 2));
+    ctx.drawImage(bidIndicators[bidDicators[1]], 70 - 3, 55 + 3, Math.floor(21 / 2), Math.floor(22 / 2));
+    ctx.drawImage(bidIndicators[bidDicators[3]], 100 - 3, 55 + 3, Math.floor(21 / 2), Math.floor(22 / 2));
+    ctx.drawImage(bidIndicators[bidDicators[2]], 85 - 3, 46 + 3, Math.floor(21 / 2), Math.floor(22 / 2));
+    ctx.font = '14px Arial';
     ctx.fillStyle = '#66FFFF';
-    ctx.fillText(`         G, P, T\nUs:     ${score[0]}, ${score[1]}, ${score[2]}\nThem: ${score[3]}, ${score[4]}, ${score[5]}`, 0, 20);
+    ctx.fillText(`     G, P, T\nUs ${score[0]}, ${score[1]}, ${score[2]}`, 0, 12);
+    ctx.fillText(`      G, P, T\n'Em ${score[3]}, ${score[4]}, ${score[5]}`, 110, 12);
     for (var i = 0; i < 4; i++) {
         if (board[i] <= 26)
-            ctx.drawImage(cards[Math.floor(parseInt(board[i]) / 6)][parseInt(board[i]) % 6], 150 - 19 - 80 * Math.sin(i * 0.5 * Math.PI), 90 + 80 * Math.cos(i * 0.5 * Math.PI), 71, 96)
+            ctx.drawImage(cards[Math.floor(parseInt(board[i]) / 6)][parseInt(board[i]) % 6], 150 - 80 - Math.floor(50 * Math.sin(i * 0.5 * Math.PI)), 40 + Math.floor(41 * Math.cos(i * 0.5 * Math.PI)), Math.floor(71 / 2), Math.floor(96 / 2))
         else
-            ctx.drawImage(secondRound[board[i] - 27], 150 - 19 - 80 * Math.sin(i * 0.5 * Math.PI), 90 + 80 * Math.cos(i * 0.5 * Math.PI), 71, 96)
+            ctx.drawImage(secondRound[board[i] - 27], 150 - 80 - 50 * Math.sin(i * 0.5 * Math.PI), 40 + 41 * Math.cos(i * 0.5 * Math.PI), Math.floor(71 / 2), Math.floor(96 / 2))
     }
 
     const attachment = new MessageAttachment(canvas.toBuffer(), 'game.png');
@@ -151,9 +152,9 @@ module.exports = {
                 var data = this.tempData[0];
                 const split = data.split(':');
                 var uzer = client.users.cache.find(person => split[0] == person.id);
-                if (!split.includes("Cards"))
-                    uzer.send(split[1 + split.indexOf("Message")]).catch(console.log);
-                else{
+                if (!split.includes("Cards")) {
+                    setTimeout((uzer, split) => uzer.send(split[1 + split.indexOf("Message")]).catch(console.log), 3000, uzer, split);
+                } else {
                     sysoutGame(uzer, split[1 + split.indexOf("Cards")].split(','), split[1 + split.indexOf("Board")].split(','), split[1 + split.indexOf("Trump")].split(','), split[1 + split.indexOf("Score")].split(','), split.includes('Message') ? split[1 + split.indexOf("Message")] : "");//.catch(console.log);
                     lastBoard[split[0]] = data;
                 }
@@ -161,8 +162,8 @@ module.exports = {
             }
         }
 
-        resendFor(userID){
-            if (lastBoard[userID] != undefined){
+        resendFor(userID) {
+            if (lastBoard[userID] != undefined) {
                 const split = lastBoard[userID].split(':');
                 sysoutGame(client.users.cache.find(person => userID == person.id), split[1 + split.indexOf("Cards")].split(','), split[1 + split.indexOf("Board")].split(','), split[1 + split.indexOf("Trump")].split(','), split[1 + split.indexOf("Score")].split(','), split.includes('Message') ? split[1 + split.indexOf("Message")] : "");
             }

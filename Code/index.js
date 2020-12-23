@@ -2,6 +2,7 @@
 const path = require('path');
 const config = require('./config.json');
 const fs = require('fs');
+const os = require('os');
 const baseFile = 'command-base.js'
 const commandBase = require(`./commands/${baseFile}`);
 const MusicDb = require('./commands/music/music-manager.js');
@@ -92,7 +93,7 @@ client.on('ready', async () => {
     bruhlist.loadbruhList();
     console.log("Presence set!");
     setInterval(() => {
-        dbl.postStats(client.guilds.size);
+        if (!os.platform().toString().includes("win")) dbl.postStats(client.guilds.size);
     }, 1800000);
 
     remoteConsole.sendHostStatus();
