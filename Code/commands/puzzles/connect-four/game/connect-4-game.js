@@ -85,16 +85,16 @@ module.exports = {
     },
 
     async initImages() {
-        background = await loadImage('./assets/images/defaultBoard.png');
-        blankBoard = await loadImage('./assets/images/emptyBoard.png');
-        specialBackground = await loadImage('./assets/images/specialBoard.png');
-        specialBoard = await loadImage('./assets/images/emptySpecialBoard.png');
-        redToken = await loadImage('./assets/images/redToken.png');
-        yellowToken = await loadImage('./assets/images/yellowToken.png');
-        lastRedToken = await loadImage('./assets/images/lastRedToken.png');
-        lastYellowToken = await loadImage('./assets/images/lastYellowToken.png');
-        winningYellowToken = await loadImage('./assets/images/winningYellowToken.png');
-        winningRedToken = await loadImage('./assets/images/winningRedToken.png');
+        background = await loadImage('./assets/images/connect-4/defaultBoard.png');
+        blankBoard = await loadImage('./assets/images/connect-4/emptyBoard.png');
+        specialBackground = await loadImage('./assets/images/connect-4/specialBoard.png');
+        specialBoard = await loadImage('./assets/images/connect-4/emptySpecialBoard.png');
+        redToken = await loadImage('./assets/images/connect-4/redToken.png');
+        yellowToken = await loadImage('./assets/images/connect-4/yellowToken.png');
+        lastRedToken = await loadImage('./assets/images/connect-4/lastRedToken.png');
+        lastYellowToken = await loadImage('./assets/images/connect-4/lastYellowToken.png');
+        winningYellowToken = await loadImage('./assets/images/connect-4/winningYellowToken.png');
+        winningRedToken = await loadImage('./assets/images/connect-4/winningRedToken.png');
     },
 
     gamesPlayed() {
@@ -110,6 +110,7 @@ module.exports = {
     },
 
     init() {
+        console.log('Start loading connect-4 assets');
         connect4GameHolder.gamesPlayed = fs.readFileSync(process.cwd() + '/assets/connect-4/game-record/0_computerBrain.dat').toString().split('\n').length - 1;
 
         stdinStream = new Readable({
@@ -146,6 +147,7 @@ module.exports = {
         console.log("master c4 bot created");
 
         this.initImages();
+        console.log('Finished loading connect-4 assets');
     },
 
     connect4game: class {

@@ -14,29 +14,31 @@ module.exports = {
             message.reply("I'm sorry but im just a pi, i cant do that stuff just yet");
             return;
         }
-        var failed = false;
+        let failed = false;
         arguments.forEach(arg => {
             if (arg != 'cpu') {
-                if (arg.includes('<'))
-                    if (arg.indexOf('!') >= 0)
-                        message.client.users.cache.find(user => user.id == arg.substring(3, arg.indexOf(">"))).send("Lets play some euchre! (You are getting this because the only way to test if i can message you is just to do it :/)").catch(err => {
-                            message.reply('Failed to send a message to someone :(');
-                            failed = true;
-                        });
+                if (!arg.includes('789368852936917002') && !arg.includes('699366687455051808'))
+                    if (arg.includes('<'))
+                        if (arg.indexOf('!') >= 0)
+                            message.client.users.cache.find(user => user.id == arg.substring(3, arg.indexOf(">"))).send("Lets play some euchre! (You are getting this because the only way to test if i can message you is just to do it :/)").catch(err => {
+                                message.reply('Failed to send a message to someone :(');
+                                failed = true;
+                            });
+                        else
+                            message.client.users.cache.find(user => user.id == arg.substring(2, arg.indexOf(">"))).send("Lets play some euchre! (You are getting this because the only way to test if i can message you is just to do it :/)").catch(err => {
+                                message.reply('Failed to send a message to someone :(');
+                                failed = true;
+                            });
                     else
-                        message.client.users.cache.find(user => user.id == arg.substring(2, arg.indexOf(">"))).send("Lets play some euchre! (You are getting this because the only way to test if i can message you is just to do it :/)").catch(err => {
+                        message.client.users.cache.find(user => user.id == arg).send("Lets play some euchre! (You are getting this because the only way to test if i can message you is just to do it :/)").catch(err => {
                             message.reply('Failed to send a message to someone :(');
                             failed = true;
                         });
-                else
-                    message.client.users.cache.find(user => user.id == arg).send("Lets play some euchre! (You are getting this because the only way to test if i can message you is just to do it :/)").catch(err => {
-                        message.reply('Failed to send a message to someone :(');
-                        failed = true;
-                    });
             }
         });
-        if (failed) return;
-        var game = new euchreGame.EuchreGame(arguments);
-        euchreManager.addGame(game);
+        if (!failed) {
+            var game = new euchreGame.EuchreGame(arguments);
+            euchreManager.addGame(game);
+        }
     }
 }
