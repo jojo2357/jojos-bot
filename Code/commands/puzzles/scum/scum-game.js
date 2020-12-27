@@ -78,14 +78,16 @@ module.exports = {
     },
 
     init() {
+        console.log('Start loading scum assets');
         this.loadCards();
+        console.log('Finnished loading scum assets');
     },
 
     async loadCards() {
         cards = [];
         blankCard = await loadImage(`assets/images/scum/blank.png`)
         cardNames = ['3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king', 'ace', '2'];
-        cardNames.forEach(i => {
+        cardNames.forEach(async function(i) {
             cards.push(await loadImage(`assets/images/scum/${i}_of_hearts.png`));
             cards.push(await loadImage(`assets/images/scum/${i}_of_diamonds.png`));
             cards.push(await loadImage(`assets/images/scum/${i}_of_spades.png`));

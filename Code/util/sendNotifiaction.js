@@ -7,6 +7,6 @@ module.exports = {
         if (platform().toString().toLowerCase().includes('win'))
             spawn(process.cwd() + '/sendNotification.bat', args);
         else
-            remoteConsole.addRecentData(args.join(' '));
+            remoteConsole.addRecentData(Array.isArray(args) ? args.join(' ') : args);
     }
 }

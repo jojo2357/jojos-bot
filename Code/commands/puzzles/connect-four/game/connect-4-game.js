@@ -80,6 +80,10 @@ async function thing() {
 }
 
 module.exports = {
+    killChild(){
+        prc.kill();
+    },
+    
     setClient(klient) {
         client = klient;
     },

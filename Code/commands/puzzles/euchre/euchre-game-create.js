@@ -1,6 +1,5 @@
 const euchreGame = require("./euchre-game");
 const euchreManager = require("./euchre-game-manager");
-const { platform } = require('os');
 
 module.exports = {
     commands: ['euchre'],
@@ -8,10 +7,8 @@ module.exports = {
     maxArgs: 4,
     restrictedToUsers: ['524411594009083933', '777008421940887583'],
     callback: (message, arguments) => {
-        if (message.author.id != '524411594009083933' && message.author.id != '777008421940887583')
-            return;
-        if (!platform().toString().toLowerCase().includes('win')) {
-            message.reply("I'm sorry but im just a pi, i cant do that stuff just yet");
+        if (!euchreGame.successfulCompile){
+            message.reply('Something went wrong in loading up the euchre game, sorry');
             return;
         }
         let failed = false;
@@ -37,7 +34,7 @@ module.exports = {
             }
         });
         if (!failed) {
-            var game = new euchreGame.EuchreGame(arguments);
+            var game = new euchreGame.EuchreGame(arguments, message.channel);
             euchreManager.addGame(game);
         }
     }

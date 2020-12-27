@@ -16,6 +16,9 @@ let client;
 let secondRound;
 let lastBoard = new Map();
 
+let windowsProgram = 'ConsoleApplication2.exe';
+let linuxProgram = 'a.out';
+
 var prc;
 var stdinStream;
 
@@ -59,8 +62,18 @@ ctx.drawImage(blankCard, 25 * i + 35, 240, 71, 96);*/
         }
     }
 
+    if (channel.id == euchreGame.rootPlayer){
+        try{
+            await euchreGame.lastMessage.delete();
+        }catch (err){}
+        const secondCanvas = createCanvas(170, 128);
+        const secondCTX = secondCanvas.getContext('2d');
+        secondCTX.drawImage(canvas, 0, 0);
+        euchreGame.lastMessage = await (euchreGame.rootChannel.send('', new MessageAttachment(secondCanvas.toBuffer(), 'spectateGame.png')));
+    }
+
     const attachment = new MessageAttachment(canvas.toBuffer(), 'game.png');
-    Promise.resolve(channel.send(message, attachment));
+    channel.send(message, attachment);
 };
 
 let getPfp = async function (player) {
@@ -70,12 +83,18 @@ let getPfp = async function (player) {
 };
 
 module.exports = {
+    successfulCompile: false,
+
+    killChild(){
+        prc.kill();
+    },
+
     init(klient) {
         console.log('Start loading euchre assets');
         client = klient;
 
-        if (!fs.existsSync(process.cwd() + '/assets/euchre/ConsoleApplication2.exe') || !platform().toString().toLowerCase().includes('win')) {
-            console.log("Euchre bot not found or os not compatible");
+        if (!fs.existsSync(process.cwd() + '/assets/euchre/' + windowsProgram) && !fs.existsSync(process.cwd() + '/assets/euchre/' + linuxProgram)) {
+            console.log("Euchre bot not found");
             return;
         }
 
@@ -85,7 +104,7 @@ module.exports = {
             }
         });
 
-        prc = spawn(process.cwd() + '/assets/euchre/ConsoleApplication2');
+        prc = platform().toString().includes('win') ? spawn(process.cwd() + '/assets/euchre/' + windowsProgram.split('.')[0]) : spawn(process.cwd() + '/assets/euchre/' + linuxProgram);
 
         //prc.stdout.checkLoad = checkLoaded;
 
@@ -107,18 +126,19 @@ module.exports = {
         console.log("master euchre bot created");
 
         this.loadCards();
+        this.successfulCompile = true;
         console.log('Finished loading euchre assets');
     },
 
     async loadCards() {
-        blankCard = await loadImage('assets/images/euchre/square.png');
+        blankCard = await loadImage(process.cwd() + '/assets/images/euchre/Square.png');
 
         cards = [
-            [await loadImage('assets/images/euchre/Nhear.png'), await loadImage('assets/images/euchre/Tnhear.png'), await loadImage('assets/images/euchre/Jhear.png'), await loadImage('assets/images/euchre/Qhear.png'), await loadImage('assets/images/euchre/Khear.png'), await loadImage('assets/images/euchre/Ahear.png')],
-            [await loadImage('assets/images/euchre/Ndia.png'), await loadImage('assets/images/euchre/Tndia.png'), await loadImage('assets/images/euchre/Jdia.png'), await loadImage('assets/images/euchre/Qdia.png'), await loadImage('assets/images/euchre/Kdia.png'), await loadImage('assets/images/euchre/Adia.png')],
-            [await loadImage('assets/images/euchre/Nclubs.png'), await loadImage('assets/images/euchre/Tnclubs.png'), await loadImage('assets/images/euchre/Jclubs.png'), await loadImage('assets/images/euchre/Qclubs.png'), await loadImage('assets/images/euchre/Kclubs.png'), await loadImage('assets/images/euchre/Aclubs.png')],
-            [await loadImage('assets/images/euchre/Nspa.png'), await loadImage('assets/images/euchre/Tnspa.png'), await loadImage('assets/images/euchre/Jspa.png'), await loadImage('assets/images/euchre/Qspa.png'), await loadImage('assets/images/euchre/Kspa.png'), await loadImage('assets/images/euchre/Aspa.png')],
-            [await loadImage('assets/images/euchre/Square.png'), await loadImage('assets/images/euchre/Order.png'), await loadImage('assets/images/euchre/Pass.png')]
+            [await loadImage(process.cwd() + '/assets/images/euchre/Nhear.png'), await loadImage(process.cwd() + '/assets/images/euchre/Tnhear.png'), await loadImage(process.cwd() + '/assets/images/euchre/Jhear.png'), await loadImage(process.cwd() + '/assets/images/euchre/Qhear.png'), await loadImage(process.cwd() + '/assets/images/euchre/Khear.png'), await loadImage(process.cwd() + '/assets/images/euchre/Ahear.png')],
+            [await loadImage(process.cwd() + '/assets/images/euchre/Ndia.png'), await loadImage(process.cwd() + '/assets/images/euchre/Tndia.png'), await loadImage(process.cwd() + '/assets/images/euchre/Jdia.png'), await loadImage(process.cwd() + '/assets/images/euchre/Qdia.png'), await loadImage(process.cwd() + '/assets/images/euchre/Kdia.png'), await loadImage(process.cwd() + '/assets/images/euchre/Adia.png')],
+            [await loadImage(process.cwd() + '/assets/images/euchre/Nclubs.png'), await loadImage(process.cwd() + '/assets/images/euchre/Tnclubs.png'), await loadImage(process.cwd() + '/assets/images/euchre/Jclubs.png'), await loadImage(process.cwd() + '/assets/images/euchre/Qclubs.png'), await loadImage(process.cwd() + '/assets/images/euchre/Kclubs.png'), await loadImage(process.cwd() + '/assets/images/euchre/Aclubs.png')],
+            [await loadImage(process.cwd() + '/assets/images/euchre/Nspa.png'), await loadImage(process.cwd() + '/assets/images/euchre/Tnspa.png'), await loadImage(process.cwd() + '/assets/images/euchre/Jspa.png'), await loadImage(process.cwd() + '/assets/images/euchre/Qspa.png'), await loadImage(process.cwd() + '/assets/images/euchre/Kspa.png'), await loadImage(process.cwd() + '/assets/images/euchre/Aspa.png')],
+            [await loadImage(process.cwd() + '/assets/images/euchre/Square.png'), await loadImage(process.cwd() + '/assets/images/euchre/Order.png'), await loadImage(process.cwd() + '/assets/images/euchre/Pass.png')]
         ];
 
         cards[0].reverse();
@@ -126,13 +146,13 @@ module.exports = {
         cards[2].reverse();
         cards[3].reverse();
 
-        secondRound = [await loadImage('assets/images/euchre/Heart.png'), await loadImage('assets/images/euchre/Diamon.png'), await loadImage('assets/images/euchre/Clubs.png'), await loadImage('assets/images/euchre/Spades.png'), await loadImage('assets/images/euchre/NoBid.png'), await loadImage('assets/images/euchre/GoneLone.png')]
+        secondRound = [await loadImage(process.cwd() + '/assets/images/euchre/Heart.png'), await loadImage(process.cwd() + '/assets/images/euchre/Diamon.png'), await loadImage(process.cwd() + '/assets/images/euchre/Clubs.png'), await loadImage(process.cwd() + '/assets/images/euchre/Spades.png'), await loadImage(process.cwd() + '/assets/images/euchre/Nobid.png'), await loadImage(process.cwd() + '/assets/images/euchre/GoneLone.png')]
 
         bidIndicators = [
-            await loadImage('assets/images/euchre/bitmap33.png'), await loadImage('assets/images/euchre/bitmap34.png'), await loadImage('assets/images/euchre/bitmap35.png'), await loadImage('assets/images/euchre/bitmap36.png'), await loadImage('assets/images/euchre/bitmap37.png')
+            await loadImage(process.cwd() + '/assets/images/euchre/bitmap33.png'), await loadImage(process.cwd() + '/assets/images/euchre/bitmap34.png'), await loadImage(process.cwd() + '/assets/images/euchre/bitmap35.png'), await loadImage(process.cwd() + '/assets/images/euchre/bitmap36.png'), await loadImage(process.cwd() + '/assets/images/euchre/bitmap37.png')
         ];
 
-        defaultComputer = await loadImage('assets/images/euchre/DefaultComputer.png');
+        defaultComputer = await loadImage(process.cwd() + '/assets/images/euchre/DefaultComputer.png');
     },
 
     EuchreGame: class {
@@ -140,7 +160,7 @@ module.exports = {
         players = [''];
         channels = new Map(); //player => channel
 
-        constructor(playerIds = ['cpu', 'cpu', 'cpu', 'cpu']) {
+        constructor(playerIds = ['cpu', 'cpu', 'cpu', 'cpu'], originChannel) {
             prc.stdout.on('data', this.handleComputer);
             for (var i = 0; i < 4; i++) {
                 playerIds[i] = playerIds[i].replace('<', '').replace('@', '').replace('!', '').replace('>', '').replace('cpu', ' ').replace('789368852936917002', ' ').replace('699366687455051808', ' ');
@@ -152,7 +172,9 @@ module.exports = {
                     this.pfps[player] = defaultComputer;
                 else
                     this.doPFP(player);
-            })
+            });
+            this.rootPlayer = this.players[0];
+            this.rootChannel = originChannel;
         }
 
         async doPFP(player) {
@@ -166,8 +188,8 @@ module.exports = {
         handleComputer(data) {
             data = data.toString();
             this.tempData = [];
-            data.split('\r\n').forEach(line => {
-                if (line.includes("Enter") || line.length == 0)
+            data.split(/(\r\n|\r|\n)/gm).forEach(line => {
+                if (line.includes("Enter") || line.length == 0 && line != '\n')
                     return;
                 console.log(line);
                 this.tempData.push(line);

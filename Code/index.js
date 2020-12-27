@@ -18,6 +18,7 @@ let client = new (require('discord.js-commando')).CommandoClient({
 });
 const { sendNotification } = require('./util/sendNotifiaction.js');
 const remoteConsole = require('./util/remoteConsole.js');
+
 const sendUsers = [require('./commands/misc/count-users.js'),
 require('./commands/misc/distribution.js'),
 require('./commands/administration/restart.js'),
@@ -29,12 +30,25 @@ require('./commands/random-responses/verify.js'),
 require('./util/getUser.js'),
 remoteConsole];
 
+const murderKids = [
+require('./commands/puzzles/connect-four/game/connect-4-game.js'),
+require('./commands/puzzles/euchre/euchre-game.js')
+];
+
+process.on('uncaughtException', (err) => {
+    sendNotification(err);
+})
+
+process.on('exit', () => {
+    murderKids.forEach((kidHolder) => kidHolder.killChild());
+})
+
 const DBL = require("dblapi.js");
 const express = require('express');
 
 const app = express();
 const server = require('http').createServer(app);
-const dbl = new DBL(config.top_ggToken, { webhookAuth: config.top_ggWebhook, webhookServer: server }, client);
+const dbl = new DBL(config.top_ggToken, { webhookAuth: config.top_ggWebhook, webhookServer: server });
 
 dbl.webhook.on('ready', () => {
     console.log("listening")
