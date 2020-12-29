@@ -13,10 +13,8 @@ module.exports = {
         client = klient;
     },
 
-    startTime: new Date().getMilliseconds(),
-
     async killHostStatus() {
-        lastHostStatus && await lastHostStatus.delete().catch();
+        lastHostStatus && !lastHostStatus.deleted && await lastHostStatus.delete().catch();
         await this.sendConsoleUpdates();
     },
 
@@ -32,7 +30,7 @@ module.exports = {
                 '     Memory used: ' + ((used / btogb)).toFixed(2) + ' GB/' +
                 (tot / btogb).toFixed(2) + ' GB (' + (used / tot * 100).toFixed(0) + `% | ${used / tot * 100 > lastMem ? '+' : ''}${(used / tot * 100 - lastMem).toFixed(0)}%)` + '```').setTimestamp()
             .setFooter('More commands coming soon!');
-        if (lastHostStatus)
+        if (lastHostStatus && !lastHostStatus.deleted)
             lastHostStatus = await lastHostStatus.edit(help);
         else
             lastHostStatus = await client.users.cache.get('524411594009083933').send(help);
