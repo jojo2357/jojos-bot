@@ -9,6 +9,7 @@ Code/assets/vote-log/recent-votes.dat
 Code/node_modules/**/*
 Code/nodejslocation.dat
 Code/recentData.dat
+Code/commands/misc/test.js
 
 # in-development:
 Code/commands/puzzles/go-fish/*

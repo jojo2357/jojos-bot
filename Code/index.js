@@ -36,7 +36,7 @@ require('./commands/puzzles/euchre/euchre-game.js')
 ];
 
 process.on('uncaughtException', (err) => {
-    sendNotification(err);
+    sendNotification(['Caught Exception:', err]);
 })
 
 process.on('exit', () => {

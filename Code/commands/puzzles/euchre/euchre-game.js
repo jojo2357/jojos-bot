@@ -189,7 +189,7 @@ module.exports = {
             data = data.toString();
             this.tempData = [];
             data.split(/(\r\n|\r|\n)/gm).forEach(line => {
-                if (line.includes("Enter") || line.length == 0 && line != '\n')
+                if (line.includes("Enter") || line.length == 0 || line == '\n' || line == '\r\n')
                     return;
                 console.log(line);
                 this.tempData.push(line);
