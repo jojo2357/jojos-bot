@@ -1,9 +1,8 @@
 const { MessageEmbed } = require('discord.js');
 const { connect4game, botLoaded } = require('./connect-4-game.js');
 const Manager = require('./connect-4-game-holder.js');
-const fs = require('fs');
 const { getStreak } = require('./../connect-4-streakerboard.js');
-const {readFileSync} = require('fs');
+const { existsSync, readFileSync } = require('fs');
 
 var user;
 
@@ -27,7 +26,7 @@ module.exports = {
             message.channel.send('Sorry i cant find that user in this server. Please try again');
             return;
         }
-        if (getStreak(readFileSync(process.cwd() + '/assets/connect-4/game-record/' + user + ".dat").toString().split('\n'))[0] > 20 && getStreak(readFileSync(process.cwd() + '/assets/connect-4/game-record/' + user + ".dat").toString().split('\n'))[1] == 'L')
+        if (existsSync(process.cwd() + '/assets/connect-4/game-record/' + message.author.id + ".dat").toString().split('\n'))[0] > 20 && getStreak(readFileSync(process.cwd() + '/assets/connect-4/game-record/' + message.author.id + ".dat") && getStreak(readFileSync(process.cwd() + '/assets/connect-4/game-record/' + message.author.id + ".dat").toString().split('\n'))[0] > 20 && getStreak(readFileSync(process.cwd() + '/assets/connect-4/game-record/' + message.author.id + ".dat").toString().split('\n'))[1] == 'L')
             message.reply('you arent allowed for some reason :|');
         if (user == '699366687455051808') {
             message.channel.send("Yes, I will play against you foolish mortal")
@@ -60,7 +59,7 @@ module.exports = {
                 message.channel.send('Brain is still loading, be patient');
                 return;
             }
-            if (message.guild != undefined && !fs.existsSync('./assets/server-settings/' + message.guild.id + '.json'))
+            if (message.guild != undefined && !existsSync('./assets/server-settings/' + message.guild.id + '.json'))
                 message.channel.send("**HEY**!! This server has not configured settings! Use `=server-settings` to get started in order to recieve updates and warnings before the bot restarts in order to not lose game data!")
             var game = new connect4game(['<@' + message.author + '>', null], message.channel);
             if (message.guild == undefined) {
