@@ -1,9 +1,11 @@
 const { MessageAttachment } = require('discord.js');
 const { Readable } = require('stream');
-const { loadImage, createCanvas} = require('canvas');
+const { loadImage, createCanvas, Image} = require('canvas');
+const GIFEncoder = require('gif-encoder');
 const fs = require('fs');
 const connect4GameHolder = require('./connect-4-game-holder');
 const {token} = require('./../../../../config.json');
+const path = require('path')
 
 const { spawn } = require('child_process');
 const { sendNotification } = require('./../../../../util/sendNotifiaction');
@@ -71,7 +73,7 @@ function checkLoaded(str = "") {// pass data in here to see if the bot is declar
 }
 
 async function thing() {
-    if (client.user != null) {
+    if (client && client.user != null) {
         await client.user.setPresence({ activity: { name: '=connect-4 in ' + client.guilds.cache.size + ' servers' }, status: 'dnd' }).then(console.log).catch(console.log);
         console.log("======================================================")
     } else {
@@ -173,6 +175,16 @@ module.exports = {
             [0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0]];
+            this.startTime = Date.now();
+            this.pendingGif = new GIFEncoder(224, 192);
+
+            fs.writeFileSync('./assets/connect-4/highlights/' + this.startTime + '.gif', '');
+            this.pendingGif.createReadStream().pipe(fs.createWriteStream('./assets/connect-4/highlights/' + this.startTime + '.gif'));
+
+            this.pendingGif.start();
+            this.pendingGif.setRepeat(0);   
+            this.pendingGif.setDelay(500);  
+            this.pendingGif.setQuality(10); 
         };
 
         generateID() {
@@ -303,6 +315,7 @@ module.exports = {
                     }
                 defaultBoard.drawImage((this.turn == 1 ? lastRedToken : lastYellowToken), 32 * this.lastMove, 160 - 32 * lastSpot, 32, 32);
             }
+            this.pendingGif.addFrame(defaultBoard);
             const attachment = new MessageAttachment(canvas.toBuffer(), 'testBoard.png');
             if (this.lastMessage != null && this.lastMessage.channel.guild != null)
                 this.lastMessage.delete().catch();
@@ -377,8 +390,13 @@ module.exports = {
                     }).catch();
             } else {
                 this.channel[0].send(attachment);
-                if (this.channel[0].id != this.channel[1].id)
+                this.pendingGif.finish();
+                this.channel[0].send("Heres an instant replay: ", {files: ['./assets/connect-4/highlights/' + this.startTime + '.gif']});
+                if (this.channel[0].id != this.channel[1].id){
                     this.channel[1].send(attachment);
+                    this.channel[0].send("Heres an instant replay: ", {files: ['./assets/connect-4/highlights/' + this.startTime + '.gif']});
+                }
+                this.pendingGif = null;
             }
             //console.log("board printing done");
         };

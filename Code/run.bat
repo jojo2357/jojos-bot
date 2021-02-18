@@ -18,9 +18,7 @@ Pushd %directory%
 FOR /F %%A IN ('WMIC OS GET LocalDateTime ^| FINDSTR \.') DO @SET B=%%A
 echo %B:~0,4%-%B:~4, 2%-%B:~6,2%, %time%
 
-set /p node_js_location= <nodejslocation.dat
-
-%node_js_location% --no-warnings .\index.js
+node --no-warnings .\index.js
 
 REM see EXIT_CODES.MD for what each one is. 
 REM On 1 and 0, the log is not saved becasue the exit was intentional. 

@@ -1,7 +1,5 @@
 let client;
 
-let thisCount;
-
 const a1 = 0.254829592;
 const a2 = -0.284496736;
 const a3 = 1.421413741;
@@ -25,7 +23,7 @@ module.exports = {
         let countedUsers = [];
         let serverMemberCounts = [];
         client.guilds.cache.forEach((guild) => {
-            thisCount = 0;
+            let thisCount = 0;
             guild.members.cache.forEach((user) => {
                 if (user.user.bot)
                     botCount++;
@@ -41,13 +39,13 @@ module.exports = {
             serverMemberCounts.push(thisCount);
             max = Math.max(max, thisCount);
         })
-        message.channel.send('Unique users in all servers: ' + uniques + "\n" +
+        message.channel.send('Unique users in all ' + client.guilds.cache.length + ' servers: ' + uniques + "\n" +
             "Total users including duplicates: " + total + "\n" +
             "Average: " + average(serverMemberCounts).toPrecision(4) + "\n" +
             "Standard deviation: " + standardDeviation(serverMemberCounts).toPrecision(4) + "\n"
             + (100 * normalcdf(average(serverMemberCounts), standardDeviation(serverMemberCounts), 0)).toPrecision(4) + "% of servers have a negative amount of users\n" +
             "Max: " + max + '\n' +
-            'Median: ' + median(serverMemberCounts) + '\n' + 
+            'Median: ' + median(serverMemberCounts) + '\n' +
             'Bots: ' + botCount + ' (' + uniqueBots + ' unique bots)');
     }
 }

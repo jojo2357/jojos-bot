@@ -12,36 +12,39 @@ const Scum = require('./commands/puzzles/scum/scum-game.js');
 const bruhlist = require('./util/bruhlist.js');
 const { EventEmitter } = require('events');
 EventEmitter.defaultMaxListeners = 100;
-let client = new (require('discord.js-commando')).CommandoClient({
-    owner: '524411594009083933',
-    commandPrefix: config.prefix
-});
+const Discord = require('discord.js');
+let client = new Discord.Client({fetchAllMembers: true});
 const { sendNotification } = require('./util/sendNotifiaction.js');
 const remoteConsole = require('./util/remoteConsole.js');
 
-const sendUsers = [require('./commands/misc/count-users.js'),
-require('./commands/misc/distribution.js'),
-require('./commands/administration/restart.js'),
-require('./commands/administration/announce.js'),
-require('./commands/administration/suggest.js'),
-require('./commands/puzzles/connect-four/game/connect-4-game.js'),
-require('./commands/puzzles/scum/scum-game.js'),
-require('./commands/random-responses/verify.js'),
-require('./util/getUser.js'),
-remoteConsole];
+const sendUsers = [
+    require('./commands/index.js'),
+    require('./commands/administration/restart.js'),
+    require('./commands/administration/announce.js'),
+    require('./commands/administration/suggest.js'),
+    require('./commands/administration/status.js'),
+    require('./commands/misc/count-users.js'),
+    require('./commands/misc/distribution.js'),
+    require('./commands/puzzles/connect-four/game/connect-4-game.js'),
+    require('./commands/puzzles/scum/scum-game.js'),
+    require('./commands/random-responses/verify.js'),
+    require('./util/getUser.js'),
+    remoteConsole
+];
 
 const murderKids = [
-require('./commands/puzzles/connect-four/game/connect-4-game.js'),
-require('./commands/puzzles/euchre/euchre-game.js')
+    require('./commands/puzzles/connect-four/game/connect-4-game.js'),
+    require('./commands/puzzles/euchre/euchre-game.js')
 ];
 
 process.on('uncaughtException', (err) => {
+    console.error(err);
     sendNotification(['Caught Exception:', err]);
 })
 
 process.on('exit', () => {
     murderKids.forEach((kidHolder) => kidHolder.killChild());
-})
+});
 
 const DBL = require("dblapi.js");
 const express = require('express');
@@ -50,7 +53,7 @@ const app = express();
 const server = require('http').createServer(app);
 const dbl = new DBL(config.top_ggToken, { webhookAuth: config.top_ggWebhook, webhookServer: server });
 
-dbl.webhook.on('ready', () => {
+/*dbl.webhook.on('ready', () => {
     console.log("listening")
 });
 
@@ -66,15 +69,15 @@ dbl.webhook.on('vote', vote => {
     var votes = fs.readFileSync('./assets/vote-log/recent-votes.dat').toString().replace('\r', '').split('\n');
     votes.push(vote.user + '@' + Date.now());
     console.log(votes);
-    votes = votes.filter(voteThing => 
+    votes = votes.filter(voteThing =>
         //console.log(Date.now() - parseInt(voteThing.split('@')[1]) <= 1000 * 3600 * 12);
         Date.now() - parseInt(voteThing.split('@')[1]) <= 1000 * 3600 * 12
     );
     fs.writeFileSync('./assets/vote-log/recent-votes.dat', votes.join('\n'));
-});
+});*/
 
 //janky hacked, no /dblwebhook extension notificaion listener:
-app.use(express.urlencoded());
+/*app.use(express.urlencoded());
 app.use(express.json());
 
 app.post('/', (req, res) => {
@@ -85,18 +88,18 @@ app.post('/', (req, res) => {
         sendNotification(['A vote! 😊', 'We got voted for! tysm!']);
         console.log('We got voted for! tysm!');
     }
-});
+});*/
 
 //const exposeLocalHost = spawn(process.cwd() + "/assets/webhook-hosting/ngrok.exe", []);
 
-server.listen(5055, () => {
+/*server.listen(5055, () => {
     console.log('Listening');
-});
+});*/
 
 //init:
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}!`);
-
+    sendUsers.forEach(sendTo => sendTo.setClient(client))
     client.user.setActivity({ name: 'thinking about connect-4', status: 'dnd' });
     client.user.setAFK(false);
     //client.user.setActivity(new Discord.Presence(client, {status: 'dnd', name: 'thinking about connect-4'}))
@@ -114,7 +117,7 @@ client.on('ready', async () => {
     setInterval(() => {
         remoteConsole.sendHostStatus();
     }, 60000);
-    
+
     if (config.remoteConsole) setInterval(() => {
         remoteConsole.sendConsoleUpdates();
     }, 3600000);
@@ -124,10 +127,11 @@ client.on('ready', async () => {
 const readCommands = (dir) => {
     const files = fs.readdirSync(path.join(__dirname, dir));
     for (const file of files) {
+        console.log(file);
         const stat = fs.lstatSync(path.join(__dirname, dir, file));
         if (stat.isDirectory()) {
             readCommands(path.join(dir, file));
-        } else if (file !== baseFile) {
+        } else if (file !== baseFile && file != 'index.js') {
             const option = require(path.join(__dirname, dir, file));
             commandBase(client, option);
         }
@@ -135,6 +139,8 @@ const readCommands = (dir) => {
 }
 
 readCommands('commands');
+
+console.log("Command registration complete");
 
 client.on("guildCreate", (guild) => {
     sendNotification(['Added to server', 'omgomgomgomgogm i got added to' + (guild.name).replace('\"', '').replace('\'', '') + '!!!'])
@@ -153,5 +159,3 @@ client.on("guildDelete", (guild) => {
 });
 
 client.login(config.token);
-
-sendUsers.forEach(sendTo => sendTo.setClient(client))

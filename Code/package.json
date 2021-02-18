@@ -9,18 +9,10 @@
   "author": "jojo2357",
   "license": "MIT",
   "dependencies": {
-    "@discordjs/opus": "^0.3.2",
     "canvas": "^2.6.1",
-    "cheerio": "^1.0.0-rc.3",
     "dblapi.js": "^2.4.1",
-    "discord.js": "^12.3.1",
-    "discord.js-commando": "git+https://github.com/discordjs/commando.git",
+    "discord.js": "^12.5.1",
     "express": "^4.17.1",
-    "ffmpeg-static": "^4.2.7",
-    "http": "0.0.1-security",
-    "minecraft-server-util": "^2.2.0",
-    "mongoose": "^5.10.7",
-    "ms": "^2.1.2",
-    "request": "^2.88.2"
+    "gif-encoder": "^0.7.2"
   }
 }
