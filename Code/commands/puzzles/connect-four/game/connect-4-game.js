@@ -1,7 +1,7 @@
 const { MessageAttachment } = require('discord.js');
 const { Readable } = require('stream');
 const { loadImage, createCanvas, Image} = require('canvas');
-const GIFEncoder = require('gif-encoder');
+const GIFEncoder = require('gif-encoder-2');
 const fs = require('fs');
 const connect4GameHolder = require('./connect-4-game-holder');
 const {token} = require('./../../../../config.json');
