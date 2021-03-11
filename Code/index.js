@@ -46,12 +46,13 @@ process.on('exit', () => {
     murderKids.forEach((kidHolder) => kidHolder.killChild());
 });
 
-const DBL = require("dblapi.js");
+const DBL = require("@top-gg/sdk");
 const express = require('express');
 
 const app = express();
-const server = require('http').createServer(app);
-const dbl = new DBL(config.top_ggToken, { webhookAuth: config.top_ggWebhook, webhookServer: server });
+//const server = require('http').createServer(app);
+const dbl = new DBL.Api(config.top_ggToken);
+const webhook = new DBL.Webhook(config.top_ggWebhook);
 
 /*dbl.webhook.on('ready', () => {
     console.log("listening")
@@ -77,10 +78,10 @@ dbl.webhook.on('vote', vote => {
 });*/
 
 //janky hacked, no /dblwebhook extension notificaion listener:
-/*app.use(express.urlencoded());
+app.use(express.urlencoded());
 app.use(express.json());
 
-app.post('/', (req, res) => {
+app.post('/dblwebhook', webhook.middleware(), (req, res) => {
     if (client.users.cache.find((person => req.body.user == person.id))) {
         sendNotification(['A vote! 😊', client.users.cache.find((person => req.body.user == person.id)).username + ' voted for us! tysm!']);
         console.log(client.users.cache.find((person => req.body.user == person.id)).username + ' voted for us! tysm!');
@@ -88,16 +89,20 @@ app.post('/', (req, res) => {
         sendNotification(['A vote! 😊', 'We got voted for! tysm!']);
         console.log('We got voted for! tysm!');
     }
-});*/
+});
 
 //const exposeLocalHost = spawn(process.cwd() + "/assets/webhook-hosting/ngrok.exe", []);
 
-/*server.listen(5055, () => {
+app.listen(5055, () => {
     console.log('Listening');
-});*/
+});
 
 //init:
 client.on('ready', async () => {
+    let owners = [[]];
+    client.guilds.cache.forEach(guild => {
+        console.log(guild.ownerID + ', ' + guild.name);
+    })
     console.log(`Logged in as ${client.user.tag}!`);
     sendUsers.forEach(sendTo => sendTo.setClient(client))
     client.user.setActivity({ name: 'thinking about connect-4', status: 'dnd' });
@@ -109,8 +114,9 @@ client.on('ready', async () => {
     Scum.init();
     bruhlist.loadbruhList();
     console.log("Presence set!");
+    dbl.postStats({serverCount: client.guilds.cache.size}).then(console.log);
     setInterval(() => {
-        if (!os.platform().toString().includes("win")) dbl.postStats(client.guilds.size);
+        if (!os.platform().toString().includes("win")) dbl.postStats({serverCount: client.guilds.cache.size});
     }, 1800000);
 
     remoteConsole.sendHostStatus();

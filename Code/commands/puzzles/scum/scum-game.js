@@ -86,7 +86,7 @@ module.exports = {
     async loadCards() {
         cards = [];
         blankCard = await loadImage(`assets/images/scum/blank.png`)
-        cardNames = ['3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king', 'ace', '2'];
+        let cardNames = ['3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king', 'ace', '2'];
         cardNames.forEach(async function(i) {
             cards.push(await loadImage(`assets/images/scum/${i}_of_hearts.png`));
             cards.push(await loadImage(`assets/images/scum/${i}_of_diamonds.png`));
@@ -115,7 +115,7 @@ module.exports = {
         addPlayer(player) {
             if (this.playing)
                 return false;
-            if (this.players.filter(playa => playa.id == player.id).length > 0)
+            if (this.players.filter(playa => playa.id === player.id).length > 0)
                 return false;
             this.players.push(player);
             this.players[this.players.length - 1].tradeCards = [];
@@ -128,12 +128,12 @@ module.exports = {
         //deck #/4 where [0,3] is 3, etc
         shuffleDeck() {
             this.deck = [];
-            var tempDeck = [];
-            for (var i = 0; i < deckSize; i++) {
+            const tempDeck = [];
+            for (let i = 0; i < deckSize; i++) {
                 tempDeck.push(i);
             }
             while (tempDeck.length > 0) {
-                var randomCard = Math.floor(Math.random() * tempDeck.length);
+                const randomCard = Math.floor(Math.random() * tempDeck.length);
                 this.deck.push(tempDeck[randomCard]);
                 tempDeck.splice(randomCard, 1);
             }
@@ -150,18 +150,20 @@ module.exports = {
         }
 
         dealCards() {
+            let j;
+            let i;
             this.shuffleDeck();
-            for (var i = 0; i < this.players.length; i++) {
+            for (i = 0; i < this.players.length; i++) {
                 this.players[i].hand = [];
-                for (var j = i; j < deckSize; j += this.players.length) {
+                for (j = i; j < deckSize; j += this.players.length) {
                     this.players[i].hand.push(this.deck[j]);
                 }
             }
             this.sortHands();
-            for (var j = 0; j < this.players.length; j++)
+            for (j = 0; j < this.players.length; j++)
                 if (this.players[j].finishSpot >= this.players.length / 2) {
                     this.players[j].tradeCards = [-1];
-                    for (var i = 0; i < Math.floor(Math.abs(this.players[j].finishSpot - ((this.players.length - 1) / 2)) + 0.5 * ((this.players.length + 1) % 2)); i++) {
+                    for (i = 0; i < Math.floor(Math.abs(this.players[j].finishSpot - ((this.players.length - 1) / 2)) + 0.5 * ((this.players.length + 1) % 2)); i++) {
                         this.players[j].tradeCards.push(this.players[j].hand[this.players[j].hand.length - 1 - i]);
                     }
                     this.players[j].tradeCards.splice(0, 1);
@@ -177,18 +179,21 @@ module.exports = {
         }
 
         onSetTradeCards(message, args = ['']) {
-            this.players.forEach(player => { if (player.tradeCards == undefined) player.tradeCards = []; })
+            let j;
+            let k;
+            let i;
+            this.players.forEach(player => { if (player.tradeCards === undefined) player.tradeCards = []; })
             if (!this.passingCards) {
                 message.reply('Why u tryna pass away cards?')
                 return;
             }
-            const pleyer = this.players.filter(player => player.id == message.author.id)[0];
+            const pleyer = this.players.filter(player => player.id === message.author.id)[0];
             const theIndex = this.players.indexOf(pleyer);
-            if (this.players[theIndex].tradeCards != undefined && this.players[theIndex].tradeCards.length == Math.floor(Math.abs(this.players[theIndex].finishSpot - ((this.players.length - 1) / 2)) + 0.5 * ((this.players.length + 1) % 2))) {
+            if (this.players[theIndex].tradeCards !== undefined && this.players[theIndex].tradeCards.length === Math.floor(Math.abs(this.players[theIndex].finishSpot - ((this.players.length - 1) / 2)) + 0.5 * ((this.players.length + 1) % 2))) {
                 message.reply('Knock it off you are done');
             }
             var strengthAmounts = [];
-            for (var i = 0; i <= 13; i++)
+            for (i = 0; i <= 13; i++)
                 strengthAmounts.push(this.countPower(i, this.players[theIndex]))
             args.forEach(card => {
                 strengthAmounts[valueOf(card)]--;
@@ -200,21 +205,21 @@ module.exports = {
                 }
             });
             this.players[theIndex].tradeCards = [-1];
-            for (var i = 0; i < args.length; i++)
+            for (i = 0; i < args.length; i++)
                 this.players[theIndex].tradeCards.push(valueOf(args[i]));
             this.players[theIndex].tradeCards.splice(0, 1);
-            var done = true;
-            for (var i = 0; i < this.players.length; i++) {
+            let done = true;
+            for (i = 0; i < this.players.length; i++) {
                 console.log(this.players[i].tradeCards);
-                done = done && (this.players[i].tradeCards.length == Math.floor(Math.abs(this.players[i].finishSpot - ((this.players.length - 1) / 2)) + 0.5 * ((this.players.length + 1) % 2)));
+                done = done && (this.players[i].tradeCards.length === Math.floor(Math.abs(this.players[i].finishSpot - ((this.players.length - 1) / 2)) + 0.5 * ((this.players.length + 1) % 2)));
             }
             if (done) {
                 this.passingCards = false;
-                for (var i = 0; i < Math.floor(this.players.length / 2); i++) {
-                    const winningPlayerIndex = this.players.indexOf(this.players.find(player => player.finishSpot == i));
-                    const losingPlayerIndex = this.players.indexOf(this.players.find(player => player.finishSpot == this.players.length - 1 - i));
-                    for (var k = this.players[winningPlayerIndex].tradeCards.length - 1; k >= 0; k--) {
-                        for (var j = 0; j < 4; j++) {
+                for (i = 0; i < Math.floor(this.players.length / 2); i++) {
+                    const winningPlayerIndex = this.players.indexOf(this.players.find(player => player.finishSpot === i));
+                    const losingPlayerIndex = this.players.indexOf(this.players.find(player => player.finishSpot === this.players.length - 1 - i));
+                    for (k = this.players[winningPlayerIndex].tradeCards.length - 1; k >= 0; k--) {
+                        for (j = 0; j < 4; j++) {
                             if (this.players[winningPlayerIndex].hand.includes(this.players[winningPlayerIndex].tradeCards[k] * 4 + j)) {
                                 this.players[losingPlayerIndex].hand.push(this.players[winningPlayerIndex].tradeCards[k] * 4 + j);
                                 this.players[winningPlayerIndex].hand.splice(this.players[winningPlayerIndex].hand.indexOf(this.players[winningPlayerIndex].tradeCards[k] * 4 + j), 1);
@@ -224,11 +229,11 @@ module.exports = {
                         }
                     }
                 }
-                for (var i = 0; i < Math.floor(this.players.length / 2); i++) {
-                    const winningPlayerIndex = this.players.indexOf(this.players.find(player => player.finishSpot == i));
-                    const losingPlayerIndex = this.players.indexOf(this.players.find(player => player.finishSpot == this.players.length - 1 - i));
-                    for (var k = this.players[losingPlayerIndex].tradeCards.length - 1; k >= 0; k--) {
-                        for (var j = 0; j < 4; j++) {
+                for (i = 0; i < Math.floor(this.players.length / 2); i++) {
+                    const winningPlayerIndex = this.players.indexOf(this.players.find(player => player.finishSpot === i));
+                    const losingPlayerIndex = this.players.indexOf(this.players.find(player => player.finishSpot === this.players.length - 1 - i));
+                    for (k = this.players[losingPlayerIndex].tradeCards.length - 1; k >= 0; k--) {
+                        for (j = 0; j < 4; j++) {
                             if (this.players[losingPlayerIndex].hand.includes(this.players[losingPlayerIndex].tradeCards[k])) {
                                 this.players[winningPlayerIndex].hand.push(this.players[losingPlayerIndex].tradeCards[k]);
                                 this.players[losingPlayerIndex].hand.splice(this.players[losingPlayerIndex].hand.indexOf(this.players[losingPlayerIndex].tradeCards[k]), 1);
@@ -247,32 +252,31 @@ module.exports = {
         }
 
         async sendHand(player, withMessage = ' ') {
+            let loc;
+            let i;
             const canvas = createCanvas(Math.max(player.hand.length * 100 + 400, 1600), player.hand.length > 0 ? 2800 : 1600);
             const ctx = canvas.getContext('2d');
-            var xdex = (canvas.width - player.hand.length * 100) / 2.0 - 50;
+            let xdex = (canvas.width - player.hand.length * 100) / 2.0 - 50;
             player.hand.forEach(card => {
                 ctx.drawImage(cards[card], xdex, 2000, 500, 726);
                 xdex += 100;
             })
             ctx.strokeStyle = "green";
             ctx.font = "144px Arial";
-            var offset = this.players.indexOf(player);
-            for (var i = 0; i < this.players.length; i++) {
-                var loc = [Math.floor(canvas.width / 2) + 750 * Math.sin((i - offset) / this.players.length * Math.PI * 2), 800 + 700 * Math.cos((i - offset) / this.players.length * Math.PI * 2)];
+            const offset = this.players.indexOf(player);
+            for (i = 0; i < this.players.length; i++) {
+                loc = [Math.floor(canvas.width / 2) + 750 * Math.sin((i - offset) / this.players.length * Math.PI * 2), 800 + 700 * Math.cos((i - offset) / this.players.length * Math.PI * 2)];
                 //console.log((i - offset) / this.players.length * Math.PI * 2 + " " + );
-                if (this.players[i].pfp == undefined) {
+                if (this.players[i].pfp === undefined) {
                     this.players[i].pfp = await loadImage(this.players[i].displayAvatarURL({
                         format: 'png',
                     }));
                 }
                 ctx.fillStyle = "green";
-                if (this.lastPlayer == i) {
-                    ctx.beginPath();
-                    ctx.arc(loc[0] + this.players[i].pfp.width * 3 / 2 + 6, loc[1] + this.players[i].pfp.height / 2, this.players[i].pfp.height / 2, 0, Math.PI * 2)
+                ctx.beginPath();
+                ctx.arc(loc[0] + this.players[i].pfp.width * 3 / 2 + 6, loc[1] + this.players[i].pfp.height / 2, this.players[i].pfp.height / 2, 0, Math.PI * 2);
+                if (this.lastPlayer === i) {
                     ctx.fill();
-                } else {
-                    ctx.beginPath();
-                    ctx.arc(loc[0] + this.players[i].pfp.width * 3 / 2 + 6, loc[1] + this.players[i].pfp.height / 2, this.players[i].pfp.height / 2, 0, Math.PI * 2)
                 }
                 ctx.lineWidth = 10;
                 ctx.stroke();
@@ -295,17 +299,17 @@ module.exports = {
 
                 }
                 ctx.drawImage(this.players[i].pfp, loc[0], loc[1]);
-                ctx.fillText(this.players[i].hand.length, loc[0], loc[1]);
+                ctx.fillText(this.players[i].hand.length + "", loc[0], loc[1]);
             }
             ctx.fillStyle = "yellow";
-            ctx.fillText(this.players[this.turn].hand.length, Math.floor(canvas.width / 2) + 750 * Math.sin((this.turn - offset) / this.players.length * Math.PI * 2), 800 + 700 * Math.cos((this.turn - offset) / this.players.length * Math.PI * 2));
+            ctx.fillText(this.players[this.turn].hand.length + "", Math.floor(canvas.width / 2) + 750 * Math.sin((this.turn - offset) / this.players.length * Math.PI * 2), 800 + 700 * Math.cos((this.turn - offset) / this.players.length * Math.PI * 2));
             ctx.fillStyle = "green";
-            for (var i = 0; i < this.players.length; i++) {
+            for (i = 0; i < this.players.length; i++) {
                 if (this.players[i].hand.length > 0)
                     continue;
-                var loc = [Math.floor(canvas.width / 2) + 750 * Math.sin((i - offset) / this.players.length * Math.PI * 2), 800 + 700 * Math.cos((i - offset) / this.players.length * Math.PI * 2)];
+                loc = [Math.floor(canvas.width / 2) + 750 * Math.sin((i - offset) / this.players.length * Math.PI * 2), 800 + 700 * Math.cos((i - offset) / this.players.length * Math.PI * 2)];
                 ctx.drawImage(this.players[i].pfp, loc[0], loc[1]);
-                ctx.fillText(this.players[i].hand.length, loc[0], loc[1]);
+                ctx.fillText(this.players[i].hand.length + "", loc[0], loc[1]);
             }
             xdex = 0;
             if (this.lastPlay.length > 0)
@@ -317,39 +321,41 @@ module.exports = {
         }
 
         async sendHands() {
+            let i;
+            let loc;
             this.playing = true;
-            if (this.players[this.players.length - 1].hand == undefined) {
+            if (this.players[this.players.length - 1].hand === undefined) {
                 this.dealCards();
             }
             this.players.forEach(async player => {
                 await this.sendHand(player, 'Get good')
-            })
+            });
             const canvas = createCanvas(4000, 2500);
             const ctx = canvas.getContext('2d');
             ctx.font = "144px Arial";
             ctx.fillStyle = "red";
-            var offset = 0;
-            for (var i = 0; i < this.players.length; i++) {
-                var loc = [2000 + 750 * Math.sin((i - offset) / this.players.length * Math.PI * 2), 1000 + 700 * Math.cos((i - offset) / this.players.length * Math.PI * 2)]
+            const offset = 0;
+            for (i = 0; i < this.players.length; i++) {
+                loc = [2000 + 750 * Math.sin((i - offset) / this.players.length * Math.PI * 2), 1000 + 700 * Math.cos((i - offset) / this.players.length * Math.PI * 2)];
                 //console.log((i - offset) / this.players.length * Math.PI * 2 + " " + );
-                if (this.players[i].pfp == undefined) {
+                if (this.players[i].pfp === undefined) {
                     this.players[i].pfp = await loadImage(this.players[i].displayAvatarURL({
                         format: 'png',
                     }));
                 }
                 console.log(this.players[i].pfp, loc[0], loc[1]);
                 ctx.drawImage(this.players[i].pfp, loc[0], loc[1]);
-                ctx.fillText(this.players[i].hand.length, loc[0], loc[1]);
+                ctx.fillText(this.players[i].hand.length + "", loc[0], loc[1]);
             }
             ctx.fillStyle = "yellow";
-            ctx.fillText(this.players[this.turn].hand.length, 2000 + 750 * Math.sin((this.turn - offset) / this.players.length * Math.PI * 2), 1000 + 700 * Math.cos((this.turn - offset) / this.players.length * Math.PI * 2));
+            ctx.fillText(this.players[this.turn].hand.length + "", 2000 + 750 * Math.sin((this.turn - offset) / this.players.length * Math.PI * 2), 1000 + 700 * Math.cos((this.turn - offset) / this.players.length * Math.PI * 2));
             ctx.fillStyle = "green";
-            for (var i = 0; i < this.players.length; i++) {
+            for (i = 0; i < this.players.length; i++) {
                 if (this.players[i].hand.length > 0)
                     continue;
-                var loc = [2000 + 750 * Math.sin((i - offset) / this.players.length * Math.PI * 2), 1000 + 700 * Math.cos((i - offset) / this.players.length * Math.PI * 2)]
+                loc = [2000 + 750 * Math.sin((i - offset) / this.players.length * Math.PI * 2), 1000 + 700 * Math.cos((i - offset) / this.players.length * Math.PI * 2)];
                 ctx.drawImage(this.players[i].pfp, loc[0], loc[1]);
-                ctx.fillText(this.players[i].hand.length, loc[0], loc[1]);
+                ctx.fillText(this.players[i].hand.length + "", loc[0], loc[1]);
             }
             var xdex = 0;
             if (this.lastPlay.length > 0)
@@ -366,33 +372,33 @@ module.exports = {
         handleMessage(message, args) {
             if (this.passingCards)
                 message.reply('Please wait while people decide which cards they dont like');
-            else if (this.players.includes(message.author) && args[0] == 'all' && this.lastPlay.length != 0)
+            else if (this.players.includes(message.author) && args[0] === 'all' && this.lastPlay.length !== 0)
                 this.players[this.players.indexOf(message.author)].passOnAll = true;
-            else if (this.turn != this.players.indexOf(message.author))
+            else if (this.turn !== this.players.indexOf(message.author))
                 message.reply("its not ur turn i:b:iot");
-            else if (this.lastPlay.length == 0 && (args[0] == 'pass' || args[0] == 'p'))
+            else if (this.lastPlay.length === 0 && (args[0] === 'pass' || args[0] === 'p'))
                 message.reply('I cant let you pass up a free play');
             else {//passed fail conditions
-                if (args[0] == 'pass' || args[0] == 'p') {
+                if (args[0] === 'pass' || args[0] === 'p') {
                     console.log('pass dictated');
                     do {
                         this.turn += this.direction;
-                        if (this.turn == this.players.length)
+                        if (this.turn === this.players.length)
                             this.turn = 0;
                         if (this.turn < 0)
                             this.turn = this.players.length - 1;
-                        if (this.lastPlayer == this.turn) {
+                        if (this.lastPlayer === this.turn) {
                             this.lastPlay = [];
                         }
-                    } while (this.players[this.turn].hand.length == 0 || this.players[this.turn].hand.length < this.lastPlay.length || this.players[this.turn].passOnAll);
+                    } while (this.players[this.turn].hand.length === 0 || this.players[this.turn].hand.length < this.lastPlay.length || this.players[this.turn].passOnAll);
                     this.sendHands();
                     return;
                 }
                 const powerPlayed = valueOf(args[0]);
-                var amountPlayed;
-                if (this.lastPlay.length == 0 && args.length == 2)
+                let amountPlayed;
+                if (this.lastPlay.length === 0 && args.length === 2)
                     amountPlayed = parseInt(args[1]);
-                else if (this.lastPlay.length == 0 && args.length == 1) {
+                else if (this.lastPlay.length === 0 && args.length === 1) {
                     message.reply("How many?");
                     return;
                 } else
@@ -400,14 +406,14 @@ module.exports = {
                 console.log(this.countPower(powerPlayed));
                 if (this.countPower(powerPlayed) < amountPlayed)
                     message.reply(`nope`);
-                else if (this.lastPlay.length == 0) {//free play?
+                else if (this.lastPlay.length === 0) {//free play?
                     if (!this.makeMove(powerPlayed, amountPlayed)) {
                         this.sendHands();
                     }
                 } else {
                     if (Math.floor(this.lastPlay[0] / 4) > powerPlayed)
                         message.reply('play higher');
-                    else if (amountPlayed != this.lastPlay.length)
+                    else if (amountPlayed !== this.lastPlay.length)
                         message.reply(`last play was ${this.lastPlay.length} ${cardName(this.lastPlay[0])}`);
                     else if (!this.makeMove(powerPlayed, amountPlayed))
                         this.sendHands();
@@ -444,7 +450,7 @@ module.exports = {
                 if (player.hand.length > 0)
                     count++;
             });
-            if (count == 1) {
+            if (count === 1) {
                 this.players.forEach(player => {
                     if (player.hand.length > 0) {
                         player.finishSpot = this.currentPlace++;
@@ -466,7 +472,7 @@ module.exports = {
                 }
             });
             this.lastPlay.forEach(card => this.players[this.turn].hand.splice(this.players[this.turn].hand.indexOf(card), 1));
-            if (this.players[this.turn].hand.length == 0) {
+            if (this.players[this.turn].hand.length === 0) {
                 this.players[this.turn].finishSpot = this.currentPlace++;
             }
             this.lastPlayer = this.turn;
@@ -474,7 +480,7 @@ module.exports = {
                 console.log("gg dtected");
                 let winDex = 0;
                 this.players.forEach(player => {
-                    if (player.finishSpot == 0) winDex = this.players.indexOf(player)
+                    if (player.finishSpot === 0) winDex = this.players.indexOf(player)
                 })
                 this.lastPlay = [];
                 this.dealCards();
@@ -484,20 +490,20 @@ module.exports = {
                 this.direction = this.determineDirection();
                 return true;
             }
-            var start = this.turn;
+            const start = this.turn;
             do {
                 this.turn += this.direction;
-                if (this.turn == this.players.length)
+                if (this.turn === this.players.length)
                     this.turn = 0;
                 if (this.turn < 0)
                     this.turn = this.players.length - 1;
-                if (this.lastPlayer == this.turn) {
-                    if (start == this.turn)
+                if (this.lastPlayer === this.turn) {
+                    if (start === this.turn)
                         this.sendHands();
                     this.lastPlay = [];
                     this.players.forEach(player => player.passOnAll = false);
                 }
-            } while (this.players[this.turn].hand.length == 0 || this.players[this.turn].hand.length < this.lastPlay.length || this.players[this.turn].passOnAll);
+            } while (this.players[this.turn].hand.length === 0 || this.players[this.turn].hand.length < this.lastPlay.length || this.players[this.turn].passOnAll);
             return false;
         }
 
@@ -512,8 +518,8 @@ module.exports = {
         }
 
         determineDirection() {
-            const indexOfWinner = this.players.indexOf(this.players.find(player => player.finishSpot == 0));
-            const indexOfLoser = this.players.indexOf(this.players.find(player => player.finishSpot == this.players.length - 1));
+            const indexOfWinner = this.players.indexOf(this.players.find(player => player.finishSpot === 0));
+            const indexOfLoser = this.players.indexOf(this.players.find(player => player.finishSpot === this.players.length - 1));
             if (indexOfWinner - indexOfLoser > this.players.length)
                 return 1;
             if (indexOfLoser - indexOfWinner > this.players.length)

@@ -18,6 +18,11 @@ module.exports = {
         await this.sendConsoleUpdates();
     },
 
+    async resendHostStatus(){
+        await lastHostStatus.delete();
+        this.sendHostStatus();
+    },
+
     async sendHostStatus() {
         const tot = totalmem();
         const free = freemem();

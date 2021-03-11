@@ -1,4 +1,4 @@
-const { existsSync } = require('fs');
+const {existsSync} = require('fs');
 
 let client;
 

@@ -13,7 +13,7 @@ module.exports = {
     restrictedToUsers: ['524411594009083933', '777008421940887583'],
     callback: async (message, arguments) => {
         if (!arguments[0] || platform().toString().toLowerCase().includes(arguments[0].toLowerCase())) {
-            client.user.setActivity('Restarting, please wait');
+            await client.user.setActivity('Restarting, please wait');
             await message.channel.send('Hasta la pasta');
             await client.user.setAFK(true);
             await remoteConsole.killHostStatus();

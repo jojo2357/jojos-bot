@@ -9,6 +9,7 @@ Code/assets/vote-log/recent-votes.dat
 Code/node_modules/**/*
 Code/recentData.dat
 Code/commands/misc/test.js
+.idea
 
 # in-development:
 Code/commands/puzzles/go-fish/*

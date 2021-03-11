@@ -1,14 +1,14 @@
-const { MessageAttachment } = require('discord.js');
-const { Readable } = require('stream');
-const { loadImage, createCanvas, Image} = require('canvas');
+const {MessageAttachment} = require('discord.js');
+const {Readable} = require('stream');
+const {loadImage, createCanvas, Image} = require('canvas');
 const GIFEncoder = require('gif-encoder-2');
 const fs = require('fs');
 const connect4GameHolder = require('./connect-4-game-holder');
 const {token} = require('./../../../../config.json');
 const path = require('path')
 
-const { spawn } = require('child_process');
-const { sendNotification } = require('./../../../../util/sendNotifiaction');
+const {spawn} = require('child_process');
+const {sendNotification} = require('./../../../../util/sendNotifiaction');
 
 let client;
 let background;
@@ -23,11 +23,11 @@ let winningYellowToken;
 let winningRedToken;
 
 const emptyBoard = [[0, 0, 0, 0, 0, 0, 0],
-[0, 0, 0, 0, 0, 0, 0],
-[0, 0, 0, 0, 0, 0, 0],
-[0, 0, 0, 0, 0, 0, 0],
-[0, 0, 0, 0, 0, 0, 0],
-[0, 0, 0, 0, 0, 0, 0]];
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0]];
 
 const brainSize = 0;
 
@@ -42,20 +42,20 @@ function playerVoted(id) {
     const filteredVotes = votes.filter(voteThing =>
         Date.now() - parseInt(voteThing.split('@')[1]) <= 1000 * 3600 * 12
     );
-    if (filteredVotes.length != votes.length)
+    if (filteredVotes.length !== votes.length)
         fs.writeFileSync('./assets/vote-log/recent-votes.dat', filteredVotes.join('\n'));
-    var returnVal = false;
+    let returnVal = false;
     filteredVotes.forEach(vote => {
-        if (id == vote.split('@')[0])
+        if (id === vote.split('@')[0])
             returnVal = true;
     })
     return returnVal;
 }
 
 function boardToString(board) {// DEBUG ONLY
-    var out = "|";
-    for (var i = 5; i >= 0; i--) {
-        for (var j = 0; j < 7; j++) {
+    let out = "|";
+    for (let i = 5; i >= 0; i--) {
+        for (let j = 0; j < 7; j++) {
             out += "" + board[i][j];
         }
         out += "|";
@@ -68,13 +68,15 @@ function checkLoaded(str = "") {// pass data in here to see if the bot is declar
         thing();
         botLoaded = true;
         console.log('Roger, inited');
-        return;
     }
 }
 
 async function thing() {
     if (client && client.user != null) {
-        await client.user.setPresence({ activity: { name: '=connect-4 in ' + client.guilds.cache.size + ' servers' }, status: 'dnd' }).then(console.log).catch(console.log);
+        await client.user.setPresence({
+            activity: {name: '=connect-4 in ' + client.guilds.cache.size + ' servers'},
+            status: 'dnd'
+        }).then(console.log).catch(console.log);
         console.log("======================================================")
     } else {
         client.login(token).then(() => client.user.setActivity('=connect-4 in ' + client.guilds.cache.size + ' servers').then(console.log)).catch(() => console.log("an error occured while setting presence"));
@@ -82,10 +84,10 @@ async function thing() {
 }
 
 module.exports = {
-    killChild(){
+    killChild() {
         prc.kill();
     },
-    
+
     setClient(klient) {
         client = klient;
     },
@@ -136,6 +138,7 @@ module.exports = {
             this.checkLoad(str);
             connect4GameHolder.notifyData(str);
         }
+
         prc.stdout.on('data', theThing);
 
         prc.stderr.on('data', (data) => {
@@ -170,11 +173,11 @@ module.exports = {
             this.turnNumber = 1;
             this.channel = [channel, channel];
             this.gameBoard = [[0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0]];
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0]];
             this.startTime = Date.now();
             this.pendingGif = new GIFEncoder(224, 192);
 
@@ -182,9 +185,9 @@ module.exports = {
             this.pendingGif.createReadStream().pipe(fs.createWriteStream('./assets/connect-4/highlights/' + this.startTime + '.gif'));
 
             this.pendingGif.start();
-            this.pendingGif.setRepeat(0);   
-            this.pendingGif.setDelay(500);  
-            this.pendingGif.setQuality(10); 
+            this.pendingGif.setRepeat(0);
+            this.pendingGif.setDelay(500);
+            this.pendingGif.setQuality(10);
         };
 
         generateID() {
@@ -215,17 +218,17 @@ module.exports = {
 
         makeMove(column = -1, playerNumber) {
             //console.log("Incoming move! my owner is " + this.players[0] + " and they played " + column);
-            if (this.turn != playerNumber) {
+            if (this.turn !== playerNumber) {
                 //console.log("Rejecting out of turn data");
                 return;
             }
             if (this.hasRoom(column)) {
                 this.lastMove = column;
                 for (var row = 0; row < 6; row++)
-                    if (this.gameBoard[row][column] == 0) {
+                    if (this.gameBoard[row][column] === 0) {
                         this.gameBoard[row][column] = playerNumber;
-                        if (this.gameOver(this.gameBoard) != 0) {
-                            if (this.gameOver(this.gameBoard) == 3)
+                        if (this.gameOver(this.gameBoard) !== 0) {
+                            if (this.gameOver(this.gameBoard) === 3)
                                 this.ggMessage(3);
                             else
                                 this.ggMessage(playerNumber);
@@ -234,7 +237,7 @@ module.exports = {
                         }
                         break;
                     }
-                if (playerNumber == 1) {
+                if (playerNumber === 1) {
                     this.turn = 2;
                     if (this.isSinglePlayer)
                         stdinStream.push(this.ID + ':' + boardToString(this.gameBoard) + '\n');
@@ -245,18 +248,18 @@ module.exports = {
                     this.turn = 1;
                     this.sysoutBoard(0);
                 }
-                if (this.timerObj != undefined)
+                if (this.timerObj !== undefined)
                     clearTimeout(this.timerObj);
-                if (this.timeout != 0) {
+                if (this.timeout !== 0) {
                     let timeout = this.timeout;
                     this.timerObj = setTimeout(function (bruh, turn) {
                         bruh.channel[bruh.turn - 1].send("So sorry, but you took longer than " + timeout / 1000 + " seconds so you forfeit.");
                         bruh.ggMessage(turn);
-                    }, timeout, this, this.turn == 2 ? 1 : 2);
+                    }, timeout, this, this.turn === 2 ? 1 : 2);
                 }
             } else {
                 if (this.isSinglePlayer) {// DEPRICATED from =m
-                    if (playerNumber == 1) {
+                    if (playerNumber === 1) {
                         this.channel[this.turn - 1].send("Hey dummy that column is full");
                     }
                 } else {
@@ -270,7 +273,7 @@ module.exports = {
             //console.log("board printing begin");
             const canvas = createCanvas(224, 192);
             const defaultBoard = canvas.getContext('2d');
-            const winningPeice = this.gameOver(this.gameBoard) == 1 ? winningYellowToken : winningRedToken;
+            const winningPeice = this.gameOver(this.gameBoard) === 1 ? winningYellowToken : winningRedToken;
             var voteBoard = playerVoted(this.players[0].substring(2, this.players[0].indexOf('>'))) || (!this.isSinglePlayer && playerVoted(this.players[1].substring(2, this.players[0].indexOf('>'))));
             if (!voteBoard) {
                 defaultBoard.drawImage(background, 0, 0, canvas.width, canvas.height);
@@ -282,15 +285,15 @@ module.exports = {
             defaultBoard.drawImage(blankBoard, 0, 0, canvas.width, canvas.height);
             for (var col = 0; col < 7; col++) {
                 for (var row = 0; row < 6; row++) {
-                    if (this.gameBoard[row][col] == 0)
+                    if (this.gameBoard[row][col] === 0)
                         break;
-                    if (this.gameBoard[row][col] == 1)
+                    if (this.gameBoard[row][col] === 1)
                         defaultBoard.drawImage(yellowToken, 32 * col, 160 - 32 * row, 32, 32);
-                    if (this.gameBoard[row][col] == 2)
+                    if (this.gameBoard[row][col] === 2)
                         defaultBoard.drawImage(redToken, 32 * col, 160 - 32 * row, 32, 32);
                 }
             }
-            if (this.gameOver(this.gameBoard) != 0) {
+            if (this.gameOver(this.gameBoard) !== 0) {
                 for (var i = 0; i < 4; i++) {
                     switch (this.winstyle) {
                         case 1:
@@ -306,20 +309,20 @@ module.exports = {
                             defaultBoard.drawImage(winningPeice, 32 * (this.windex[1] + i), 160 - 32 * (this.windex[0] + 3 - i), 32, 32)
                     }
                 }
-            } else if (this.lastMove != undefined) {
+            } else if (this.lastMove !== undefined) {
                 var lastSpot = -1;
                 for (row = 5; row >= 0; row--)
-                    if (this.gameBoard[row][this.lastMove] != 0) {
+                    if (this.gameBoard[row][this.lastMove] !== 0) {
                         lastSpot = row;
                         break;
                     }
-                defaultBoard.drawImage((this.turn == 1 ? lastRedToken : lastYellowToken), 32 * this.lastMove, 160 - 32 * lastSpot, 32, 32);
+                defaultBoard.drawImage((this.turn === 1 ? lastRedToken : lastYellowToken), 32 * this.lastMove, 160 - 32 * lastSpot, 32, 32);
             }
             this.pendingGif.addFrame(defaultBoard);
             const attachment = new MessageAttachment(canvas.toBuffer(), 'testBoard.png');
             if (this.lastMessage != null && this.lastMessage.channel.guild != null)
                 this.lastMessage.delete().catch();
-            if (!this.gameOver(this.gameBoard) && player != -1) {
+            if (!this.gameOver(this.gameBoard) && player !== -1) {
                 connect4GameHolder.holdMyBeer = this;
                 this.channel[player].send('Don\'t mess up ' + this.players[player] + ' the i:b:iot! You are playing the ' + (this.turn == 1 ? "yellow" : "red") + " pieces", attachment)
                     .then(async function (message) {
@@ -392,7 +395,7 @@ module.exports = {
                 this.channel[0].send(attachment);
                 this.pendingGif.finish();
                 this.channel[0].send("Heres an instant replay: ", {files: ['./assets/connect-4/highlights/' + this.startTime + '.gif']});
-                if (this.channel[0].id != this.channel[1].id){
+                if (this.channel[0].id != this.channel[1].id) {
                     this.channel[1].send(attachment);
                     this.channel[0].send("Heres an instant replay: ", {files: ['./assets/connect-4/highlights/' + this.startTime + '.gif']});
                 }
@@ -523,15 +526,18 @@ module.exports = {
                 connect4GameHolder.gamesPlayed++;
             if (this.tourney == undefined) {
                 if (!fs.existsSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, this.players[0].indexOf('>')) + '.dat'))
-                    fs.open('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, this.players[0].indexOf('>')) + '.dat', function (err) { });
+                    fs.open('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, this.players[0].indexOf('>')) + '.dat', function (err) {
+                    });
                 fs.appendFileSync('./assets/connect-4/game-record/' + ("" + this.players[0]).substring(2, this.players[0].indexOf('>')) + '.dat', "" + ((winner == 1 || winner == "1") ? "W" : winner == 3 ? "D" : "L") + ' ' + (this.isSinglePlayer ? brainSize : this.players[1]) + '\n');
                 if (!this.isSinglePlayer) {
                     if (!fs.existsSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, this.players[1].indexOf('>')) + '.dat'))
-                        fs.open('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, this.players[1].indexOf('>')) + '.dat', function (err) { });
+                        fs.open('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, this.players[1].indexOf('>')) + '.dat', function (err) {
+                        });
                     fs.appendFileSync('assets/connect-4/game-record/' + ("" + this.players[1]).substring(2, this.players[1].indexOf('>')) + '.dat', "" + ((winner == 1 || winner == "1") ? "L" : winner == 3 ? "D" : "W") + ' ' + this.players[0] + '\n');
                 } else {
                     if (!fs.existsSync('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat'))
-                        fs.open('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat', function (err) { });
+                        fs.open('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat', function (err) {
+                        });
                     fs.appendFileSync('assets/connect-4/game-record/' + brainSize + '_computerBrain.dat', "" + ((winner == 1 || winner == "1") ? "L" : winner == 3 ? "D" : "W") + ' ' + this.players[0] + '\n');
                 }
             } else {

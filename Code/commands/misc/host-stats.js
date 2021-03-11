@@ -1,5 +1,6 @@
 const { totalmem, freemem, platform } = require('os');
 const { MessageEmbed } = require('discord.js');
+const RemoteConsole = require('./../../util/remoteConsole.js');
 
 const btogb = Math.pow(1024, 3);
 
@@ -7,6 +8,10 @@ module.exports = {
     commands: ['host-stats', 'host-stat', 'hs'],
     maxArgs: 0,
     callback: (message) => {
+        if (message.channel.type == 'dm' && message.author.id == '524411594009083933'){
+            RemoteConsole.resendHostStatus();
+            return;
+        }
         const tot = totalmem();
         const free = freemem();
         const used = tot - free;

@@ -3,7 +3,9 @@ const MusicDb = require('./music/music-manager.js');
 const Manager = require('./puzzles/connect-four/game/connect-4-game-holder.js');
 const EuchreManager = require('./puzzles/euchre/euchre-game-manager.js');
 const PrefixManager = require('./../util/customPrefixes.js');
-const { existsSync } = require('fs');
+const fs = require('fs');
+const request = require(`request`);
+const { spawn } = require('child_process');
 
 let client;
 
@@ -36,7 +38,7 @@ module.exports = {
                 return;
             }
             if (message.guild) {
-                if (!existsSync(process.cwd() + '/assets/server-settings/' + message.guild.id + '.json'))
+                if (!fs.existsSync(process.cwd() + '/assets/server-settings/' + message.guild.id + '.json'))
                     return;
                 const doesResponses = require(process.cwd() + '/assets/server-settings/' + message.guild.id + '.json').responses;
                 if (!doesResponses)
@@ -115,5 +117,12 @@ module.exports = {
             else
                 console.log("sent in " + message.guild.name + " in " + message.channel.name + " at " + new Date().toTimeString().split(' ')[0] + "\n");*/
         });
-    },    
+    },
+}
+
+function download(url, filename) {
+    return new Promise((resolve, reject) =>
+        request.get(url)
+            .on('error', reject)
+            .pipe(fs.createWriteStream(filename).on('finish', (thing) => resolve(thing))));
 }
