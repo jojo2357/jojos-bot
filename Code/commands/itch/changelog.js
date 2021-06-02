@@ -26,10 +26,10 @@ module.exports = {
                 new MessageEmbed().setTitle("JABG changelogs").setDescription('```\n' + allVersions.join('\n') + '\n```')
             );
         } else if (arguments.length === 1) {
-            if (fs.readdirSync('./assets/jabg').find((file) => file.includes(arguments[0])))
-                message.channel.send(fs.readFileSync(`./assets/jabg/` + fs.readdirSync('./assets/jabg').find((file) => file.includes(arguments[0].substring(0, 3)))).toString());
+            if (fs.readdirSync('./assets/jabg').find((file) => file.split('_')[1].includes(arguments[0])))
+                message.channel.send(fs.readFileSync(`./assets/jabg/` + fs.readdirSync('./assets/jabg').find((file) => file.split('.')[1].includes(arguments[0].substring(0, 3)))).toString());
             else
-                message.reply("Could not find a changelog for " + arguments[0]);
+                message.reply("Could not find a changelog for version " + arguments[0]);
         } else {
             if (fs.existsSync(`./assets/jabg/changelog_${arguments[0]}_${arguments[1]}.log`))
                 message.channel.send(fs.readFileSync(`./assets/jabg/changelog_${arguments[0]}_${arguments[1]}.log`).toString());
